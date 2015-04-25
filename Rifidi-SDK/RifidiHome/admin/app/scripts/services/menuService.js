@@ -2,7 +2,11 @@
  * Created by Alejandro on 07/04/2015.
  */
 
-app.service('MenuService', function($rootScope, $http, ServerService, CommonService, SensorService, AppService){
+app.service('MenuService', function($rootScope, $http, $interval, ServerService, CommonService, SensorService, AppService){
+
+
+    var intervalRef;
+    var self = this;
 
     //Method that creates and updates the tree view menu
     this.createUpdateMenu = function(){
@@ -43,8 +47,8 @@ app.service('MenuService', function($rootScope, $http, ServerService, CommonServ
 
         }
 
-        console.log('menuServers: ');
-        console.log(menuServers);
+        //console.log('menuServers: ');
+        //console.log(menuServers);
 
         //Query the updated list of servers
         ServerService.callServerListService()
@@ -90,7 +94,7 @@ app.service('MenuService', function($rootScope, $http, ServerService, CommonServ
 
                         changeServerStatusToConnecting(newServer);
 
-                        console.log('going to add new server to menu');
+                        //console.log('going to add new server to menu');
 
                         menuServers.push(newServer);
 
@@ -206,10 +210,10 @@ app.service('MenuService', function($rootScope, $http, ServerService, CommonServ
             ServerService.callPingServerService(protocol, ipAddress, port)
                 .success(function (data, status, headers, config) {
 
-                    console.log('updateMenuServersStatus.callPingServerService.success response');
-                    console.log('updateMenuServersStatus.callPingServerService.headers:');
-                    console.log('config:');
-                    console.log(config);
+                    //console.log('updateMenuServersStatus.callPingServerService.success response');
+                    //console.log('updateMenuServersStatus.callPingServerService.headers:');
+                    //console.log('config:');
+                    //console.log(config);
 
                     var serverTimestamp = ServerService.getPingTimestampFromReceivedData(data);
 
@@ -228,9 +232,9 @@ app.service('MenuService', function($rootScope, $http, ServerService, CommonServ
 
                         menuServers.forEach(function (serverToTest) {
 
-                            console.log('inside menuservers loop');
-                            console.log('serverToTest.host: ' + serverToTest.host);
-                            console.log('pingResponseHost: ' + pingResponseHost);
+                            //console.log('inside menuservers loop');
+                            //console.log('serverToTest.host: ' + serverToTest.host);
+                            //console.log('pingResponseHost: ' + pingResponseHost);
 
                             if (serverToTest.host == pingResponseHost) {
 
@@ -319,11 +323,11 @@ app.service('MenuService', function($rootScope, $http, ServerService, CommonServ
         //Refresh the list of sensors for this server
         var menuSensors = serverElement.children[0].children;
 
-        console.log('serverElement.children[0]');
-        console.log(serverElement.children[0]);
+        //console.log('serverElement.children[0]');
+        //console.log(serverElement.children[0]);
 
-        console.log('menu sensors');
-        console.log(menuSensors);
+        //console.log('menu sensors');
+        //console.log(menuSensors);
 
         //Query the updated list of sensors
         SensorService.callSensorListService(serverElement.host)
@@ -334,8 +338,8 @@ app.service('MenuService', function($rootScope, $http, ServerService, CommonServ
                 //We need to compare this new received list with sensors inside server
                 var newSensorList = SensorService.getSensorsFromReceivedData(data);
 
-                console.log('menuSensors for host: ' + serverElement.host);
-                console.log(menuSensors);
+                //console.log('menuSensors for host: ' + serverElement.host);
+                //console.log(menuSensors);
 
                 //iterate over the received sensors
                 //if exists -> then update
@@ -374,12 +378,12 @@ app.service('MenuService', function($rootScope, $http, ServerService, CommonServ
                         newSensor.allowCreateSession = false;
                         newSensor.children = [];
 
-                        console.log('going to add new sensor to menu on server: ' + serverElement.host);
+                        //console.log('going to add new sensor to menu on server: ' + serverElement.host);
 
                         menuSensors.push(newSensor);
 
-                        console.log('new menu sensors');
-                        console.log(menuSensors);
+                        //console.log('new menu sensors');
+                        //console.log(menuSensors);
 
                     }
 
@@ -391,28 +395,28 @@ app.service('MenuService', function($rootScope, $http, ServerService, CommonServ
 
                 var sensorsToDelete = [];
 
-                console.log('checking sensors to delete');
+                //console.log('checking sensors to delete');
                 menuSensors.forEach(function (menuSensor) {
 
                     var menuSensorExists = false;
 
-                    console.log('menuSensor:');
-                    console.log(menuSensor);
+                    //console.log('menuSensor:');
+                    //console.log(menuSensor);
 
                     //iterate over the new received sensor list
                     newSensorList.forEach(function (newSensor) {
 
-                        console.log('newSensor:');
-                        console.log(newSensor);
+                        //console.log('newSensor:');
+                        //console.log(newSensor);
 
                         if( (newSensor.id == menuSensor.id) ){
 
-                            console.log('newSensor.id = menuSensor.id');
+                            //console.log('newSensor.id = menuSensor.id');
                             menuSensorExists = true;
 
                         } else {
 
-                            console.log('newSensor.id <> menuSensor.id');
+                            //console.log('newSensor.id <> menuSensor.id');
 
                         }
 
@@ -506,11 +510,11 @@ app.service('MenuService', function($rootScope, $http, ServerService, CommonServ
         //Refresh the list of command types for this server
         var menuReaderTypes = serverElement.children[1].children;
 
-        console.log('serverElement.children[1]');
-        console.log(serverElement.children[1]);
+        //console.log('serverElement.children[1]');
+        //console.log(serverElement.children[1]);
 
-        console.log('menu reader types');
-        console.log(menuReaderTypes);
+        //console.log('menu reader types');
+        //console.log(menuReaderTypes);
 
         //Query the updated list of reader types
         SensorService.callReaderTypesService(serverElement.host)
@@ -521,8 +525,8 @@ app.service('MenuService', function($rootScope, $http, ServerService, CommonServ
                 //We need to compare this new received list with reader types inside server
                 var newReaderTypeList = SensorService.getReaderTypesFromReceivedData(data);
 
-                console.log('menuReaderTypes for host: ' + serverElement.host);
-                console.log(menuReaderTypes);
+                //console.log('menuReaderTypes for host: ' + serverElement.host);
+                //console.log(menuReaderTypes);
 
                 //iterate over the received reader types
                 //if exists -> then update
@@ -557,12 +561,12 @@ app.service('MenuService', function($rootScope, $http, ServerService, CommonServ
                         newReaderType.host = serverElement.host;
                         newReaderType.children = [];
 
-                        console.log('going to add new reader type to menu on server: ' + serverElement.host);
+                        //console.log('going to add new reader type to menu on server: ' + serverElement.host);
 
                         menuReaderTypes.push(newReaderType);
 
-                        console.log('new menu reader types');
-                        console.log(menuReaderTypes);
+                        //console.log('new menu reader types');
+                        //console.log(menuReaderTypes);
 
                     }
 
@@ -576,28 +580,28 @@ app.service('MenuService', function($rootScope, $http, ServerService, CommonServ
 
                 var readerTypesToDelete = [];
 
-                console.log('checking reader types to delete');
+                //console.log('checking reader types to delete');
                 menuReaderTypes.forEach(function (menuReaderType) {
 
                     var menuReaderTypeExists = false;
 
-                    console.log('menuReaderTypeExists:');
-                    console.log(menuReaderTypeExists);
+                    //console.log('menuReaderTypeExists:');
+                    //console.log(menuReaderTypeExists);
 
                     //iterate over the new received reader types list
                     newReaderTypeList.forEach(function (newReaderType) {
 
-                        console.log('newReaderType:');
-                        console.log(newReaderType);
+                        //console.log('newReaderType:');
+                        //console.log(newReaderType);
 
                         if( (newReaderType.factoryID == menuReaderType.factoryID) ){
 
-                            console.log('newReaderType.factoryID = menuReaderType.factoryID');
+                            //console.log('newReaderType.factoryID = menuReaderType.factoryID');
                             menuReaderTypeExists = true;
 
                         } else {
 
-                            console.log('newReaderType.factoryID <> menuReaderType.factoryID');
+                            //console.log('newReaderType.factoryID <> menuReaderType.factoryID');
 
                         }
 
@@ -651,7 +655,7 @@ app.service('MenuService', function($rootScope, $http, ServerService, CommonServ
             })
             . error(function (data, status, headers, config) {
 
-                console.log('updateMenuReaderTypes.fail response on server: ' + serverElement.host);
+                //console.log('updateMenuReaderTypes.fail response on server: ' + serverElement.host);
 
                 //Delete the list of reader types node
                 menuReaderTypes = [];
@@ -715,7 +719,7 @@ app.service('MenuService', function($rootScope, $http, ServerService, CommonServ
         var appGroupsElement = appManagementElement.children[0];
         if ( !appGroupsElement ) {
 
-            console.log('!appGroupsElement');
+            //console.log('!appGroupsElement');
 
             appGroupsElement = {
                 "elementName": "App Groups",
@@ -729,15 +733,15 @@ app.service('MenuService', function($rootScope, $http, ServerService, CommonServ
 
         } else {
 
-            console.log('appGroupsElement');
+            //console.log('appGroupsElement');
 
         }
 
         //Refresh the list of app groups for this server
         var menuAppGroups = appGroupsElement.children;
 
-        console.log('menuAppGroups:');
-        console.log(menuAppGroups);
+        //console.log('menuAppGroups:');
+        //console.log(menuAppGroups);
 
         //Query the updated list of app groups
         AppService.callAppListService(serverElement.host)
@@ -748,11 +752,11 @@ app.service('MenuService', function($rootScope, $http, ServerService, CommonServ
                 //We need to compare this new received list with app groups inside server
                 var newAppGroupList = AppService.getAppGroupsFromReceivedData(data);
 
-                console.log('newAppGroupList: ');
-                console.log(newAppGroupList);
+                //console.log('newAppGroupList: ');
+                //console.log(newAppGroupList);
 
-                console.log('menuAppGroupList for host: ' + serverElement.host);
-                console.log(menuAppGroups);
+                //console.log('menuAppGroupList for host: ' + serverElement.host);
+                //console.log(menuAppGroups);
 
                 //iterate over the received app groups
                 //if exists -> then update
@@ -790,12 +794,12 @@ app.service('MenuService', function($rootScope, $http, ServerService, CommonServ
                         newAppGroup.host = serverElement.host;
                         newAppGroup.children = [];
 
-                        console.log('going to add new app group to menu on server: ' + serverElement.host);
+                        //console.log('going to add new app group to menu on server: ' + serverElement.host);
 
                         menuAppGroups.push(newAppGroup);
 
-                        console.log('new menu app groups:');
-                        console.log(menuAppGroups);
+                        //console.log('new menu app groups:');
+                        //console.log(menuAppGroups);
 
                     }
 
@@ -807,28 +811,28 @@ app.service('MenuService', function($rootScope, $http, ServerService, CommonServ
 
                 var appGroupsToDelete = [];
 
-                console.log('checking app groups to delete');
+                //console.log('checking app groups to delete');
                 menuAppGroups.forEach(function (menuAppGroup) {
 
                     var menuAppGroupExists = false;
 
-                    console.log('menuAppGroupExists:');
-                    console.log(menuAppGroupExists);
+                    //console.log('menuAppGroupExists:');
+                    //console.log(menuAppGroupExists);
 
                     //iterate over the new received app group list
                     newAppGroupList.forEach(function (newAppGroup) {
 
-                        console.log('newAppGroup:');
-                        console.log(newAppGroup);
+                        //console.log('newAppGroup:');
+                        //console.log(newAppGroup);
 
                         if( newAppGroup.groupName == menuAppGroup.groupName ){
 
-                            console.log('newAppGroup.groupName == menuAppGroup.groupName');
+                            //console.log('newAppGroup.groupName == menuAppGroup.groupName');
                             menuAppGroupExists = true;
 
                         } else {
 
-                            console.log('newAppGroup.groupName <> menuAppGroup.groupName');
+                            //console.log('newAppGroup.groupName <> menuAppGroup.groupName');
 
                         }
 
@@ -882,7 +886,7 @@ app.service('MenuService', function($rootScope, $http, ServerService, CommonServ
             })
             . error(function (data, status, headers, config) {
 
-                console.log('menuAppGroups.fail response on server: ' + serverElement.host);
+                //console.log('menuAppGroups.fail response on server: ' + serverElement.host);
 
                 //Delete the list of app groups
                 menuAppGroups = [];
@@ -941,12 +945,12 @@ app.service('MenuService', function($rootScope, $http, ServerService, CommonServ
     var updateApps = function(appsElement, appsData){
 
         console.log('updateApps');
-        console.log('appsElement: ');
-        console.log(appsElement);
+        //console.log('appsElement: ');
+        //console.log(appsElement);
 
         var menuApps = appsElement.children;
-        console.log('menuApps for host: ' + appsElement.host);
-        console.log(menuApps);
+        //console.log('menuApps for host: ' + appsElement.host);
+        //console.log(menuApps);
 
         //We need to compare this new received list with apps inside apps element
         var newAppList = AppService.getAppsFromReceivedData(appsData, appsElement.groupName);
@@ -991,12 +995,12 @@ app.service('MenuService', function($rootScope, $http, ServerService, CommonServ
                 newApp.allowStopApp = false;
                 newApp.children = [];
 
-                console.log('going to add new app to menu');
+                //console.log('going to add new app to menu');
 
                 menuApps.push(newApp);
 
-                console.log('new menu apps');
-                console.log(menuApps);
+                //console.log('new menu apps');
+                //console.log(menuApps);
 
             }
 
@@ -1008,28 +1012,28 @@ app.service('MenuService', function($rootScope, $http, ServerService, CommonServ
 
         var appsToDelete = [];
 
-        console.log('checking apps to delete on group: ' + appsElement.groupName);
+        //console.log('checking apps to delete on group: ' + appsElement.groupName);
         menuApps.forEach(function (menuApp) {
 
             var menuAppExists = false;
 
-            console.log('menuApp:');
-            console.log(menuApp);
+            //console.log('menuApp:');
+            //console.log(menuApp);
 
             //iterate over the new received app list
             newAppList.forEach(function (newApp) {
 
-                console.log('newApp:');
-                console.log(newApp);
+                //console.log('newApp:');
+                //console.log(newApp);
 
                 if( (newApp.appId == menuApp.appId) ){
 
-                    console.log('newApp.appId == menuApp.appId');
+                    //console.log('newApp.appId == menuApp.appId');
                     menuAppExists = true;
 
                 } else {
 
-                    console.log('newApp.appId <> menuApp.appId');
+                    //console.log('newApp.appId <> menuApp.appId');
 
                 }
 
@@ -1143,8 +1147,8 @@ app.service('MenuService', function($rootScope, $http, ServerService, CommonServ
     var updateReadzones = function(readzonesElement, appsData){
 
         console.log('updateReadzones');
-        console.log('readzonesElement: ');
-        console.log(readzonesElement);
+        //console.log('readzonesElement: ');
+        //console.log(readzonesElement);
 
         //var menuReadzones = readzonesElement.children;
         //console.log('menuReadzones for host: ' + readzonesElement.host);
@@ -1165,8 +1169,8 @@ app.service('MenuService', function($rootScope, $http, ServerService, CommonServ
         //Refresh the list of readzones for this group
         var menuReadzones = readzonesElement.children;
 
-        console.log('menuReadzones:');
-        console.log(menuReadzones);
+        //console.log('menuReadzones:');
+        //console.log(menuReadzones);
 
         //Query the updated list of readzones
         AppService.callReadzoneListService(readzonesElement.host, readzonesElement.appId)
@@ -1177,11 +1181,11 @@ app.service('MenuService', function($rootScope, $http, ServerService, CommonServ
                 //We need to compare this new received list with readzones inside server
                 var newReadzoneList = AppService.getReadzonesFromReceivedData(data);
 
-                console.log('newReadzoneList: ');
-                console.log(newReadzoneList);
+                //console.log('newReadzoneList: ');
+                //console.log(newReadzoneList);
 
-                console.log('menuReadzones for host: ' + readzonesElement.host);
-                console.log(menuReadzones);
+                //console.log('menuReadzones for host: ' + readzonesElement.host);
+                //console.log(menuReadzones);
 
                 //iterate over the received readzones
                 //if exists -> then update
@@ -1221,12 +1225,12 @@ app.service('MenuService', function($rootScope, $http, ServerService, CommonServ
                         newReadzone.elementType = 'readZone';
                         newReadzone.children = [];
 
-                        console.log('going to add new readzone to menu on server: ' + readzonesElement.host);
+                        //console.log('going to add new readzone to menu on server: ' + readzonesElement.host);
 
                         menuReadzones.push(newReadzone);
 
-                        console.log('new menu readzones:');
-                        console.log(menuReadzones);
+                        //console.log('new menu readzones:');
+                        //console.log(menuReadzones);
 
                     }
 
@@ -1238,28 +1242,28 @@ app.service('MenuService', function($rootScope, $http, ServerService, CommonServ
 
                 var readzonesToDelete = [];
 
-                console.log('checking readzones to delete');
+                //console.log('checking readzones to delete');
                 menuReadzones.forEach(function (menuReadzone) {
 
                     var menuReadzoneExists = false;
 
-                    console.log('menuReadzoneExists:');
-                    console.log(menuReadzoneExists);
+                    //console.log('menuReadzoneExists:');
+                    //console.log(menuReadzoneExists);
 
                     //iterate over the new received readzone list
                     newReadzoneList.forEach(function (newReadzone) {
 
-                        console.log('newReadzone:');
-                        console.log(newReadzone);
+                        //console.log('newReadzone:');
+                        //console.log(newReadzone);
 
                         if( newReadzone.readzone == menuReadzone.readzone ){
 
-                            console.log('newReadzone.readzone == menuReadzone.readzone');
+                            //console.log('newReadzone.readzone == menuReadzone.readzone');
                             menuReadzoneExists = true;
 
                         } else {
 
-                            console.log('newReadzone.readzone <> menuReadzone.readzone');
+                            //console.log('newReadzone.readzone <> menuReadzone.readzone');
 
                         }
 
@@ -1315,12 +1319,12 @@ app.service('MenuService', function($rootScope, $http, ServerService, CommonServ
     var updateCommandTypes = function(menuReaderType){
 
         console.log('updateCommandTypes');
-        console.log('menuReaderType: ');
-        console.log(menuReaderType);
+        //console.log('menuReaderType: ');
+        //console.log(menuReaderType);
 
         var menuCommandTypes = menuReaderType.children;
-        console.log('menuCommandTypes for readertype: ' + menuReaderType.id + ', and host: ' + menuReaderType.host);
-        console.log(menuCommandTypes);
+        //console.log('menuCommandTypes for readertype: ' + menuReaderType.id + ', and host: ' + menuReaderType.host);
+        //console.log(menuCommandTypes);
 
         //Query the updated list of command types
         SensorService.callCommandTypesService(menuReaderType.host)
@@ -1367,12 +1371,12 @@ app.service('MenuService', function($rootScope, $http, ServerService, CommonServ
                         newCommandType.readerTypeElement = 'readerTypeElement';
                         newCommandType.children = [];
 
-                        console.log('going to add new command type to menu on reader type: ' + menuReaderType.factoryID);
+                        //console.log('going to add new command type to menu on reader type: ' + menuReaderType.factoryID);
 
                         menuCommandTypes.push(newCommandType);
 
-                        console.log('new menu command types');
-                        console.log(menuCommandTypes);
+                        //console.log('new menu command types');
+                        //console.log(menuCommandTypes);
 
                     }
 
@@ -1384,28 +1388,28 @@ app.service('MenuService', function($rootScope, $http, ServerService, CommonServ
 
                 var commandTypesToDelete = [];
 
-                console.log('checking command types to delete on reader type: ' + menuReaderType.id);
+                //console.log('checking command types to delete on reader type: ' + menuReaderType.id);
                 menuCommandTypes.forEach(function (menuCommandType) {
 
                     var menuCommandTypeExists = false;
 
-                    console.log('menuCommandType:');
-                    console.log(menuCommandType);
+                    //console.log('menuCommandType:');
+                    //console.log(menuCommandType);
 
                     //iterate over the new received command type list
                     newCommandTypesList.forEach(function (newCommandType) {
 
-                        console.log('newCommandType:');
-                        console.log(newCommandType);
+                        //console.log('newCommandType:');
+                        //console.log(newCommandType);
 
                         if( (newCommandType.factoryID == menuCommandType.factoryID) ){
 
-                            console.log('newCommandType.factoryID == menuCommandType.factoryID');
+                            //console.log('newCommandType.factoryID == menuCommandType.factoryID');
                             menuCommandTypeExists = true;
 
                         } else {
 
-                            console.log('newCommandType.factoryID <> menuCommandType.factoryID');
+                            //console.log('newCommandType.factoryID <> menuCommandType.factoryID');
 
                         }
 
@@ -1470,12 +1474,12 @@ app.service('MenuService', function($rootScope, $http, ServerService, CommonServ
     var updateCommandInstances = function(menuCommandType){
 
         console.log('updateCommandInstances');
-        console.log('menuCommandType: ');
-        console.log(menuCommandType);
+        //console.log('menuCommandType: ');
+        //console.log(menuCommandType);
 
         var menuCommandInstances = menuCommandType.children;
-        console.log('menuCommandInstances for command type: ' + menuCommandType.factoryID + ', and host: ' + menuCommandType.host);
-        console.log(menuCommandInstances);
+        //console.log('menuCommandInstances for command type: ' + menuCommandType.factoryID + ', and host: ' + menuCommandType.host);
+        //console.log(menuCommandInstances);
 
         //Query the updated list of command instances
         SensorService.callCommandInstancesService(menuCommandType.host)
@@ -1524,12 +1528,12 @@ app.service('MenuService', function($rootScope, $http, ServerService, CommonServ
                         //newCommandInstance.factoryElement = ' factoryElement,
                         newCommandInstance.children = [];
 
-                        console.log('going to add new command instance to menu on command type: ' + newCommandInstance.commandID);
+                        //console.log('going to add new command instance to menu on command type: ' + newCommandInstance.commandID);
 
                         menuCommandInstances.push(newCommandInstance);
 
-                        console.log('new menu command instances');
-                        console.log(menuCommandInstances);
+                        //console.log('new menu command instances');
+                        //console.log(menuCommandInstances);
 
                     }
 
@@ -1541,28 +1545,28 @@ app.service('MenuService', function($rootScope, $http, ServerService, CommonServ
 
                 var commandInstancesToDelete = [];
 
-                console.log('checking command instances to delete on command type: ' + menuCommandType.factoryID);
+                //console.log('checking command instances to delete on command type: ' + menuCommandType.factoryID);
                 menuCommandInstances.forEach(function (menuCommandInstance) {
 
                     var menuCommandInstanceExists = false;
 
-                    console.log('menuCommandInstance:');
-                    console.log(menuCommandInstance);
+                    //console.log('menuCommandInstance:');
+                    //console.log(menuCommandInstance);
 
                     //iterate over the new received command instance list
                     newCommandInstancesList.forEach(function (newCommandInstance) {
 
-                        console.log('newCommandInstance:');
-                        console.log(newCommandInstance);
+                        //console.log('newCommandInstance:');
+                        //console.log(newCommandInstance);
 
                         if( (newCommandInstance.commandID == menuCommandInstance.commandID) ){
 
-                            console.log('newCommandInstance.commandID == menuCommandInstance.commandID');
+                            //console.log('newCommandInstance.commandID == menuCommandInstance.commandID');
                             menuCommandInstanceExists = true;
 
                         } else {
 
-                            console.log('newCommandInstance.commandID <> menuCommandInstance.commandID');
+                            //console.log('newCommandInstance.commandID <> menuCommandInstance.commandID');
 
                         }
 
@@ -1621,12 +1625,12 @@ app.service('MenuService', function($rootScope, $http, ServerService, CommonServ
     var updateSessions = function(sensorElement){
 
         console.log('updateSessions');
-        console.log('sensorElement: ');
-        console.log(sensorElement);
+        //console.log('sensorElement: ');
+        //console.log(sensorElement);
 
         var menuSessions = sensorElement.children;
-        console.log('menuSessions for sensor: ' + sensorElement.id + ', and host: ' + sensorElement.host);
-        console.log(menuSessions);
+        //console.log('menuSessions for sensor: ' + sensorElement.id + ', and host: ' + sensorElement.host);
+        //console.log(menuSessions);
 
         //Query the updated list of sessions
         SensorService.callReaderStatusService(sensorElement.host, sensorElement.id)
@@ -1678,12 +1682,12 @@ app.service('MenuService', function($rootScope, $http, ServerService, CommonServ
                         newSession.children = [];
                         newSession.host = sensorElement.host;
 
-                        console.log('going to add new session to menu on sensor: ' + readerStatus.sensor.id);
+                        //console.log('going to add new session to menu on sensor: ' + readerStatus.sensor.id);
 
                         menuSessions.push(newSession);
 
-                        console.log('new menu sessions');
-                        console.log(menuSessions);
+                        //console.log('new menu sessions');
+                        //console.log(menuSessions);
 
                         //Update menu executing commands for this session
                         updateExecutingCommandsForSession(newSession, newSession.executingCommands);
@@ -1698,28 +1702,28 @@ app.service('MenuService', function($rootScope, $http, ServerService, CommonServ
 
                 var sessionsToDelete = [];
 
-                console.log('checking sessions to delete on sensor: ' + readerStatus.sensor.id);
+                //console.log('checking sessions to delete on sensor: ' + readerStatus.sensor.id);
                 menuSessions.forEach(function (menuSession) {
 
                     var menuSessionExists = false;
 
-                    console.log('menuSession:');
-                    console.log(menuSession);
+                    //console.log('menuSession:');
+                    //console.log(menuSession);
 
                     //iterate over the new received session list
                     newSessionList.forEach(function (newSession) {
 
-                        console.log('newSession:');
-                        console.log(newSession);
+                        //console.log('newSession:');
+                        //console.log(newSession);
 
                         if( (newSession.id == menuSession.id) ){
 
-                            console.log('newSession.id == menuSession.id');
+                            //console.log('newSession.id == menuSession.id');
                             menuSessionExists = true;
 
                         } else {
 
-                            console.log('newSession.id <> menuSession.id');
+                            //console.log('newSession.id <> menuSession.id');
 
                         }
 
@@ -1858,12 +1862,12 @@ app.service('MenuService', function($rootScope, $http, ServerService, CommonServ
                 newCommand.host = sessionElement.host;
                 newCommand.children = [];
 
-                console.log('going to add new command instance to menu on session: ' + sessionElement.id);
+                //console.log('going to add new command instance to menu on session: ' + sessionElement.id);
 
                 menuCommands.push(newCommand);
 
-                console.log('new menu commands');
-                console.log(menuCommands);
+                //console.log('new menu commands');
+                //console.log(menuCommands);
 
             }
 
@@ -1875,28 +1879,28 @@ app.service('MenuService', function($rootScope, $http, ServerService, CommonServ
 
         var commandsToDelete = [];
 
-        console.log('checking commands to delete on session: ' + sessionElement.id);
+        //console.log('checking commands to delete on session: ' + sessionElement.id);
         menuCommands.forEach(function (menuCommand) {
 
             var menuCommandExists = false;
 
-            console.log('menuCommand:');
-            console.log(menuCommand);
+            //console.log('menuCommand:');
+            //console.log(menuCommand);
 
             //iterate over the new received command list
             newCommands.forEach(function (newCommand) {
 
-                console.log('newCommand:');
-                console.log(newCommand);
+                //console.log('newCommand:');
+                //console.log(newCommand);
 
                 if( (newCommand.id == menuCommand.id) ){
 
-                    console.log('newCommand.id == menuCommand.id');
+                    //console.log('newCommand.id == menuCommand.id');
                     menuCommandExists = true;
 
                 } else {
 
-                    console.log('newCommand.id <> menuCommand.id');
+                    //console.log('newCommand.id <> menuCommand.id');
 
                 }
 
@@ -1944,10 +1948,10 @@ app.service('MenuService', function($rootScope, $http, ServerService, CommonServ
     var removeChildNodes = function(element){
 
         console.log('removeChildNodes');
-        console.log('element');
-        console.log(element);
-        console.log('element.children');
-        console.log(element.children);
+        //console.log('element');
+        //console.log(element);
+        //console.log('element.children');
+        //console.log(element.children);
 
         if (element && element.children){
 
@@ -1965,6 +1969,69 @@ app.service('MenuService', function($rootScope, $http, ServerService, CommonServ
         return config.url.substring(0, config.url.lastIndexOf("/"));
 
     };
+
+    this.resolveAutoRefresh = function(){
+
+        console.log('resolveAutoRefresh');
+
+        //call the rest service to query uiproperties and see if enable autorefresh
+        ServerService.callUIPropertiesService()
+            .success(function (data, status, headers, config) {
+
+                console.log('success calling getuiproperties');
+                console.log('data.enableAutoRefresh:');
+                console.log(data.enableAutoRefresh);
+
+                $rootScope.enableAutoRefresh = data.enableAutoRefresh;
+
+                console.log('data.autoRefreshDelay:');
+                console.log(data.autoRefreshDelay);
+
+                if ( $rootScope.enableAutoRefresh == 'true' ){
+
+                    var autoRefreshDelay = data.autoRefreshDelay;
+
+                    if (autoRefreshDelay > 0){
+
+                        //start interval
+                        console.log('going to start interval at ' + autoRefreshDelay  + ' milliseconds');
+                        intervalRef = $interval(callCreateUpdateMenu, autoRefreshDelay);
+
+                    }
+
+                } else {
+
+                    //if interval is running then stop
+                    console.log('if interval is running then stop');
+                    if ( angular.isDefined( intervalRef ) ){
+
+                        $interval.cancel( intervalRef );
+
+                    }
+
+
+
+                }
+
+            })
+            .error(function (data, status, headers, config) {
+
+                console.log('error calling getuiproperties');
+
+            });
+
+
+
+
+    };
+
+
+    var callCreateUpdateMenu = function(){
+
+        self.createUpdateMenu();
+
+    }
+
 
 
 });

@@ -15,6 +15,12 @@ var module = angular.module('rifidiApp')
                                           ServerService, SensorService, AppService, CommonService, MenuService) {
 
 
+        //$scope.enableAutoRefresh = false;
+        //$scope.autoRefreshDelay;
+
+        //$scope.propEnableAutoRefresh;
+        //$scope.propAutoRefreshDelay;
+
         $scope.booleanValues = CommonService.getBooleanValues();
 
         var clearElementSelection = function () {
@@ -67,7 +73,7 @@ var module = angular.module('rifidiApp')
           if( $scope.temporaryNode.elementName  ) {//TODO: Validate all values or use a require validation
               $scope.temporaryNode.elementType="server";
               $scope.temporaryNode.displayName= $scope.temporaryNode.elementName;
-              console.log($scope.elementTree.currentNode);
+              //console.log($scope.elementTree.currentNode);
               $scope.elementTree.currentNode.children.push( angular.copy($scope.temporaryNode) );
               //console.log("$scope.elementTree.currentNode.children");
               //console.log($scope.elementTree.currentNode.children);
@@ -1616,7 +1622,61 @@ var module = angular.module('rifidiApp')
             console.log($rootScope.operationSuccessMsg);
             //$scope.$apply();
             */
-        }
+        };
+
+        var saveServersProperties = function() {
+
+            console.log("saveServersProperties");
+            console.log("is going to store:");
+
+            console.log("$scope.propEnableAutoRefresh:");
+            console.log($scope.propEnableAutoRefresh);
+            console.log("$scope.propAutoRefreshDelay:");
+            console.log($scope.propAutoRefreshDelay);
+
+            var dataToStore =
+                '{'
+                + '"enableAutoRefresh": ' + '"' + $scope.propEnableAutoRefresh + '",'
+                + '"autoRefreshDelay" : ' + $scope.propAutoRefreshDelay
+                + '}';
+
+            //call the rest command to store data
+            ServerService.callUpdateUIPropertiesService(dataToStore).
+                success(function (data, status, headers, config) {
+
+                    console.log("success response editing servers properties");
+
+                    //get the xml response and extract the values for properties
+                    var message = ServerService.getSaveServersUIMessageFromReceivedData(data);
+
+                    if (message == 'Success') {
+                        console.log("Success saving servers ui properties");
+
+                        $rootScope.operationSuccessMsg = "Success saving ui properties";
+
+                        MenuService.resolveAutoRefresh();
+
+                        //MenuService.createUpdateMenu();
+
+                    } else {
+
+                        /*
+                        var editServerCommandDescription = xmlEditServerResponse.getElementsByTagName("description")[0].childNodes[0].nodeValue;
+                        console.log("fail editing server");
+                        console.log(editServerCommandDescription);
+                        */
+                        showErrorDialog('Error saving servers ui properties');
+                    }
+
+                }).
+                error(function (data, status, headers, config) {
+                    console.log("error saving servers ui properties");
+
+                    showErrorDialog('Error saving servers ui properties');
+
+                });
+
+        };
 
         var saveServerConfig = function(){
               console.log("saveServerConfig");
@@ -1758,7 +1818,7 @@ var module = angular.module('rifidiApp')
             });
 
 
-        }
+        };
 
           //$scope.refreshMenuTreeView;
 
@@ -1768,14 +1828,8 @@ var module = angular.module('rifidiApp')
 
         MenuService.createUpdateMenu();
 
+        MenuService.resolveAutoRefresh();
 
-        $interval(callAtInterval, 5000);
-
-        function callAtInterval(){
-
-            //MenuService.createUpdateMenu();
-
-        }
 
 
 
@@ -3048,6 +3102,29 @@ var module = angular.module('rifidiApp')
                               // or server returns response with an error status.
                           });
 
+                  } else if ($scope.elementTree.currentNode.elementType == 'servers'){
+
+                      //if selected element is servers, then load the UIproperties
+                      //call the rest service to query uiproperties and see if enable autorefresh
+                      ServerService.callUIPropertiesService()
+                          .success(function (data, status, headers, config) {
+
+                              console.log('success calling getuiproperties');
+
+                              $scope.propEnableAutoRefresh = angular.copy(data.enableAutoRefresh);
+                              $scope.propAutoRefreshDelay = angular.copy(parseInt(data.autoRefreshDelay));
+
+                              console.log("servers node select: set property for propEnableAutoRefresh: " + $scope.propEnableAutoRefresh);
+                              console.log("servers node select: set property for propAutoRefreshDelay: " + $scope.propAutoRefreshDelay);
+
+                          })
+                          .error(function (data, status, headers, config) {
+
+                              console.log('error calling getuiproperties on selecting servers element');
+
+                          });
+
+
                   }
 
                   //console.log("set 2 propertyType: " + $scope.propertyType);
@@ -3099,6 +3176,58 @@ var module = angular.module('rifidiApp')
                     }
 
                 );
+
+        };
+
+
+        $scope.openSaveServersPropertiesDialog = function(propEnableAutoRefresh, propAutoRefreshDelay){
+
+            $scope.propEnableAutoRefresh = propEnableAutoRefresh;
+            $scope.propAutoRefreshDelay = propAutoRefreshDelay;
+
+            console.log("openSaveServersPropertiesDialog");
+            console.log("is going to store:");
+
+            console.log("$scope.propEnableAutoRefresh:");
+            console.log($scope.propEnableAutoRefresh);
+            console.log("$scope.propAutoRefreshDelay:");
+            console.log($scope.propAutoRefreshDelay);
+
+            //var serversElement = angular.copy($scope.elementTree.currentNode);
+
+            ngDialog.openConfirm({template: 'saveServersPropertiesDialogTmpl.html',
+
+                scope: $scope, //Pass the scope object if you need to access in the template
+
+                showClose: false,
+
+                closeByEscape: true,
+
+                closeByDocument: false
+
+            }).then(
+
+                function(value) {
+
+                    //confirm operation
+                    if (value == 'Save'){
+                        console.log("to save");
+
+                        //call save servrs properties operation
+                        saveServersProperties();
+
+                    }
+
+                },
+
+                function(value) {
+
+                    //Cancel or do nothing
+                    console.log("cancel");
+
+                }
+
+            );
 
         };
 
