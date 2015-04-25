@@ -1993,7 +1993,10 @@ app.service('MenuService', function($rootScope, $http, $interval, ServerService,
 
                     if (autoRefreshDelay > 0){
 
-                        //start interval
+                        //stop interval
+                        stopInterval();
+
+                        //then start interval
                         console.log('going to start interval at ' + autoRefreshDelay  + ' milliseconds');
                         intervalRef = $interval(callCreateUpdateMenu, autoRefreshDelay);
 
@@ -2003,11 +2006,7 @@ app.service('MenuService', function($rootScope, $http, $interval, ServerService,
 
                     //if interval is running then stop
                     console.log('if interval is running then stop');
-                    if ( angular.isDefined( intervalRef ) ){
-
-                        $interval.cancel( intervalRef );
-
-                    }
+                    stopInterval();
 
 
 
@@ -2024,6 +2023,16 @@ app.service('MenuService', function($rootScope, $http, $interval, ServerService,
 
 
     };
+
+    function stopInterval(){
+
+        if ( angular.isDefined( intervalRef ) ){
+
+            $interval.cancel( intervalRef );
+
+        }
+
+    }
 
 
     var callCreateUpdateMenu = function(){
