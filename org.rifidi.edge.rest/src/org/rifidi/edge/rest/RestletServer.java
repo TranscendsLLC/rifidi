@@ -47,6 +47,8 @@ public class RestletServer {
 				Component component = new Component();
 				component.getServers().add(Protocol.HTTP, port);
 				component.getClients().add(Protocol.FILE);
+				component.getClients().add(Protocol.HTTP);
+				//component.getClients().add(Protocol.CLAP);
 
 				component.getDefaultHost().attach(app);
 				component.start();

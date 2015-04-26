@@ -2581,10 +2581,12 @@ public class SensorManagerServiceRestletImpl extends Application {
 		//Directory directory = new Directory(getContext(), "file:\\D:\\datos\\proyectos\\idlink\\rfid\rifidi_workspace\\Rifidi-SDK\\RifidiHome\\admin\\app");
 	
 		
-		String appPath = System.getProperty("org.rifidi.home") + File.separator
+		String appPath = "file:///" + System.getProperty("org.rifidi.home") + File.separator
+		//String appPath = System.getProperty("org.rifidi.home") + File.separator
+		//String appPath = "http:///" + System.getProperty("org.rifidi.home") + File.separator
 					+ "admin" + File.separator + "app" + File.separator;
 		
-		//System.out.println("appPath: " + appPath);
+		System.out.println("appPath: " + appPath);
 		
 		//router.getApplication().
 		
@@ -2593,11 +2595,13 @@ public class SensorManagerServiceRestletImpl extends Application {
 		
 		
 		///getContext().getParameters().add("useForwardedForHeader", "true");
-		//Directory directory = new Directory(getContext(),
+		/*
+		Directory directory2 = new Directory(getContext(),
 			     //LocalReference.createClapReference(appPath));
-			//	LocalReference.createFileReference(appPath));
-			//  directory.setIndexName("index.html");
-		router.attach("/console", directory);
+				LocalReference.createFileReference(appPath));
+			  directory2.setIndexName("index.html");
+		router.attach("/console2", directory2);
+		*/
 
 		
 
