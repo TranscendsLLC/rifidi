@@ -728,7 +728,7 @@
                                        <div class="col-sm-6">
 
                                            <input aria-describedby="helpAutoRefreshDelay" id="autoRefreshDelay" name="autoRefreshDelay" type="number"
-                                                  class="form-control" ng-model="propAutoRefreshDelay" required
+                                                  class="form-control" ng-model="propAutoRefreshDelay" required min="500"
                                                    />
 
                                        </div>
@@ -743,7 +743,7 @@
                                        </div>
 
                                    </div>
-                                   <span id="helpAutoRefreshDelay" class="help-block">Set the time in milliseconds for menu autorefresh to periodically execute</span>
+                                   <span id="helpAutoRefreshDelay" class="help-block">Set the time in milliseconds for menu autorefresh to periodically execute (minimum accepted value is 500 ms)</span>
 
                                    <input class="btn btn-primary" ng-click="openSaveServersPropertiesDialog(propEnableAutoRefresh, propAutoRefreshDelay)" ng-disabled="form.$invalid" type="submit" value="Save" />
 
