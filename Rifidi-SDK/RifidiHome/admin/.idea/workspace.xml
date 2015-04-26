@@ -24,11 +24,21 @@
   </component>
   <component name="FileEditorManager">
     <leaf>
-      <file leaf-file-name="menuService.js" pinned="false" current-in-tab="true">
+      <file leaf-file-name="menuService.js" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/app/scripts/services/menuService.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.5321101" vertical-offset="33734" max-vertical-offset="34884">
+            <state vertical-scroll-proportion="-8.285714" vertical-offset="33734" max-vertical-offset="34884">
               <caret line="1998" column="31" selection-start-line="1998" selection-start-column="31" selection-end-line="1998" selection-end-column="31" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="Gruntfile.js" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/Gruntfile.js">
+          <provider selected="true" editor-type-id="text-editor">
+            <state vertical-scroll-proportion="0.0" vertical-offset="979" max-vertical-offset="7038">
+              <caret line="71" column="0" selection-start-line="71" selection-start-column="0" selection-end-line="71" selection-end-column="0" />
               <folding />
             </state>
           </provider>
@@ -54,11 +64,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="index.html" pinned="false" current-in-tab="false">
+      <file leaf-file-name="index.html" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/app/index.html">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="-2.5185184" vertical-offset="13787" max-vertical-offset="14450">
-              <caret line="819" column="37" selection-start-line="819" selection-start-column="29" selection-end-line="819" selection-end-column="37" />
+            <state vertical-scroll-proportion="0.7878049" vertical-offset="12342" max-vertical-offset="14450">
+              <caret line="745" column="166" selection-start-line="745" selection-start-column="166" selection-end-line="745" selection-end-column="166" />
               <folding />
             </state>
           </provider>
@@ -72,7 +82,6 @@
         <option value="$PROJECT_DIR$/app/deleteSensorDialogTmpl.html" />
         <option value="$PROJECT_DIR$/app/deleteSessionDialogTmpl.html" />
         <option value="$PROJECT_DIR$/app/scripts/controllers/components/menu/menuRifidi.js" />
-        <option value="$PROJECT_DIR$/Gruntfile.js" />
         <option value="$PROJECT_DIR$/app/saveSensorPropertiesDialogTmpl.html" />
         <option value="$PROJECT_DIR$/app/views/commandWizard.html" />
         <option value="$PROJECT_DIR$/app/submitJobDialogTmpl.html" />
@@ -118,8 +127,9 @@
         <option value="$PROJECT_DIR$/app/saveServersPropertiesDialogTmpl.html" />
         <option value="$PROJECT_DIR$/app/scripts/services/serverService.js" />
         <option value="$PROJECT_DIR$/app/scripts/controllers/menu.js" />
-        <option value="$PROJECT_DIR$/app/index.html" />
         <option value="$PROJECT_DIR$/app/scripts/services/menuService.js" />
+        <option value="$PROJECT_DIR$/Gruntfile.js" />
+        <option value="$PROJECT_DIR$/app/index.html" />
       </list>
     </option>
   </component>
@@ -192,86 +202,6 @@
             </PATH_ELEMENT>
             <PATH_ELEMENT>
               <option name="myItemId" value="app" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="rifidi-app" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="admin" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="app" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="views" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="rifidi-app" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="admin" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="app" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="scripts" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="rifidi-app" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="admin" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="app" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="scripts" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="services" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="rifidi-app" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="admin" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="app" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="scripts" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="controllers" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
@@ -403,13 +333,6 @@
     <watches-manager />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/app/views/main.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="17" max-vertical-offset="272">
-          <caret line="1" column="0" selection-start-line="1" selection-start-column="0" selection-end-line="8" selection-end-column="6" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/app/deleteJobDialogTmpl.html">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0" vertical-offset="119" max-vertical-offset="340">
@@ -746,14 +669,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/index.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="-2.5185184" vertical-offset="13787" max-vertical-offset="14450">
-          <caret line="819" column="37" selection-start-line="819" selection-start-column="29" selection-end-line="819" selection-end-column="37" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/app/scripts/controllers/menu.js">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="-0.0" vertical-offset="0" max-vertical-offset="84711">
@@ -764,8 +679,24 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/app/scripts/services/menuService.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.5321101" vertical-offset="33734" max-vertical-offset="34884">
+        <state vertical-scroll-proportion="-8.285714" vertical-offset="33734" max-vertical-offset="34884">
           <caret line="1998" column="31" selection-start-line="1998" selection-start-column="31" selection-end-line="1998" selection-end-column="31" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Gruntfile.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="979" max-vertical-offset="7038">
+          <caret line="71" column="0" selection-start-line="71" selection-start-column="0" selection-end-line="71" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/index.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.7878049" vertical-offset="12342" max-vertical-offset="14450">
+          <caret line="745" column="166" selection-start-line="745" selection-start-column="166" selection-end-line="745" selection-end-column="166" />
           <folding />
         </state>
       </provider>
