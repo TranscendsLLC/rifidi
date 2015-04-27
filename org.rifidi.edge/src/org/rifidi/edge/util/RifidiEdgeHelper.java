@@ -557,7 +557,19 @@ public class RifidiEdgeHelper implements Serializable {
 	public static byte[] getServersFile() throws Exception {
 
 		// the path of the directory to read files from
-		String dataPath = getServersDirPath() + File.separator + "servers.json";
+		String dataPath = getConfigDirPath() + File.separator + "servers.json";
+		
+		File file = new File(dataPath);
+	       
+		byte[] bytes = readContentIntoByteArray(file);
+		return bytes;
+		
+	}
+	
+	public static byte[] getUIPropertiesFile() throws Exception {
+
+		// the path of the directory to read file from
+		String dataPath = getConfigDirPath() + File.separator + "uiproperties.json";
 		
 		File file = new File(dataPath);
 	       
@@ -691,7 +703,7 @@ public class RifidiEdgeHelper implements Serializable {
 				+ (dir != null ? dir : "");
 	}
 	
-	private static String getServersDirPath() {
+	private static String getConfigDirPath() {
 		return  System.getProperty("org.rifidi.home") + File.separator
 				+ "admin" + File.separator + "config";
 	}
@@ -703,8 +715,20 @@ public class RifidiEdgeHelper implements Serializable {
 	 * @throws IOException
 	 */
 	public static void updateServersFile(String content) throws Exception {
-		String dataPath = getServersDirPath();
+		String dataPath = getConfigDirPath();
 		String fileName = dataPath + File.separator + "servers.json";
+		writeToServersFile(fileName, content.getBytes());
+
+	}
+	
+	/**
+	 * Sets the content of uiproperties.json
+	 * @param content the content to be set in uiproperties.json file
+	 * @throws IOException
+	 */
+	public static void updateUIPropertiesFile(String content) throws Exception {
+		String dataPath = getConfigDirPath();
+		String fileName = dataPath + File.separator + "uiproperties.json";
 		writeToServersFile(fileName, content.getBytes());
 
 	}
