@@ -1,16 +1,19 @@
 package org.rifidi.edge.util;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.ByteArrayInputStream;
 import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.PrintWriter;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -30,6 +33,8 @@ public class RifidiEdgeHelper implements Serializable {
 	private static final String READZONES_FOLDER_NAME = "readzones";
 
 	private static final String READZONE_FILE_NAME_PREFIX = "readzone";
+	
+	private static final String DEFAULT_INI_FILE_NAME = "applications/default.ini";
 
 	/** The logger for this class */
 	private static final Log logger = LogFactory.getLog(RifidiEdgeHelper.class);
@@ -291,6 +296,37 @@ public class RifidiEdgeHelper implements Serializable {
 
 		setProperties(fileName, attributes);
 
+	}
+	
+	/**
+	 * Add a group to the default application file.  
+	 * 
+	 * @param groupName
+	 * @param attributes
+	 * @throws IOException
+	 * @throws Exception
+	 */
+	public static void addDefaultApp(String groupName) throws IOException, Exception {
+		
+		String dataPath = getApplicationDirPath();
+		String fileName = dataPath + File.separator + "default.ini";
+
+		// check if file exists
+		File file = new File(fileName);
+		if (!file.exists()) {
+			file.createNewFile();
+		}
+		
+		PrintWriter out = null;
+		try {
+			out = new PrintWriter(new BufferedWriter(new FileWriter(file, true)));
+			out.println(groupName);
+			out.close();
+		} finally {
+			if(out!=null) {
+				out.close();
+			}
+		}
 	}
 
 	/**
@@ -701,6 +737,10 @@ public class RifidiEdgeHelper implements Serializable {
 				+ System.getProperty("org.rifidi.edge.applications")
 				+ File.separator + groupName + File.separator
 				+ (dir != null ? dir : "");
+	}
+	
+	private static String getApplicationDirPath() {
+		return System.getProperty("org.rifidi.home") + File.separator + System.getProperty("org.rifidi.edge.applications");
 	}
 	
 	private static String getConfigDirPath() {
