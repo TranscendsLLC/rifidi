@@ -2366,11 +2366,28 @@ public class SensorManagerServiceRestletImpl extends Application {
 					String str = new String(data, "UTF-8");
 					response.setEntity(str, MediaType.APPLICATION_JSON);
 				} catch (Exception e) {
-
 					response.setEntity(self.generateReturnString(self
 							.generateErrorMessage(e.toString(), null)),
 							MediaType.TEXT_XML);
 				}
+			}
+		};
+		
+		Restlet addDefaultApplication = new Restlet() {
+			@Override
+			public void handle(Request request, Response response) {
+				try {
+					setResponseHeaders(request, response);
+					String group = (String) request.getAttributes().get("group");
+					RifidiEdgeHelper.addDefaultApp(group);
+					response.setEntity(self.generateReturnString(self
+							.generateSuccessMessage()), MediaType.TEXT_XML);					
+				} catch(Exception e) {
+					response.setEntity(self.generateReturnString(self
+							.generateErrorMessage(e.toString(), null)),
+							MediaType.TEXT_XML);					
+				}
+				
 			}
 		};
 
@@ -2437,6 +2454,7 @@ public class SensorManagerServiceRestletImpl extends Application {
 		router.attach("/startapp/{appID}", startApp);
 		router.attach("/stopapp/{appID}", stopApp);
 		router.attach("/loadapp/{path}", loadApp);
+		router.attach("/adddefaultapp/{group}", addDefaultApplication);		
 		router.attach("/commandtypes", commandTypes);
 		router.attach("/readertypes", readerTypes);
 		router.attach("/readermetadata", readerMetadata);
