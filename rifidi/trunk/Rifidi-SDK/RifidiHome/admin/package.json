@@ -1,7 +1,12 @@
 {
   "name": "rifidiapp",
   "version": "0.0.0",
-  "dependencies": {},
+  "dependencies": {
+    "imagemin-gifsicle": "^4.1.0",
+    "imagemin-jpegtran": "^4.1.0",
+    "imagemin-optipng": "^4.2.0",
+    "imagemin-pngquant": "^4.1.0"
+  },
   "devDependencies": {
     "grunt": "^0.4.1",
     "grunt-autoprefixer": "^0.7.3",

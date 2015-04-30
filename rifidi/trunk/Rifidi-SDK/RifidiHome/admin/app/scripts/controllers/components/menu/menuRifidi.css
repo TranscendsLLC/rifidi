@@ -30,13 +30,13 @@ div[data-tree-model] li {
 
 div[data-tree-model] li .expanded {
     padding: 1px 10px;
-    background-image: url("/images/expanded.png");
+    background-image: url("/dashboard/images/expanded.png");
     background-repeat: no-repeat;
 }
 
 div[data-tree-model] li .collapsed {
     padding: 1px 10px;
-    background-image: url("/images/collapsed.png");
+    background-image: url("/dashboard/images/collapsed.png");
     background-repeat: no-repeat;
 }
 
@@ -61,151 +61,151 @@ div[data-tree-model] li .selected {
 
 div[data-tree-model] li .server-disconnected {
     padding: 1px 10px;
-    background-image: url("/images/server-red.png");
+    background-image: url("/dashboard/images/server-red.png");
     background-repeat: no-repeat;
 }
 
 div[data-tree-model] li .server-connected {
      padding: 1px 10px;
-     background-image: url("/images/server-green.png");
+     background-image: url("/dashboard/images/server-green.png");
      background-repeat: no-repeat;
  }
 
 div[data-tree-model] li .server {
     padding: 1px 10px;
-    background-image: url("/images/server.png");
+    background-image: url("/dashboard/images/server.png");
     background-repeat: no-repeat;
 }
 
 div[data-tree-model] li .reader {
     padding: 1px 10px;
-    background-image: url("/images/reader.png");
+    background-image: url("/dashboard/images/reader.png");
     background-repeat: no-repeat;
 }
 
 div[data-tree-model] li .reader-cog {
     padding: 1px 10px;
-    background-image: url("/images/reader-cog.png");
+    background-image: url("/dashboard/images/reader-cog.png");
     background-repeat: no-repeat;
 }
 
 div[data-tree-model] li .link-red {
     padding: 1px 10px;
-    background-image: url("/images/link-red.png");
+    background-image: url("/dashboard/images/link-red.png");
     background-repeat: no-repeat;
 }
 
 div[data-tree-model] li .link-yellow {
     padding: 1px 10px;
-    background-image: url("/images/link-yellow.png");
+    background-image: url("/dashboard/images/link-yellow.png");
     background-repeat: no-repeat;
 }
 
 div[data-tree-model] li .link-green {
     padding: 1px 10px;
-    background-image: url("/images/link-green.png");
+    background-image: url("/dashboard/images/link-green.png");
     background-repeat: no-repeat;
 }
 
 div[data-tree-model] li .script-gear {
     padding: 1px 10px;
-    background-image: url("/images/script_gear.png");
+    background-image: url("/dashboard/images/script_gear.png");
     background-repeat: no-repeat;
 }
 
 div[data-tree-model] li .cog {
     padding: 1px 10px;
-    background-image: url("/images/cog.png");
+    background-image: url("/dashboard/images/cog.png");
     background-repeat: no-repeat;
 }
 
 div[data-tree-model] li .app-dev {
     padding: 1px 10px;
-    background-image: url("/images/app-dev.png");
+    background-image: url("/dashboard/images/app-dev.png");
     background-repeat: no-repeat;
 }
 
 div[data-tree-model] li .appgroups {
     padding: 1px 10px;
-    background-image: url("/images/appgroups.png");
+    background-image: url("/dashboard/images/appgroups.png");
     background-repeat: no-repeat;
 }
 
 div[data-tree-model] li .application {
     padding: 1px 10px;
-    background-image: url("/images/application.png");
+    background-image: url("/dashboard/images/application.png");
     background-repeat: no-repeat;
 }
 
 div[data-tree-model] li .appmanagement {
     padding: 1px 10px;
-    background-image: url("/images/appmanagement.png");
+    background-image: url("/dashboard/images/appmanagement.png");
     background-repeat: no-repeat;
 }
 
 div[data-tree-model] li .apps {
     padding: 1px 10px;
-    background-image: url("/images/apps.png");
+    background-image: url("/dashboard/images/apps.png");
     background-repeat: no-repeat;
 }
 
 div[data-tree-model] li .app {
     padding: 1px 10px;
-    background-image: url("/images/app.png");
+    background-image: url("/dashboard/images/app.png");
     background-repeat: no-repeat;
 }
 
 div[data-tree-model] li .group {
     padding: 1px 10px;
-    background-image: url("/images/group.png");
+    background-image: url("/dashboard/images/group.png");
     background-repeat: no-repeat;
 }
 
 div[data-tree-model] li .readzones {
     padding: 1px 10px;
-    background-image: url("/images/readzones.jpg");
+    background-image: url("/dashboard/images/readzones.jpg");
     background-repeat: no-repeat;
 }
 
 div[data-tree-model] li .readzone {
     padding: 1px 10px;
-    background-image: url("/images/readzone.png");
+    background-image: url("/dashboard/images/readzone.png");
     background-repeat: no-repeat;
 }
 
 div[data-tree-model] li .readeradd {
     padding: 1px 10px;
-    background-image: url("/images/readeradd.png");
+    background-image: url("/dashboard/images/readeradd.png");
     background-repeat: no-repeat;
 }
 
 div[data-tree-model] li .readerdelete {
     padding: 1px 10px;
-    background-image: url("/images/readerdelete.png");
+    background-image: url("/dashboard/images/readerdelete.png");
     background-repeat: no-repeat;
 }
 
 div[data-tree-model] li .linkadd {
     padding: 1px 10px;
-    background-image: url("/images/link_add.png");
+    background-image: url("/dashboard/images/link_add.png");
     background-repeat: no-repeat;
 }
 
 div[data-tree-model] li .linkdelete {
     padding: 1px 10px;
-    background-image: url("/images/link_delete.png");
+    background-image: url("/dashboard/images/link_delete.png");
     background-repeat: no-repeat;
 }
 
 div[data-tree-model] li .linkstart {
     padding: 1px 10px;
-    background-image: url("/images/link-start.png");
+    background-image: url("/dashboard/images/link-start.png");
     background-repeat: no-repeat;
 }
 
 div[data-tree-model] li .linkstop {
     padding: 1px 10px;
-    background-image: url("/images/link-stop.png");
+    background-image: url("/dashboard/images/link-stop.png");
     background-repeat: no-repeat;
 }
 
@@ -218,54 +218,54 @@ div[data-tree-model] li .disabledLink {
 
 div[data-tree-model] li .saveserver {
     padding: 1px 10px;
-    background-image: url("/images/disk.png");
+    background-image: url("/dashboard/images/disk.png");
     background-repeat: no-repeat;
 }
 
 div[data-tree-model] li .saveservers {
     padding: 1px 10px;
-    background-image: url("/images/disk.png");
+    background-image: url("/dashboard/images/disk.png");
     background-repeat: no-repeat;
 }
 
 div[data-tree-model] li .addserver {
     padding: 1px 10px;
-    background-image: url("/images/add-server.png");
+    background-image: url("/dashboard/images/add-server.png");
     background-repeat: no-repeat;
 }
 
 div[data-tree-model] li .deleteserver {
     padding: 1px 10px;
-    background-image: url("/images/delete-server.png");
+    background-image: url("/dashboard/images/delete-server.png");
     background-repeat: no-repeat;
 }
 
 div[data-tree-model] li .submit-job {
     padding: 1px 10px;
-    background-image: url("/images/script_add.png");
+    background-image: url("/dashboard/images/script_add.png");
     background-repeat: no-repeat;
 }
 
 div[data-tree-model] li .script-delete {
     padding: 1px 10px;
-    background-image: url("/images/script_delete.png");
+    background-image: url("/dashboard/images/script_delete.png");
     background-repeat: no-repeat;
 }
 
 div[data-tree-model] li .folder {
     padding: 1px 10px;
-    background-image: url("/images/folder.png");
+    background-image: url("/dashboard/images/folder.png");
     background-repeat: no-repeat;
 }
 
 div[data-tree-model] li .app-started {
     padding: 1px 10px;
-    background-image: url("/images/app-started.jpg");
+    background-image: url("/dashboard/images/app-started.jpg");
     background-repeat: no-repeat;
 }
 
 div[data-tree-model] li .app-stopped {
     padding: 1px 10px;
-    background-image: url("/images/app-stopped.png");
+    background-image: url("/dashboard/images/app-stopped.png");
     background-repeat: no-repeat;
 }
