@@ -1,10 +1,13 @@
 <div class="panel panel-default">
+
     <div class="panel-heading">
+        <a data-toggle="collapse" data-target="#idCollapsibleWindow">
         <span class="glyphicon glyphicon-dashboard" aria-hidden="true"></span> Sensor creation wizard
+        </a>
     </div>
 
 
-    <div class="panel-body">
+    <div id="idCollapsibleWindow" class="panel-body panel-collapse collapse in">
 
         <wizard on-finish="finishSensorWizard(selectedReaderType)" edit-mode="false">
         <!--<wizard on-finish="openSensorWizardSummaryDialog()" edit-mode="false" ng-controller="SensorWizardCtrl">-->
