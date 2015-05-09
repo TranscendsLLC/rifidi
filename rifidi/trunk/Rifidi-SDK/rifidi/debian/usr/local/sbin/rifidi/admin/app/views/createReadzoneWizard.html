@@ -1,0 +1,132 @@
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <span class="glyphicon glyphicon-dashboard" aria-hidden="true"></span> Add Read Zone Wizard
+    </div>
+    <div class="panel-body">
+
+
+        <form class="form-horizontal" role="form" name="form" novalidate>
+
+
+            <div class="form-group">
+
+                <div class="col-sm-3">
+                    <label class="control-label" for="readzone">Readzone</label>
+                </div>
+
+                <div class="col-sm-7" >
+
+                    <input aria-describedby="helpReadzone" id="readZone"
+                           name="readZone" type="text" ng-value="readzoneProperties.readzone" ng-model="readzoneProperties.readzone"
+                           class="form-control"
+                            />
+
+                    <div ng-show="form.$submitted || form.readZone.$touched" >
+
+                        <div ng-show="form.readZone.$error.required">
+
+                            readzone name is required. Can not contain spaces.
+
+                        </div>
+                    </div>
+
+                    <span id="helpReadzone" class="help-block">The readzone is required. Can not contain spaces.</span>
+
+                </div>
+
+                <br>
+                <p>
+
+            </div>
+
+            <div class="form-group" ng-repeat="property in readzoneProperties.properties | orderBy:['key']">
+
+                <div class="col-sm-3">
+                    <label class="control-label" for="{{property.key}}">{{property.key}}</label>
+                </div>
+
+
+                <div class="col-sm-7" >
+
+                    <!--hide default input fields for readerID and matchtPattern to display them in custom fields-->
+                    <div ng-hide="property.key == 'readerID' || property.key =='matchPattern'">
+
+                        <input aria-describedby="help{{property.key}}"
+                               name="{{property.key}}" type="text" ng-value="property.value" ng-model="property.value"
+                               class="form-control"
+                                />
+
+                    </div>
+
+                    <div ng-show="property.key == 'readerID'">
+
+                        <div class="radio">
+                            <label>By single reader</label>
+                        </div>
+
+                        <select id="{{property.key}}"
+                                name="{{property.key}}"
+                                ng-model="property.value"
+                                ng-required="false"
+                                class="form-control"
+                                aria-describedby="help{{property.key}}"
+                                ng-options="value.id as value.id for value in sensors | orderBy:'id'">
+                            <option>--</option>
+                        </select>
+
+                        <div class="radio">
+                            <label>By regular expression</label>
+                            <input aria-describedby="help{{property.key}}"
+                               name="{{property.key}}" type="text" ng-value="property.value" ng-model="property.value"
+                               class="form-control"
+                                />
+                        </div>
+
+                        <span ng-show="sensors[0]" id="help{{property.key}}" class="help-block">A regex is for example: {{sensors[0].id}}.* and means all sensors whose readerid begins with {{sensors[0].id}}</span>
+                        <span ng-show="!sensors[0]" id="help{{property.key}}" class="help-block">A regex is for example: Alien_1.* and means all sensors whose readerid begins with Alien_1</span>
+
+                    </div>
+
+                    <div ng-show="property.key == 'matchPattern'">
+
+                        <select id="{{property.key}}"
+                                name="{{property.key}}"
+                                ng-model="property.value"
+                                ng-required="false"
+                                class="form-control"
+                                aria-describedby="help{{property.key}}"
+                                ng-options="value.id as value.id for value in booleanValues">
+
+                            <option>--</option>
+                        </select>
+
+                    </div>
+
+
+                    <div ng-show="form.$submitted || form.property.key.$touched" >
+
+                        <div ng-show="form.property.key.$error.required">
+
+                            {{property.key}} is required.
+
+                        </div>
+                    </div>
+
+                    <span id="help{{property.key}}" class="help-block">{{property.helpText}}</span>
+
+                </div>
+
+                <br>
+                <p>
+
+            </div>
+
+            <input class="btn btn-primary" ng-hide="getPropertiesErrorMsg" ng-click="openCreateReadzoneDialog()" ng-disabled="form.$invalid" type="submit" value="Create" />
+
+        </form>
+
+    </div>
+</div>
+
+
+
