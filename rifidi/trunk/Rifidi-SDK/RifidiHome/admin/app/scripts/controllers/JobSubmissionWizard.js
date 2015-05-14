@@ -444,7 +444,7 @@ angular.module('rifidiApp')
           $scope.commandWizardData.commandCreationResponseStatus = {};
 
           //create command
-          $http.get($scope.elementSelected.host + '/createcommand/' + $scope.commandWizardData.commandType.factoryID + "/" + strCommandProperties)
+          $http.get($scope.elementSelected.host + '/createcommand/' + $scope.commandWizardData.commandType.factoryID + "/" + encodeURIComponent(strCommandProperties))
               .success(function(data, status, headers, config) {
 
                 console.log("success response creating command in wizard");
@@ -507,7 +507,7 @@ angular.module('rifidiApp')
           //console.log("going to set command properties: " + host + '/setproperties/' + $scope.selectedCommandInstance.commandID + '/' + strCommandProperties);
           $scope.commandWizardData.setCommandPropertiesResponseStatus = {};
 
-          $http.get($scope.elementSelected.host + '/setproperties/' + $scope.commandWizardData.commandInstance.commandID + '/' + strCommandProperties)
+          $http.get($scope.elementSelected.host + '/setproperties/' + $scope.commandWizardData.commandInstance.commandID + '/' + encodeURIComponent(strCommandProperties))
               .success(function(data, status, headers, config) {
 
                 var xmlSetCommandPropertiesResponse;

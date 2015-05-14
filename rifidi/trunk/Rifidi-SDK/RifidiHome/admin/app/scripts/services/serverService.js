@@ -4,7 +4,11 @@
 
 app.service('ServerService', function($http, CommonService){
 
-    var host = 'http://localhost:8111/';
+    //var host = 'http://localhost:8111/';
+    var host = location.origin + '/';  //as client is not going to be always the same ip address as server is
+    console.log('host:');
+    console.log(host);
+
 
     //Method that calls the API to get the servers
     this.callServerListService = function(){

@@ -3515,7 +3515,7 @@ var module = angular.module('rifidiApp')
                 //console.log("going to set command properties: " + host + '/setproperties/' + $scope.selectedCommandInstance.commandID + '/' + strCommandProperties);
                 $scope.setCommandPropertiesResponseStatus = {};
 
-                $http.get(host + '/setproperties/' + commandId + '/' + strCommandProperties)
+                $http.get(host + '/setproperties/' + commandId + '/' + encodeURIComponent(strCommandProperties))
                     .success(function(data, status, headers, config) {
 
                         var xmlSetCommandPropertiesResponse;

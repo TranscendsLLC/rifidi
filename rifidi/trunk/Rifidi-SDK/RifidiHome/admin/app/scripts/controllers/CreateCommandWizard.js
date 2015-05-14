@@ -315,7 +315,7 @@ angular.module('rifidiApp')
         $scope.commandWizardData.commandCreationResponseStatus = {};
 
         //create command
-        $http.get($scope.elementSelected.host + '/createcommand/' + $scope.elementSelected.factoryID + "/" + strCommandProperties)
+        $http.get($scope.elementSelected.host + '/createcommand/' + $scope.elementSelected.factoryID + "/" + encodeURIComponent(strCommandProperties))
             .success(function (data, status, headers, config) {
 
               console.log("success response creating command in wizard");

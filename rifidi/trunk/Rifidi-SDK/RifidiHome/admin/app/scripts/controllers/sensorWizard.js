@@ -812,7 +812,7 @@ angular.module('rifidiApp')
                                     console.log($scope.selectedCommandType.factoryID);
                                     console.log("going to execute: " + host + '/createcommand/' + $scope.selectedCommandType.factoryID + "/" + strCommandProperties);
 
-                                    $http.get(host + '/createcommand/' + $scope.selectedCommandType.factoryID + "/" + strCommandProperties)
+                                    $http.get(host + '/createcommand/' + $scope.selectedCommandType.factoryID + "/" + encodeURIComponent(strCommandProperties))
                                         .success(function (data, status, headers, config) {
 
                                           console.log("success response creating command in wizard");
@@ -871,7 +871,7 @@ angular.module('rifidiApp')
 
                                     console.log("going to set command properties: " + host + '/setproperties/' + $scope.selectedCommandInstance.commandID + '/' + strCommandProperties);
 
-                                    $http.get(host + '/setproperties/' + $scope.selectedCommandInstance.commandID + '/' + strCommandProperties)
+                                    $http.get(host + '/setproperties/' + $scope.selectedCommandInstance.commandID + '/' + encodeURIComponent(strCommandProperties))
                                         .success(function (data, status, headers, config) {
 
                                           var xmlSetCommandPropertiesResponse;
