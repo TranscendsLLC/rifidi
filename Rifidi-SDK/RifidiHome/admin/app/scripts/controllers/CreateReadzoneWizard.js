@@ -181,7 +181,7 @@ angular.module('rifidiApp')
         //$scope.commandWizardData.commandCreationResponseStatus = {};
 
         //create readzone
-        $http.get(host + '/addReadZone/' + appId + '/' + readzone + '/' + strReadzoneProperties)
+        $http.get(host + '/addReadZone/' + appId + '/' + readzone + '/' + encodeURIComponent(strReadzoneProperties))
             .success(function (data, status, headers, config) {
 
               console.log("success response adding readzone");
