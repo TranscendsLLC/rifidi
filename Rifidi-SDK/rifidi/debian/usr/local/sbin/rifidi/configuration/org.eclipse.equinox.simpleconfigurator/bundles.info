@@ -89,7 +89,7 @@ org.rifidi.edge.adapter.alien,2.10.1,plugins/org.rifidi.edge.adapter.alien_2.10.
 org.rifidi.edge.adapter.awid,1.0.8,plugins/org.rifidi.edge.adapter.awid_1.0.8.jar,4,true
 org.rifidi.edge.adapter.csl,1.0.1,plugins/org.rifidi.edge.adapter.csl_1.0.1.jar,4,true
 org.rifidi.edge.adapter.generic,1.0.2,plugins/org.rifidi.edge.adapter.generic_1.0.2.jar,4,true
-org.rifidi.edge.adapter.llrp,2.2.4,plugins/org.rifidi.edge.adapter.llrp_2.2.4.jar,4,true
+org.rifidi.edge.adapter.llrp,2.2.5,plugins/org.rifidi.edge.adapter.llrp_2.2.5.jar,4,true
 org.rifidi.edge.adapter.opticon,1.0.1,plugins/org.rifidi.edge.adapter.opticon_1.0.1.jar,4,true
 org.rifidi.edge.adapter.thinkify50,1.0.2,plugins/org.rifidi.edge.adapter.thinkify50_1.0.2.jar,4,true
 #org.rifidi.edge.adapter.thingmagic6,1.0.1,plugins/org.rifidi.edge.adapter.thingmagic6_1.0.1.jar,4,true
