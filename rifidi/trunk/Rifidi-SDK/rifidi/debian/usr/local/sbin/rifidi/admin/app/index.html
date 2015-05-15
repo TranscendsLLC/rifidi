@@ -1,0 +1,850 @@
+<!doctype html>
+<html class="no-js">
+  <head>
+    <meta charset="utf-8">
+    <title></title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width">
+    <!-- Place favicon.ico and apple-touch-icon.png in the root directory -->
+    <!-- build:css(.) styles/vendor.css -->
+    <!-- bower:css -->
+    <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.css" />
+    <link rel="stylesheet" href="bower_components/ngDialog/css/ngDialog-theme-default.css" />
+    <!-- endbower -->
+    <!-- endbuild -->
+    <!-- build:css(.tmp) styles/main.css -->
+    <link rel="stylesheet" href="styles/main.css">
+    <link rel="stylesheet" href="scripts/controllers/components/menu/menuRifidi.css" />
+    <link rel="stylesheet" href="bower_components/angular-wizard/dist/angular-wizard.css" />
+    <link rel="stylesheet" href="bower_components/ngDialog/css/ngDialog.css" />
+    <!-- endbuild -->
+  </head>
+  <body ng-app="rifidiApp">
+    <!--[if lt IE 7]>
+    <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
+    <![endif]-->
+
+    <!-- Add your site or application content here -->
+    <div class="container" >
+        <nav class="navbar navbar-default navbar-fixed-top">
+            <div class="container">
+                <div class="navbar-header">
+
+                    <a class="navbar-brand" href="#">Enterprise Rifidi Management Dashboard</a>
+                </div>
+            </div>
+        </nav>
+        <div class="row">
+            <div class="col-md-5" >
+
+                    <div class="alert alert-success" ng-show="operationSuccessMsg || operationSuccessMsgs.length > 0">
+                        <div>{{operationSuccessMsg}}</div>
+                        <div ng-repeat="msg in operationSuccessMsgs">{{msg}}</div>
+                    </div>
+
+
+            </div>
+        </div>
+
+       <div ng-controller="MenuController">
+
+       <div class="row">
+           <div class="col-md-5">
+
+               <!-- start menu -->
+
+               <div class="panel panel-default">
+                   <div class="panel-heading">
+                       <span class="glyphicon glyphicon-list-alt" aria-hidden="true"></span>
+                       <a data-toggle="collapse" href="#idCollapsibleMenu">
+                       Main menu (click to collapse / expand)
+                       </a> <img tooltip="Refresh server management" src="images/refresh_button.jpg" ng-click="refreshMenu()" alt="Refresh">
+
+
+                   </div>
+                   <div id="idCollapsibleMenu" class="panel-body panel-collapse collapse in">
+                       <div
+                               data-angular-treeview="true"
+                               data-tree-id="elementTree"
+                               data-tree-model="elementList"
+                               data-node-id="elementId"
+                               data-node-label="elementName"
+                               data-node-children="children" >
+                       </div>
+                   </div>
+               </div>
+
+
+               <!--
+                 <div class="row" ng-repeat="server in servers">
+
+                   <div class="col-md-4"><span>{{server.displayName}}</span></div>
+
+                   <div class="col-md-4"><strong>{{element.ipAddress}}</strong></div>
+
+                   <div class="col-md-4"><strong>{{element.restProtocol}}</strong></div>
+                   <br/>
+                 </div>-->
+
+               <!--<tab ng-repeat="tab in tabs" heading="{{tab.title}}" active="tab.active" disabled="tab.disabled">
+                                           <h3>{{tab.title}}</h3>
+                                           Esto es un contenido de tab:
+                                           {{tab.content}}
+                                       </tab>
+                                       <tab select="alertMe()">
+                                           <tab-heading>
+                                               <i class="glyphicon glyphicon-bell"></i> Alert!
+                                           </tab-heading>
+                                           I've got an HTML heading, and a select callback. Pretty cool!
+
+                                       </tab>-->
+
+
+
+               <!-- end menu -->
+
+               <!--
+               <menu-rifidi></menu-rifidi>
+               -->
+
+
+
+           </div>
+           <div class="col-md-7">
+               <div ng-view=""></div>
+
+               <div class="panel panel-default">
+
+                   <div class="panel-heading">
+                       <a data-toggle="collapse" href="#idCollapsibleProperties">
+                       <span class="glyphicon glyphicon-wrench" aria-hidden="true"></span> {{elementSelected.elementName}} Properties (click to collapse / expand)
+                       </a>
+                   </div>
+
+                   <div id="idCollapsibleProperties" class="panel-body panel-collapse collapse in">
+
+                       <div ng-switch="elementTree.currentNode.elementType">
+
+                           <div ng-switch-when="server">
+
+                               <form class="form-horizontal" role="form" name="form" novalidate ng-controller="ServerWizardCtrl">
+
+                                   <!--
+                                   ng-class="{ 'has-error' : form.displayName.$invalid && !form.displayName.$pristine }"
+                                   -->
+
+                                   <div class="form-group">
+                                       <div class="col-sm-3">
+                                           <label class="control-label" for="ipAddress">Display Name</label>
+                                       </div>
+                                       <div class="col-sm-6">
+                                           <input aria-describedby="helpDisplayName" id="displayName" name="displayName" type="text"
+                                                  class="form-control" value="{{elementSelected.displayName}}" data-ng-model="elementSelected.displayName" required />
+
+                                           <div ng-show="form.$submitted || form.displayName.$touched" >
+
+                                               <div ng-show="form.displayName.$error.required">
+
+                                                   Display name is required.
+
+                                               </div>
+                                           </div>
+
+                                           <span id="helpDisplayName" class="help-block">The display name.</span>
+                                       </div>
+
+                                   </div>
+                                   <div class="form-group">
+                                       <div class="col-sm-3">
+                                           <label class="control-label" for="ipAddress">IP Address</label>
+                                       </div>
+                                       <div class="col-sm-6">
+                                           <input aria-describedby="helpIpAddress" id="ipAddress" name="ipAddress" type="text"
+                                                  class="form-control" value="{{elementSelected.ipAddress}}" data-ng-model="elementSelected.ipAddress" required >
+
+                                           <div ng-show="form.$submitted || form.ipAddress.$touched" >
+
+                                               <div ng-show="form.ipAddress.$error.required">
+
+                                                   IP address is required.
+
+                                               </div>
+                                           </div>
+
+                                           <span id="helpIpAddress" class="help-block">The ip address or server name.</span>
+                                       </div>
+                                   </div>
+                                   <div class="form-group">
+                                       <div class="col-sm-3">
+                                           <label class="control-label" for="ipAddress">Rest Protocol</label>
+                                       </div>
+                                       <div class="col-sm-6">
+
+                                           <!--
+                                           value="{{elementSelected.restProtocol}}" data-ng-model="elementSelected.restProtocol"
+                                           -->
+
+                                           <select id="restProtocol" name="restProtocol" aria-describedby="helpProtocol"
+                                                   class="form-control"
+                                                   ng-required="true"
+                                                   ng-options="value.protocol as value.protocol for value in serverProtocols | orderBy:'protocol'"
+                                                   data-ng-model="elementSelected.restProtocol"
+                                                   >
+
+                                           </select>
+
+                                           elementSelected.restProtocol: {{elementSelected.restProtocol}}
+
+                                           <!--
+                                           <input aria-describedby="helpProtocol" id="restProtocol" name="restProtocol" type="text"
+                                                  class="form-control" value="{{elementSelected.restProtocol}}" data-ng-model="elementSelected.restProtocol" required>
+                                           -->
+
+                                           <div ng-show="form.$submitted || form.restProtocol.$touched" >
+
+                                               <div ng-show="form.restProtocol.$error.required">
+
+                                                   Protocol is required.
+
+                                               </div>
+                                           </div>
+
+                                           <span id="helpProtocol" class="help-block">The protocol to communicate with rest services, be it http or https.</span>
+                                       </div>
+                                   </div>
+                                   <div class="form-group">
+                                       <div class="col-sm-3">
+                                           <label class="control-label" for="ipAddress">Rest Port</label>
+                                       </div>
+                                       <div class="col-sm-6">
+                                           <!--
+                                           placeholder="8111"
+                                           -->
+                                           <input aria-describedby="helpPort" id="restPort" name="restPort" type="text"
+                                                  class="form-control" value="{{elementSelected.restProtocol}}" data-ng-model="elementSelected.restPort"
+                                                  required>
+
+                                           <div ng-show="form.$submitted || form.restPort.$touched" >
+
+                                               <div ng-show="form.restPort.$error.required">
+
+                                                   Port is required.
+
+                                               </div>
+                                           </div>
+
+                                           <span id="helpPort" class="help-block">The port number to call rest services. The default value is 8111.</span>
+                                       </div>
+                                   </div>
+                                   <!--
+                                   <input type="button" value="Save" class="done_button" data-ng-click="done()">
+                                   <input type="button" value="Delete" class="done_button" data-ng-click="deleteServer()">
+                                   -->
+
+                                   <!--
+                                   ng-disabled="form.displayName.$dirty && form.displayName.$error"
+                                   -->
+                                   <!--
+                                   <input class="btn btn-danger" type="button" value="Cancel" ng-click="go('/#')" />
+                                   -->
+                                   <input class="btn btn-primary" ng-disabled="form.$invalid" ng-click="openSaveServerPropertiesDialog()" type="submit"
+                                          value="Save" />
+                               </form>
+
+
+                               <!--
+                                   <tabset>
+                                       <tab heading="Properties">
+                                           <br/>
+                                           <form role="form">
+
+                                               <div class="form-group row" >
+                                                   <div class="col-lg-6">
+                                                       <label class="control-label" for="ipAddress">Display Name</label>
+                                                   </div>
+                                                   <div class="col-lg-6">
+                                                       <input id="displayName" name="displayName" type="text" placeholder="Server 1" class="input-xlarge" value="{{elementSelected.displayName}}" data-ng-model="elementTree.currentNode.elementName"/>
+                                                  </div>
+
+                                               </div>
+                                               <div class="form-group row">
+                                                   <div class="col-lg-6">
+                                                       <label class="control-label" for="ipAddress">IP Address</label>
+                                                   </div>
+                                                   <div class="col-lg-6">
+                                                       <input id="ipAddress" name="ipAddress" type="text" placeholder="127.0.0.1" class="input-xlarge" value="{{elementSelected.ipAddress}}" data-ng-model="elementTree.currentNode.ipAddress">
+                                                   </div>
+                                               </div>
+                                               <div class="form-group row">
+                                                   <div class="col-lg-6">
+                                                       <label class="control-label" for="ipAddress">Rest Protocol</label>
+                                                   </div>
+                                                   <div class="col-lg-6">
+                                                       <input id="restProtocol" name="restProtocol" type="text" placeholder="http" class="input-xlarge" value="{{elementSelected.restProtocol}}" data-ng-model="elementTree.currentNode.restProtocol">
+                                                   </div>
+                                               </div>
+                                               <div class="form-group row">
+                                                   <div class="col-lg-6">
+                                                       <label class="control-label" for="ipAddress">Rest Port</label>
+                                                   </div>
+                                                   <div class="col-lg-6">
+                                                       <input id="restPort" name="restPort" type="text" placeholder="8111" class="input-xlarge" value="{{elementSelected.restPort}}" data-ng-model="elementTree.currentNode.restPort">
+                                                   </div>
+                                               </div>
+                                               <input type="button" value="Save" class="done_button" data-ng-click="done()">
+                                               <input type="button" value="Delete" class="done_button" data-ng-click="deleteServer()">
+                                           </form>
+                                       </tab>
+                                       <tab heading="Administration">
+                                           <br/>
+                                           <button type="button" class="btn btn-default" aria-label="Left Align">
+                                               <span class="glyphicon glyphicon-edit" aria-hidden="true">Edit Server</span>
+                                           </button>
+                                           <br/><br/>
+                                           <button type="button" class="btn btn-default" aria-label="Left Align">
+                                               <span class="glyphicon glyphicon-trash" aria-hidden="true">Delete Server</span>
+                                           </button>
+                                       </tab>
+                                   </tabset>
+
+                                   -->
+                           </div>
+
+
+                           <div ng-switch-when="sensor">
+
+                               <form class="form-horizontal" role="form" name="form" novalidate>
+
+                               <tabset>
+                                   <tab heading="{{propertyCategory.category}}" ng-repeat="propertyCategory in sensorProperties.propertyCategoryList | orderBy:'category'">
+                                       <br/>
+
+                                               <div class="form-group" ng-repeat="property in propertyCategory.properties | orderBy:['ordervalue', 'displayname']">
+
+                                                   <div class="col-sm-6">
+                                                       <label class="control-label" for="{{property.name}}">{{property.displayname}}</label>
+                                                   </div>
+
+
+                                                   <div class="col-sm-6" >
+
+                                                       <input aria-describedby="help{{property.name}}" id="{{property.name}}"
+                                                              name="{{property.name}}" ng-disabled="!property.writable" ng-readonly="!property.writable"
+                                                              type="{{property.htmlType}}" ng-value="property.value" ng-model="property.value" min="property.minvalue" max="property.maxvalue"
+                                                              class="form-control"
+                                                               />
+
+                                                       <div ng-show="form.$submitted || form.property.name.$touched" >
+
+                                                           <div ng-show="form.property.name.$error.required">
+
+                                                               {{property.name}} is required.
+
+                                                           </div>
+                                                       </div>
+
+                                                       <span id="help{{property.name}}" class="help-block">{{property.description}}</span>
+
+                                                   </div>
+
+                                                   <br>
+                                                   <p>
+
+                                               </div>
+
+
+                                   </tab>
+                               </tabset>
+
+                               <!--
+                               <input class="btn btn-danger" type="button" value="Cancel" ng-click="go('/#')" />
+                               -->
+                               <input class="btn btn-primary" ng-click="openSaveSensorPropertiesDialog()" ng-disabled="form.$invalid" type="submit" value="Save" />
+
+                               </form>
+                           </div>
+
+                           <div ng-switch-when="commandInstance_sensor">
+
+                               <div class="form-group">
+
+                                   <form class="form-horizontal" role="form" name="form" novalidate>
+
+                                   <tabset>
+                                       <tab heading="{{propertyCategory.category}}" ng-repeat="propertyCategory in commandProperties.propertyCategoryList | orderBy:'category'">
+                                           <br/>
+
+                                           <div class="form-group" ng-repeat="property in propertyCategory.properties | orderBy:['ordervalue', 'displayname']">
+
+                                               <div class="col-sm-6">
+                                                   <label class="control-label" for="{{property.name}}">{{property.displayname}}</label>
+                                               </div>
+
+
+                                               <div class="col-sm-6" >
+
+                                                   <input aria-describedby="help{{property.name}}" id="{{property.name}}"
+                                                          name="{{property.name}}" ng-disabled="!property.writable" ng-readonly="!property.writable"
+                                                          type="{{property.htmlType}}" ng-value="property.value" ng-model="property.value" min="property.minvalue" max="property.maxvalue"
+                                                          class="form-control"
+                                                           />
+
+                                                   <div ng-show="form.$submitted || form.property.name.$touched" >
+
+                                                       <div ng-show="form.property.name.$error.required">
+
+                                                           {{property.name}} is required.
+
+                                                       </div>
+                                                   </div>
+
+                                                   <span id="help{{property.name}}" class="help-block">{{property.description}}</span>
+
+                                               </div>
+
+                                               <br>
+                                               <p>
+
+                                           </div>
+
+
+                                       </tab>
+                                   </tabset>
+
+                                   <input class="btn btn-primary" ng-click="openSaveCommandInstancePropertiesDialog(commandProperties, elementSelected.host, elementSelected.commandID)" ng-disabled="form.$invalid" type="submit" value="Save" />
+
+                                   </form>
+                               </div>
+
+                           </div>
+
+                           <div ng-switch-when="commandType">
+
+                               <div class="form-group">
+                                   <div class="col-sm-4">
+                                       <label class="control-label" for="readerType">Compatible Reader Type</label>
+                                   </div>
+                                   <div class="col-sm-6">
+                                       <label class="control-label" id="readerType" >{{elementSelected.readerFactoryID}}</label>
+
+
+                                   </div>
+                               </div>
+
+                               <div class="form-group">
+                                   <div class="col-sm-4">
+                                       <label class="control-label" for="description">Description</label>
+                                   </div>
+                                   <div class="col-sm-6">
+                                       <label class="control-label" id="description" >{{elementSelected.description}}</label>
+
+
+                                   </div>
+                               </div>
+
+
+                           </div>
+
+                           <div ng-switch-when="commandInstance_commandManagement">
+
+                               <div class="form-group">
+
+                                   <form class="form-horizontal" role="form" name="form" novalidate>
+
+                                       <tabset>
+                                           <tab heading="{{propertyCategory.category}}" ng-repeat="propertyCategory in commandProperties.propertyCategoryList | orderBy:'category'">
+                                               <br/>
+
+                                               <div class="form-group" ng-repeat="property in propertyCategory.properties | orderBy:['ordervalue', 'displayname']">
+
+                                                   <div class="col-sm-6">
+                                                       <label class="control-label" for="{{property.name}}">{{property.displayname}}</label>
+                                                   </div>
+
+
+                                                   <div class="col-sm-6" >
+
+                                                       <input aria-describedby="help{{property.name}}" id="{{property.name}}"
+                                                              name="{{property.name}}" ng-disabled="!property.writable" ng-readonly="!property.writable"
+                                                              type="{{property.htmlType}}" ng-value="property.value" ng-model="property.value" min="property.minvalue" max="property.maxvalue"
+                                                              class="form-control"
+                                                               />
+
+                                                       <div ng-show="form.$submitted || form.property.name.$touched" >
+
+                                                           <div ng-show="form.property.name.$error.required">
+
+                                                               {{property.name}} is required.
+
+                                                           </div>
+                                                       </div>
+
+                                                       <span id="help{{property.name}}" class="help-block">{{property.description}}</span>
+
+                                                   </div>
+
+                                                   <br>
+                                                   <p>
+
+                                               </div>
+
+
+                                           </tab>
+                                       </tabset>
+
+                                       <input class="btn btn-primary" ng-click="openSaveCommandInstancePropertiesDialog(commandProperties, elementSelected.host, elementSelected.commandID)" ng-disabled="form.$invalid" type="submit" value="Save" />
+
+                                   </form>
+                               </div>
+
+                           </div>
+
+                           <div ng-switch-when="appGroup">
+
+                               <div ng-show="getPropertiesErrorMsg">
+                                   {{getPropertiesErrorMsg}}
+                               </div>
+
+                               <form class="form-horizontal" role="form" name="form" novalidate>
+
+                                   <div class="form-group" ng-repeat="property in appGroupProperties.properties | orderBy:['key']">
+
+                                       <div class="col-sm-6">
+                                           <label class="control-label" for="{{property.key}}">{{property.key}}</label>
+                                       </div>
+
+
+                                       <div class="col-sm-6" >
+
+                                           <input aria-describedby="help{{property.key}}" id="{{property.key}}"
+                                                  name="{{property.key}}" type="text" ng-value="property.value" ng-model="property.value"
+                                                  class="form-control"
+                                           />
+
+                                           <div ng-show="form.$submitted || form.property.name.$touched" >
+
+                                               <div ng-show="form.property.key.$error.required">
+
+                                                   {{property.key}} is required.
+
+                                               </div>
+                                           </div>
+
+                                       </div>
+
+                                       <br>
+                                       <p>
+
+                                   </div>
+
+                                   <input class="btn btn-primary" ng-hide="getPropertiesErrorMsg" ng-click="openSaveAppGroupPropertiesDialog(elementTree.currentNode, appGroupProperties)" ng-disabled="form.$invalid" type="submit" value="Save" />
+
+                               </form>
+                           </div>
+
+                           <div ng-switch-when="app">
+
+                               <div ng-show="getPropertiesErrorMsg">
+                                   {{getPropertiesErrorMsg}}
+                               </div>
+
+                               <form class="form-horizontal" role="form" name="form" novalidate>
+
+                                   <div class="form-group" ng-repeat="property in appProperties.properties | orderBy:['key']">
+
+                                       <div class="col-sm-6">
+                                           <label class="control-label" for="{{property.key}}">{{property.key}}</label>
+                                       </div>
+
+
+                                       <div class="col-sm-6" >
+
+                                           <input aria-describedby="help{{property.key}}" id="{{property.key}}"
+                                                  name="{{property.key}}" type="text" ng-value="property.value" ng-model="property.value"
+                                                  class="form-control"
+                                                   />
+
+                                           <div ng-show="form.$submitted || form.property.key.$touched" >
+
+                                               <div ng-show="form.property.key.$error.required">
+
+                                                   {{property.key}} is required.
+
+                                               </div>
+                                           </div>
+
+                                       </div>
+
+                                       <br>
+                                       <p>
+
+                                   </div>
+
+                                   <input class="btn btn-primary" ng-hide="getPropertiesErrorMsg" ng-click="openSaveAppPropertiesDialog(appProperties, elementSelected)" ng-disabled="form.$invalid" type="submit" value="Save" />
+
+                               </form>
+                           </div>
+
+                           <div ng-switch-when="readZone">
+
+                               <div ng-show="getPropertiesErrorMsg">
+                                   {{getPropertiesErrorMsg}}
+                               </div>
+
+                               <form class="form-horizontal" role="form" name="form" novalidate>
+
+                                   <div class="form-group" ng-repeat="property in readzoneProperties.properties | orderBy:['key']">
+
+                                       <div class="col-sm-3">
+                                           <label class="control-label" for="{{property.key}}">{{property.key}}</label>
+                                       </div>
+
+
+                                       <div class="col-sm-7">
+
+                                           <!--hide default input fields for readerID and matchtPattern to display them in custom fields-->
+                                           <div ng-hide="property.key == 'readerID' || property.key =='matchPattern'">
+
+                                               <input aria-describedby="help{{property.key}}" id="{{property.key}}"
+                                                      name="{{property.key}}" type="text" ng-value="property.value" ng-model="property.value"
+                                                      class="form-control"
+                                                       />
+
+                                           </div>
+
+                                           <div ng-show="property.key == 'readerID'">
+
+                                               <div class="radio">
+                                                   <label>By single reader</label>
+                                               </div>
+
+                                               <select id="{{property.key}}"
+                                                       name="{{property.key}}"
+                                                       ng-model="property.value"
+                                                       ng-required="false"
+                                                       class="form-control"
+                                                       aria-describedby="help{{property.key}}"
+                                                       ng-options="value.id as value.id for value in sensors | orderBy:'id'">
+
+                                                   <option>--</option>
+                                               </select>
+
+                                               <div class="radio">
+                                                   <label>By regular expression</label>
+                                                   <input aria-describedby="help{{property.key}}"
+                                                          name="{{property.key}}" type="text" ng-value="property.value" ng-model="property.value"
+                                                          class="form-control"
+                                                           />
+
+                                               </div>
+
+                                               <span ng-show="sensors[0]" id="help{{property.key}}" class="help-block">A regex is for example: {{sensors[0].id}}.* and means all sensors whose readerid begins with {{sensors[0].id}}</span>
+                                               <span ng-show="!sensors[0]" id="help{{property.key}}" class="help-block">A regex is for example: Alien_1.* and means all sensors whose readerid begins with Alien_1</span>
+
+                                           </div>
+
+                                           <div ng-show="property.key == 'matchPattern'">
+
+                                               <select id="{{property.key}}"
+                                                       name="{{property.key}}"
+                                                       ng-model="property.value"
+                                                       ng-required="false"
+                                                       class="form-control"
+                                                       aria-describedby="help{{property.key}}"
+                                                       ng-options="value.id as value.id for value in booleanValues">
+
+                                                   <option>--</option>
+                                               </select>
+
+                                           </div>
+
+                                           <div ng-show="form.$submitted || form.property.key.$touched" >
+
+                                               <div ng-show="form.property.key.$error.required">
+
+                                                   {{property.key}} is required.
+
+                                               </div>
+                                           </div>
+
+                                           <span id="help{{property.key}}" class="help-block">{{property.helpText}}</span>
+
+                                       </div>
+
+                                       <br>
+                                       <p>
+
+                                   </div>
+
+                                   <input class="btn btn-primary" ng-hide="getPropertiesErrorMsg" ng-click="openSaveReadzonePropertiesDialog(elementTree.currentNode, readzoneProperties)" ng-disabled="form.$invalid" type="submit" value="Save" />
+
+                               </form>
+                           </div>
+
+                           <div ng-switch-when="servers">
+
+                               <div ng-show="getPropertiesErrorMsg">
+                                   {{getPropertiesErrorMsg}}
+                               </div>
+
+                               <form class="form-horizontal" role="form" name="form" novalidate>
+
+                                   <div class="form-group" >
+
+                                       <div class="col-sm-3">
+                                           <label class="control-label" for="enableAutoRefresh">Enable auto refresh</label>
+                                       </div>
+
+                                       <div class="col-sm-6">
+
+                                           <select id="enableAutoRefresh"
+                                                   name="enableAutoRefresh"
+                                                   ng-model="propEnableAutoRefresh"
+                                                   ng-required="true"
+                                                   class="form-control"
+                                                   aria-describedby="helpEnableAutoRefresh"
+                                                   ng-options="value.id as value.id for value in booleanValues">
+
+                                               <option>--</option>
+                                           </select>
+
+                                       </div>
+
+                                       <div ng-show="form.$submitted || form.enableAutoRefresh.$touched" >
+
+                                           <div ng-show="form.enableAutoRefresh.$error.required">
+
+                                               enableAutoRefresh is required.
+
+                                           </div>
+                                       </div>
+
+                                   </div>
+                                   <span id="helpEnableAutoRefresh" class="help-block">Set true to enable auto refresh of menu</span>
+
+                                   <br>
+                                   <p>
+
+                                   <div class="form-group" >
+
+                                       <div class="col-sm-3">
+                                           <label class="control-label" for="autoRefreshDelay">Auto refresh delay</label>
+                                       </div>
+
+                                       <div class="col-sm-6">
+
+                                           <input aria-describedby="helpAutoRefreshDelay" id="autoRefreshDelay" name="autoRefreshDelay" type="number"
+                                                  class="form-control" ng-model="propAutoRefreshDelay" required min="500"
+                                                   />
+
+                                       </div>
+
+                                       <div ng-show="form.$submitted || form.autoRefreshDelay.$touched" >
+
+                                           <div ng-show="form.autoRefreshDelay.$error.required">
+
+                                               autoRefreshDelay is required.
+
+                                           </div>
+                                       </div>
+
+                                   </div>
+                                   <span id="helpAutoRefreshDelay" class="help-block">Set the time in milliseconds for menu autorefresh to periodically execute (minimum accepted value is 500 ms)</span>
+
+                                   <input class="btn btn-primary" ng-click="openSaveServersPropertiesDialog(propEnableAutoRefresh, propAutoRefreshDelay)" ng-disabled="form.$invalid" type="submit" value="Save" />
+
+                               </form>
+                           </div>
+
+                           <div ng-switch-when="">
+                               Nothing
+                           </div>
+
+                       </div>
+                   </div>
+
+               </div>
+
+           </div>
+
+       </div>
+
+       </div>
+
+
+
+      <div class="footer">
+        <p>Copyright Transcends 2015</p>
+      </div>
+
+    </div>
+
+
+    <!-- Google Analytics: change UA-XXXXX-X to be your site's ID -->
+     <script>
+       (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+       (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+       m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+       })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+       ga('create', 'UA-XXXXX-X');
+       ga('send', 'pageview');
+    </script>
+
+    <!-- build:js(.) scripts/oldieshim.js -->
+    <!--[if lt IE 9]>
+    <script src="../bower_components/es5-shim/es5-shim.js"></script>
+    <script src="../bower_components/json3/lib/json3.js"></script>
+    <![endif]-->
+    <!-- endbuild -->
+
+    <!-- build:js(.) scripts/vendor.js -->
+    <!-- bower:js -->
+    <script src="bower_components/jquery/dist/jquery.js"></script>
+    <script src="bower_components/es5-shim/es5-shim.js"></script>
+    <script src="bower_components/angular/angular.js"></script>
+    <script src="bower_components/json3/lib/json3.js"></script>
+    <script src="bower_components/bootstrap/dist/js/bootstrap.js"></script>
+    <script src="bower_components/angular-cookies/angular-cookies.js"></script>
+    <script src="bower_components/angular-resource/angular-resource.js"></script>
+    <script src="bower_components/angular-route/angular-route.js"></script>
+    <script src="bower_components/angular-sanitize/angular-sanitize.js"></script>
+    <script src="bower_components/angular-touch/angular-touch.js"></script>
+    <script src="bower_components/angular-treeview/angular-treeview.js"></script>
+    <script src="bower_components/angular-bootstrap/ui-bootstrap-tpls.js"></script>
+    <script src="bower_components/lodash/dist/lodash-compat.js"></script>
+    <script src="bower_components/angular-wizard/dist/angular-wizard.js"></script>
+    <script src="bower_components/ngDialog/js/ngDialog.js"></script>
+    <script src="bower_components/angular-mocks/angular-mocks.js"></script>
+    <script src="bower_components/ng-contextmenu/dist/ng-contextmenu.js"></script>
+    <!-- endbower -->
+    <!-- endbuild -->
+
+        <!-- build:js({.tmp,app}) scripts/scripts.js -->
+
+        <script src="scripts/app.js"></script>
+        <script src="scripts/controllers/components/menu/contextMenu.js" ></script>
+        <script src="scripts/controllers/main.js"></script>
+        <script src="scripts/controllers/about.js"></script>
+        <script src="scripts/controllers/sensorWizard.js"></script>
+        <script src="scripts/controllers/serverWizard.js"></script>
+        <script src="scripts/controllers/JobSubmissionWizard.js"></script>
+        <script src="scripts/controllers/CreateCommandWizard.js"></script>
+        <script src="scripts/controllers/CreateReadzoneWizard.js"></script>
+        <script src="scripts/controllers/menu.js"></script>
+
+        <!-- Services -->
+        <script src="scripts/services/serverService.js"></script>
+        <script src="scripts/services/appService.js"></script>
+        <script src="scripts/services/commonService.js"></script>
+        <script src="scripts/services/sensorService.js"></script>
+        <script src="scripts/services/menuService.js"></script>
+
+
+
+    <!--        <script src="scripts/controllers/common.js"></script>-->
+
+
+        <!-- endbuild -->
+</body>
+</html>
