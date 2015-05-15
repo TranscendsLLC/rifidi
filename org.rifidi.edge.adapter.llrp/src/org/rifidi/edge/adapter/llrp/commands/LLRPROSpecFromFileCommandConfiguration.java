@@ -124,7 +124,7 @@ public class LLRPROSpecFromFileCommandConfiguration extends
 	 */
 	@Property(displayName = "Filename", description = "The location of the file where the "
 			+ "ADD_ROSpec command is.  The file should have an XML representation of an ADD_ROSpec "
-			+ "command in it.  ", writable = true, type = PropertyType.PT_STRING, defaultValue = "addrospec.xml"
+			+ "command in it.  ", writable = true, type = PropertyType.PT_STRING, defaultValue = "config/default.llrp"
 			+ "", category = category)
 	public String getFilename() {
 		return filename;
