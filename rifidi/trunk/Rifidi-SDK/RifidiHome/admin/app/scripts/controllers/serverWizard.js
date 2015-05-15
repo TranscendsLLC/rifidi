@@ -8,7 +8,7 @@
  * Controller of the rifidiApp
  */
 angular.module('rifidiApp')
-  .controller('ServerWizardCtrl', function ($rootScope, $scope, $http, $routeParams, $location, ngDialog, TreeViewPainting,
+  .controller('ServerWizardCtrl', function ($rootScope, $scope, $http, $routeParams, $location, ngDialog,
                                             commonVariableService, ServerService, MenuService) {
 
       var getSuccessMessage = function () {

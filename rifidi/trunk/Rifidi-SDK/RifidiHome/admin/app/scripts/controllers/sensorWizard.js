@@ -8,7 +8,7 @@
  * Controller of the rifidiApp
  */
 angular.module('rifidiApp')
-  .controller('SensorWizardCtrl', function ($routeParams, $rootScope, $scope, $http, $location, ngDialog, TreeViewPainting,
+  .controller('SensorWizardCtrl', function ($routeParams, $rootScope, $scope, $http, $location, ngDialog,
                                             commonVariableService, MenuService) {
 
         //retrieve the reader types

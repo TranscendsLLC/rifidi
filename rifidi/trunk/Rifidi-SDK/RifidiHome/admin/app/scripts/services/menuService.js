@@ -1853,7 +1853,7 @@ app.service('MenuService', function($rootScope, $http, $interval, ServerService,
                 newCommand.elementName = newCommand.id;
                 newCommand.elementId = newCommand.id;
                 newCommand.collapsed = true;
-                newCommand.iconClass = 'script-gear';
+                newCommand.iconClass = 'cog';
                 newCommand.session = sessionElement;
                 newCommand.elementType = 'commandInstance_sensor';
                 newCommand.contextMenuId = 'contextMenuCommand_sensor';
