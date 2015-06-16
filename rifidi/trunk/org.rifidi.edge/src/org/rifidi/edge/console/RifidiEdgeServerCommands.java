@@ -482,7 +482,9 @@ public class RifidiEdgeServerCommands implements CommandProvider {
 			@Override
 			public void run() {
 				try {
-					session.connect();
+					synchronized (session) {
+						session.connect();
+					}
 					reader.applyPropertyChanges();
 				} catch (IOException e) {
 					session.disconnect();

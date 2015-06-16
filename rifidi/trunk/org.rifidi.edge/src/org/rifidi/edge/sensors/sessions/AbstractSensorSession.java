@@ -542,7 +542,7 @@ public abstract class AbstractSensorSession extends SensorSession {
 		 */
 		@Override
 		public String toString() {
-			return "CommandExecutor: " + getCommandID() + sensorSession;
+			return "CommandExecutor: " + getCommandID() + " " + sensorSession;
 		}
 
 	}
