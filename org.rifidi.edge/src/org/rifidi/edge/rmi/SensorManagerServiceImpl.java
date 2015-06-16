@@ -362,7 +362,9 @@ public class SensorManagerServiceImpl implements SensorManagerService {
 					SensorSession session = reader.getSensorSessions().get(
 							finalSessionIndex);
 					if (session != null) {
-						session.connect();
+						synchronized (session) {
+							session.connect();
+						}
 						logger.info("Session " + finalReaderID + " on Reader "
 								+ finalReaderID + " has started");
 						reader.applyPropertyChanges();
