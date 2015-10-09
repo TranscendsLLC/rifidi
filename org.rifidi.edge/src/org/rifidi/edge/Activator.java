@@ -2,7 +2,7 @@ package org.rifidi.edge;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.dna.mqtt.moquette.server.Server;
+import org.eclipse.moquette.server.Server;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 
@@ -35,8 +35,6 @@ public class Activator implements BundleActivator {
 					.getProperty("org.rifidi.mqtt.enabled"));
 
 			if (enabled) {
-
-				String rifidihome = System.getProperty("org.rifidi.home");
 
 				// set moquette path
 				System.setProperty("moquette.path",

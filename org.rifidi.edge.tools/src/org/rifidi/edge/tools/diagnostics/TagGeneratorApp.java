@@ -113,8 +113,8 @@ public class TagGeneratorApp extends AbstractRifidiApp implements TagGenerator{
 	 */
 	@Override
 	public boolean lazyStart() {
-		String lazyStart = getProperty(LAZY_START, "true");
-		return Boolean.parseBoolean(lazyStart);
+//		String lazyStart = getProperty(LAZY_START, "true");
+		return true;
 	}
 	
 	/* (non-Javadoc)
