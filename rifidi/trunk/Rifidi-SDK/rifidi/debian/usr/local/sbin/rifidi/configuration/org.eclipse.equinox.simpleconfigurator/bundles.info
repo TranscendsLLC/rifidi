@@ -1,7 +1,7 @@
 #version=1
-org.restlet,2.3.1.v20150203-1110,plugins/org.restlet_2.3.1.jar,4,true
-org.restlet.ext.servlet,2.3.1.v20150203-1110,plugins/org.restlet.ext.servlet_2.3.1.jar,4,true
-org.restlet.ext.simple,2.3.1.v20150203-1110,plugins/org.restlet.ext.simple_2.3.1.jar,4,true 
+org.restlet,2.3.5.v20151003-1559,plugins/org.restlet_2.3.1.jar,4,true
+org.restlet.ext.servlet,2.3.5.v20151003-1559,plugins/org.restlet.ext.servlet_2.3.5.jar,4,true
+org.restlet.ext.simple,2.3.5.v20151003-1559,plugins/org.restlet.ext.simple_2.3.5.jar,4,true 
 org.jsslutils,1.0.0,plugins/org.jsslutils_1.0.0.jar,4,true
 org.moquette,0.6.0,plugins/org.moquette_0.6.0.jar,4,true
 org.eclipse.paho,0.4.0,plugins/org.eclipse.paho_0.4.0.jar,4,true
@@ -17,8 +17,8 @@ com.amazonaws,1.9.0,plugins/com.amazonaws_1.9.0.jar,4,true
 com.fasterxml.jackson.annotation,2.4.3,plugins/com.fasterxml.jackson.annotation_2.4.3.jar,4,true
 com.fasterxml.jackson.core,2.4.3,plugins/com.fasterxml.jackson.core_2.4.3.jar,4,true
 com.fasterxml.jackson.databind,2.4.3,plugins/com.fasterxml.jackson.databind_2.4.3.jar,4,true
-org.apache.httpcomponents.httpclient,4.2.1,plugins/org.apache.httpcomponents.httpclient_4.2.1.jar,4,true
-org.apache.httpcomponents.httpcore,4.2.1,plugins/org.apache.httpcomponents.httpcore_4.2.1.jar,4,true
+org.apache.httpcomponents.httpclient,4.5.1,plugins/org.apache.httpcomponents.httpclient_4.5.1.jar,4,true
+org.apache.httpcomponents.httpcore,4.4.3,plugins/org.apache.httpcomponents.httpcore_4.4.3.jar,4,true
 jackson-core-lgpl,1.9.9,plugins/jackson-core-lgpl-1.9.9.jar,4,true
 com.espertech.esper,5.0.0,plugins/com.espertech.esper_5.0.0.jar,4,true
 com.mysql.jdbc,5.1.10,plugins/com.mysql.jdbc_5.1.10.jar,4,true
