@@ -3,12 +3,51 @@
     <services>
         <attributes>
             <entry>
-                <key>TagType</key>
-                <value>2</value>
+                <key>ROSpecID</key>
+                <value>1</value>
             </entry>
         </attributes>
-        <factoryID>Alien-Poll</factoryID>
-        <serviceID>Alien_Poll_1</serviceID>
+        <factoryID>LLRP-Configure</factoryID>
+        <serviceID>LLRP_Configure_1</serviceID>
+    </services>
+    <services>
+        <attributes>
+            <entry>
+                <key>ReconnectionInterval</key>
+                <value>500</value>
+            </entry>
+            <entry>
+                <key>Port</key>
+                <value>5084</value>
+            </entry>
+            <entry>
+                <key>IpAddress</key>
+                <value>127.0.0.1</value>
+            </entry>
+            <entry>
+                <key>MaxNumConnectionAttempts</key>
+                <value>10</value>
+            </entry>
+            <entry>
+                <key>DisplayName</key>
+                <value>LLRP</value>
+            </entry>
+            <entry>
+                <key>ReaderConfigPath</key>
+                <value>config/SET_READER_CONFIG.llrp</value>
+            </entry>
+        </attributes>
+        <factoryID>LLRP</factoryID>
+        <serviceID>LLRP_1</serviceID>
+        <sessionDTOs>
+            <commands>
+                <commandID>LLRP_Configure_1</commandID>
+                <interval>0</interval>
+                <processID>0</processID>
+            </commands>
+            <ID>1</ID>
+            <status>PROCESSING</status>
+        </sessionDTOs>
     </services>
     <services>
         <attributes>
@@ -21,15 +60,15 @@
                 <value>password</value>
             </entry>
             <entry>
-                <key>ReaderNumber</key>
-                <value>0</value>
-            </entry>
-            <entry>
                 <key>IpAddress</key>
                 <value>127.0.0.1</value>
             </entry>
             <entry>
                 <key>ExternalOutput</key>
+                <value>0</value>
+            </entry>
+            <entry>
+                <key>ReaderNumber</key>
                 <value>0</value>
             </entry>
             <entry>
@@ -83,7 +122,17 @@
                 <timeUnit>MILLISECONDS</timeUnit>
             </commands>
             <ID>1</ID>
-            <status>PROCESSING</status>
+            <status>CONNECTING</status>
         </sessionDTOs>
+    </services>
+    <services>
+        <attributes>
+            <entry>
+                <key>TagType</key>
+                <value>2</value>
+            </entry>
+        </attributes>
+        <factoryID>Alien-Poll</factoryID>
+        <serviceID>Alien_Poll_1</serviceID>
     </services>
 </configurationStore>
