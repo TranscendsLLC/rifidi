@@ -14,12 +14,17 @@
 		class="org.rifidi.edge.api.service.appmanager.AppManagerCommandProvider">
 		<property name="appManager" ref="appManager" />
 	</bean>
+	
+	<bean id="RawTagAppService"
+		class="org.rifidi.edge.api.service.tagmonitor.RawTagMonitoringServiceImpl">
+		<constructor-arg index="0" value="AppService" />
+		<constructor-arg index="1" value="ReadZones" />
+	</bean>
 
 	<bean id="ReadZoneAppService"
 		class="org.rifidi.edge.api.service.tagmonitor.ReadZoneMonitoringServiceImpl">
 		<constructor-arg index="0" value="AppService" />
 		<constructor-arg index="1" value="ReadZones" />
-
 	</bean>
 	
 	<bean id="RSSIMonitoringService" class="org.rifidi.edge.api.service.tagmonitor.RSSIMonitoringServiceImpl">
@@ -67,6 +72,7 @@
 	<osgi:service ref="AppManagerCommands"
 		interface="org.eclipse.osgi.framework.console.CommandProvider" />
 	<osgi:service ref="ReadZoneAppService" auto-export="interfaces" />
+	<osgi:service ref="RawTagAppService" auto-export="interfaces" />
 	<osgi:service ref="SensorStatusAppService" auto-export="interfaces" />
 	<osgi:service ref="UniqueTagIntervalAppService"
 		auto-export="interfaces" />
