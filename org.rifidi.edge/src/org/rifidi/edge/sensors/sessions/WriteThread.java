@@ -14,7 +14,6 @@ package org.rifidi.edge.sensors.sessions;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.net.SocketOptions;
 import java.util.concurrent.BlockingQueue;
 
 import org.apache.commons.logging.Log;

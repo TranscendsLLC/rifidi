@@ -15,7 +15,6 @@
  */
 package org.rifidi.edge.api.service.tagmonitor;
 
-import java.util.HashMap;
 import java.util.List;
 
 import org.rifidi.edge.api.service.RifidiAppSubscriber;
