@@ -316,7 +316,7 @@ public abstract class AbstractRifidiApp implements RifidiApp,
 		} catch (InterruptedException e) {
 			logger.error(e.getMessage());
 		}
-		EPStatement statement = getEPAdministrator().createEPL(esperStatement);		
+		EPStatement statement = getEPAdministrator().createEPL(esperStatement);
 		statements.add(statement);
 		return statement.getName();
 

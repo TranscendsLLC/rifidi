@@ -1,0 +1,2 @@
+//com.springsource.sts.config.flow.coordinates\:http\://www.springframework.org/schema/integration\:/org.rifidi.edge/META-INF/spring/services-notification.xml=<?xml version\="1.0" encoding\="UTF-8"?>\n<graph>\n<element clazz\="PublishSubscribeChannelModelElement" type\="publish-subscribe-channel">\n<structure end\="1202" endstart\="1202" start\="1128" startend\="1202"/>\n<bounds height\="124" width\="124" x\="19" y\="17"/>\n</element>\n</graph>
+eclipse.preferences.version=1
