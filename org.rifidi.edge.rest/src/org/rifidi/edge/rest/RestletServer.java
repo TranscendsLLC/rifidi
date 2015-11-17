@@ -12,6 +12,7 @@ import org.restlet.Component;
 import org.restlet.Server;
 import org.restlet.data.Parameter;
 import org.restlet.data.Protocol;
+import org.restlet.ext.jetty.HttpServerHelper;
 import org.restlet.util.Series;
 
 /**
@@ -29,19 +30,23 @@ public class RestletServer {
 	 */
 	public RestletServer(Application app) {
 		try {
-
+			
 			logger.info("RestletServer called");
 			boolean restletEnabled = Boolean.parseBoolean(System
 					.getProperty("org.rifidi.restlet.enabled"));
 			if (restletEnabled) {
+				
 				int port = Integer.parseInt(System
 						.getProperty("org.rifidi.restlet.port"));
 				logger.info("Starting restlet server on port: " + port);
 				Component component = new Component();
-				component.getServers().add(Protocol.HTTP, port);
+				Server jettyServer = new Server(component.getContext(), Protocol.HTTP, port);
+				Series<Parameter> parameters = jettyServer.getContext().getParameters();
+				
+				//jetty parameters
+				addArguments(parameters);
+				component.getServers().add(jettyServer); 
 				component.getClients().add(Protocol.FILE);
-				component.getClients().add(Protocol.HTTP);
-				//component.getClients().add(Protocol.CLAP);
 
 				component.getDefaultHost().attach(app);
 				component.start();
@@ -56,40 +61,38 @@ public class RestletServer {
 
 				// Get required jvm properties
 
-				int sslPort = Integer.parseInt(System
-						.getProperty("org.rifidi.restlet.ssl.port"));
+				int sslPort = Integer.parseInt(System.getProperty("org.rifidi.restlet.ssl.port"));
 				String keystorepath = System.getProperty("org.rifidi.home")
 						+ File.separator
 						+ System.getProperty("org.rifidi.restlet.ssl.keystorepath");
-				String keystorepassword = System
-						.getProperty("org.rifidi.restlet.ssl.keystorepassword");
-				String keypassword = System
-						.getProperty("org.rifidi.restlet.ssl.keypassword");
-				String keystoretype = System
-						.getProperty("org.rifidi.restlet.ssl.keystoretype");
+				String keystorepassword = System.getProperty("org.rifidi.restlet.ssl.keystorepassword");
+				String keypassword = System.getProperty("org.rifidi.restlet.ssl.keypassword");
+				String keystoretype = System.getProperty("org.rifidi.restlet.ssl.keystoretype");
 
 				logger.info("Starting ssl restlet server on port: " + sslPort);
 
 				Component sslComponent = new Component();
+				Server sjettyServer = new Server(sslComponent.getContext(), Protocol.HTTPS, sslPort);
 
-				Server server = sslComponent.getServers().add(Protocol.HTTPS,
-						sslPort);
+				//Server server = sslComponent.getServers().add(Protocol.HTTPS, sslPort);
 
-				server.getProtocols().add(Protocol.FILE);
+				sjettyServer.getProtocols().add(Protocol.FILE);
 
 				// sslComponent.getClients().add(Protocol.FILE);
 
-				Series<Parameter> parameters = server.getContext()
-						.getParameters();
+				Series<Parameter> parameters = sjettyServer.getContext().getParameters();
 
 				// parameters.add("sslContextFactory",
 				// "org.restlet.ext.ssl.PkixSslContextFactory");
-				parameters.add("sslContextFactory",
-						"org.restlet.ext.jsslutils.PkixSslContextFactory");
+				parameters.add("sslContextFactory", "org.restlet.ext.jsslutils.PkixSslContextFactory");
 				parameters.add("keystorePath", keystorepath);
 				parameters.add("keystorePassword", keystorepassword);
 				parameters.add("keyPassword", keypassword);
 				parameters.add("keystoreType", keystoretype);
+				//jetty parameters
+				addArguments(parameters);
+				
+				sslComponent.getServers().add(sjettyServer);
 
 				sslComponent.getDefaultHost().attach(app);
 				sslComponent.start();
@@ -99,6 +102,27 @@ public class RestletServer {
 		} catch (Exception e) {
 			// TODO Handle this
 			e.printStackTrace();
+		}
+	}
+	
+	public static void addArguments(Series<Parameter> parameters) {
+		String[] args = new String[] { "threadPool.minThreads",
+				"threadPool.maxThreads", "threadPool.threadsPriority",
+				"threadPool.idleTimeout", "threadPool.stopTimeout",
+				"connector.acceptors", "connector.selectors",
+				"connector.acceptQueueSize", "connector.idleTimeout",
+				"connector.soLingerTime", "connector.stopTimeout",
+				"http.headerCacheSize", "http.requestHeaderSize",
+				"http.responseHeaderSize", "http.outputBufferSize",
+				"lowResource.period", "lowResource.threads",
+				"lowResource.maxMemory", "lowResource.maxConnections",
+				"lowResource.idleTimeout", "lowResource.stopTimeout",
+				"spdy.version", "spdy.pushStrategy" };
+		for (String arg : args) {
+			String prop = System.getProperty("org.rifidi.restlet." + arg);
+			if (prop != null) {
+				parameters.add(arg, prop);
+			}
 		}
 	}
 }

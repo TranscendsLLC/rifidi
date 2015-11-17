@@ -685,7 +685,7 @@ public class SensorManagerServiceRestletImpl extends Application {
 		Restlet readers = new Restlet() {
 			@Override
 			public void handle(Request request, Response response) {
-				
+				logger.info("readers requested");
 				setResponseHeaders(request, response);
 				
 				Set<ReaderDTO> dtos = sensorManagerService.getReaders();
@@ -706,7 +706,7 @@ public class SensorManagerServiceRestletImpl extends Application {
 		Restlet commands = new Restlet() {
 			@Override
 			public void handle(Request request, Response response) {
-				
+				logger.info("commands requested");
 				setResponseHeaders(request, response);
 				
 				Set<CommandConfigurationDTO> dtos = commandManagerService
@@ -728,7 +728,7 @@ public class SensorManagerServiceRestletImpl extends Application {
 		Restlet readerStatus = new Restlet() {
 			@Override
 			public void handle(Request request, Response response) {
-
+				logger.info("readerStatus requested");
 				setResponseHeaders(request, response);
 
 				Set<ReaderDTO> dtos = sensorManagerService.getReaders();
@@ -791,7 +791,7 @@ public class SensorManagerServiceRestletImpl extends Application {
 			@Override
 			public void handle(Request request, Response response) {
 				try {
-					
+					logger.info("startSession requested");
 					setResponseHeaders(request, response);
 					
 					String strReaderId = (String) request.getAttributes().get(
@@ -837,7 +837,7 @@ public class SensorManagerServiceRestletImpl extends Application {
 			@Override
 			public void handle(Request request, Response response) {
 				try {
-					
+					logger.info("stopSession requested");
 					setResponseHeaders(request, response);
 
 					String strReaderId = (String) request.getAttributes().get(
@@ -881,6 +881,7 @@ public class SensorManagerServiceRestletImpl extends Application {
 			@Override
 			public void handle(Request request, Response response) {
 				try {
+					logger.info("createSession requested");
 					String readerID = (String) request.getAttributes().get("readerID");
 					List<SessionDTO> sessions = sensorManagerService.getReader(readerID).getSessions();
 					//only one session allowed.  
@@ -904,7 +905,8 @@ public class SensorManagerServiceRestletImpl extends Application {
 		Restlet deleteSession = new Restlet() {
 			@Override
 			public void handle(Request request, Response response) {
-				try {					
+				try {	
+					logger.info("deleteSession requested");
 					setResponseHeaders(request, response);					
 					sensorManagerService.deleteSession((String) request
 							.getAttributes().get("readerID"), (String) request
@@ -924,6 +926,7 @@ public class SensorManagerServiceRestletImpl extends Application {
 			@Override
 			public void handle(Request request, Response response) {
 				try {
+					logger.info("deleteReader requested");
 					setResponseHeaders(request, response);
 					sensorManagerService.deleteReader((String) request.getAttributes().get("readerID"));
 					response.setEntity(self.generateReturnString(self
@@ -940,6 +943,7 @@ public class SensorManagerServiceRestletImpl extends Application {
 			@Override
 			public void handle(Request request, Response response) {
 				try {
+					logger.info("deleteCommand requested");
 					setResponseHeaders(request, response);
 					commandManagerService.deleteCommand((String) request.getAttributes().get("commandID"));
 					response.setEntity(self.generateReturnString(self
@@ -956,7 +960,7 @@ public class SensorManagerServiceRestletImpl extends Application {
 			@Override
 			public void handle(Request request, Response response) {
 				try {
-					
+					logger.info("executeCommand requested");
 					setResponseHeaders(request, response);
 					
 					sensorManagerService.submitCommand((String) request
@@ -988,6 +992,7 @@ public class SensorManagerServiceRestletImpl extends Application {
 		Restlet setProperties = new Restlet() {
 			@Override
 			public void handle(Request request, Response response) {
+				logger.info("setProperties requested");
 				try {
 
 					setResponseHeaders(request, response);
@@ -1056,6 +1061,7 @@ public class SensorManagerServiceRestletImpl extends Application {
 		Restlet getProperties = new Restlet() {
 			@Override
 			public void handle(Request request, Response response) {
+				logger.info("getProperties requested");
 				try {
 					
 					setResponseHeaders(request, response);
@@ -1105,6 +1111,7 @@ public class SensorManagerServiceRestletImpl extends Application {
 		Restlet createReader = new Restlet() {
 			@Override
 			public void handle(Request request, Response response) {
+				logger.info("createReader requested");
 
 				String readerId = null;
 
@@ -1196,7 +1203,7 @@ public class SensorManagerServiceRestletImpl extends Application {
 		Restlet createCommand = new Restlet() {
 			@Override
 			public void handle(Request request, Response response) {
-
+				logger.info("createCommand requested");
 				String strCommandId = null;
 
 				try {
@@ -1256,6 +1263,7 @@ public class SensorManagerServiceRestletImpl extends Application {
 		Restlet startApp = new Restlet() {
 			@Override
 			public void handle(Request request, Response response) {
+				logger.info("startApp requested");
 				try {
 					
 					setResponseHeaders(request, response);
@@ -1276,6 +1284,7 @@ public class SensorManagerServiceRestletImpl extends Application {
 		Restlet stopApp = new Restlet() {
 			@Override
 			public void handle(Request request, Response response) {
+				logger.info("stopApp requested");
 				try {
 					
 					setResponseHeaders(request, response);
@@ -1296,6 +1305,7 @@ public class SensorManagerServiceRestletImpl extends Application {
 		Restlet readerTypes = new Restlet() {
 			@Override
 			public void handle(Request request, Response response) {
+				logger.info("readerTypes requested");
 				try {
 					
 					setResponseHeaders(request, response);
@@ -1325,6 +1335,7 @@ public class SensorManagerServiceRestletImpl extends Application {
 		Restlet readerMetadata = new Restlet() {
 			@Override
 			public void handle(Request request, Response response) {
+				logger.info("readerMetadata requested");
 				try {
 					
 					setResponseHeaders(request, response);
@@ -1443,6 +1454,7 @@ public class SensorManagerServiceRestletImpl extends Application {
 		Restlet commandTypes = new Restlet() {
 			@Override
 			public void handle(Request request, Response response) {
+				logger.info("commandTypes requested");
 				try {
 					
 					setResponseHeaders(request, response);
@@ -1473,7 +1485,7 @@ public class SensorManagerServiceRestletImpl extends Application {
 		Restlet apps = new Restlet() {
 			@Override
 			public void handle(Request request, Response response) {
-				
+				logger.info("apps requested");
 				try {
 					
 					setResponseHeaders(request, response);
@@ -1492,6 +1504,7 @@ public class SensorManagerServiceRestletImpl extends Application {
 					armd.setApps(appNames);
 					response.setEntity(self.generateReturnString(armd),
 							MediaType.TEXT_XML);
+					Thread.sleep(200000);
 				} catch (Exception e) {
 
 					response.setEntity(self.generateReturnString(self
@@ -1503,6 +1516,7 @@ public class SensorManagerServiceRestletImpl extends Application {
 		Restlet loadApp = new Restlet() {
 			@Override
 			public void handle(Request request, Response response) {
+				logger.info("loadApp requested");
 				try {
 					provisioningService.provision((String)request.getAttributes().get("path"));
 					response.setEntity(self.generateReturnString(self
@@ -1518,6 +1532,7 @@ public class SensorManagerServiceRestletImpl extends Application {
 		Restlet save = new Restlet() {
 			@Override
 			public void handle(Request request, Response response) {
+				logger.info("save requested");
 				try {
 					
 					setResponseHeaders(request, response);
