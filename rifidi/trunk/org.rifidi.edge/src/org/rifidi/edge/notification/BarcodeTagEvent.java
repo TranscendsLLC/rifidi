@@ -14,8 +14,6 @@ package org.rifidi.edge.notification;
 
 import java.math.BigInteger;
 
-import org.rifidi.edge.notification.DatacontainerEvent.MemoryBankLengthTuple;
-
 
 /**
  * This class represents a barcode tag for the reader.

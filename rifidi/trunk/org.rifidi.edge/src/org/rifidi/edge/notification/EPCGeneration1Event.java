@@ -14,8 +14,6 @@ package org.rifidi.edge.notification;
 
 import java.math.BigInteger;
 
-import org.apache.commons.codec.binary.Hex;
-
 /**
  * A class that represents a EPC Class 1 Gen 1 Tag
  * 

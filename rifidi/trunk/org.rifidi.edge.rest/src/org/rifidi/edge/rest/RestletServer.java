@@ -12,7 +12,6 @@ import org.restlet.Component;
 import org.restlet.Server;
 import org.restlet.data.Parameter;
 import org.restlet.data.Protocol;
-import org.restlet.ext.jetty.HttpServerHelper;
 import org.restlet.util.Series;
 
 /**
