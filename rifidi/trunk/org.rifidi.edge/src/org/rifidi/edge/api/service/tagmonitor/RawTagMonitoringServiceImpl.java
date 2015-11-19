@@ -17,7 +17,6 @@ import java.util.List;
 
 import org.rifidi.edge.api.service.RifidiAppEsperFactory;
 import org.rifidi.edge.api.service.RifidiAppService;
-import org.rifidi.edge.notification.ReadCycle;
 import org.rifidi.edge.notification.TagReadEvent;
 
 import com.espertech.esper.client.EPServiceProvider;
@@ -86,21 +85,13 @@ public class RawTagMonitoringServiceImpl extends RifidiAppService<RawTagSubscrib
 				// all additions
 				if (arg0 != null) {
 					for (EventBean b : arg0) {
-						ReadCycle rc = (ReadCycle) b.getUnderlying();
-						for(TagReadEvent tre:rc.getTags()) {
-							subscriber.tagArrived(tre);
-						}
+						TagReadEvent tre = (TagReadEvent) b.getUnderlying();
+						subscriber.tagArrived(tre);
 					}
 				}
 
 			}
 		};
-	}
-
-	@Override
-	public void unsubscribe(RawTagSubscriber subscriber) {
-		// TODO Auto-generated method stub
-		
 	}
 
 }

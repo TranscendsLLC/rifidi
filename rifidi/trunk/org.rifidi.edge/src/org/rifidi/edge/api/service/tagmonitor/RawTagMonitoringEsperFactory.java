@@ -62,9 +62,6 @@ public class RawTagMonitoringEsperFactory implements RifidiAppEsperFactory {
 	 */
 	@Override
 	public List<String> createStatements() {
-//		statements.add(createWindowStatement());
-//		String insertStatement = EsperUtil.buildInsertStatement(windowName, readzones, false);
-//		statements.add(insertStatement);
 		statements.add(createInsertStatement());
 		return statements;
 	}
@@ -81,6 +78,6 @@ public class RawTagMonitoringEsperFactory implements RifidiAppEsperFactory {
 	}
 	
 	private String createInsertStatement() {
-		return "insert into " + windowName + " select * from ReadCycle " + EsperUtil.whereClause(readzones, false);
+		return EsperUtil.buildInsertStatement(windowName, readzones, false);
 	}
 }
