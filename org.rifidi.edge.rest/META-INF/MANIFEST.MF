@@ -8,6 +8,7 @@ Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Import-Package: com.espertech.esper.client,
  javax.xml.bind,
  javax.xml.bind.annotation,
+ net.sf.cglib.reflect;version="2.1.3",
  org.apache.commons.logging,
  org.apache.http;version="4.2.1",
  org.apache.http.client;version="4.2.1",

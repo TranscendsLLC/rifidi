@@ -20,6 +20,7 @@ import java.io.Writer;
 import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -64,12 +65,15 @@ import org.rifidi.edge.api.SensorManagerService;
 import org.rifidi.edge.api.SessionDTO;
 import org.rifidi.edge.api.SessionStatus;
 import org.rifidi.edge.api.service.appmanager.AppManager;
+import org.rifidi.edge.api.service.tagmonitor.RawTagMonitoringService;
+import org.rifidi.edge.api.service.tagmonitor.RawTagSubscriber;
 import org.rifidi.edge.api.service.tagmonitor.ReadZone;
 import org.rifidi.edge.configuration.AbstractCommandConfigurationFactory;
 import org.rifidi.edge.configuration.Configuration;
 import org.rifidi.edge.configuration.ConfigurationService;
 import org.rifidi.edge.daos.CommandDAO;
 import org.rifidi.edge.daos.ReaderDAO;
+import org.rifidi.edge.notification.TagReadEvent;
 import org.rifidi.edge.rest.exception.NotValidPropertyForObjectException;
 import org.rifidi.edge.sensors.AbstractSensor;
 import org.rifidi.edge.sensors.AbstractSensorFactory;
@@ -86,7 +90,7 @@ import org.rifidi.edge.util.RifidiEdgeHelper;
  * @author Matthew Dean - matt@transcends.co
  */
 public class SensorManagerServiceRestletImpl extends Application {
-	
+
 	public static String HEADERS_KEY = "org.restlet.http.headers";
 
 	public static final String SUCCESS_MESSAGE = "Success";
@@ -96,23 +100,23 @@ public class SensorManagerServiceRestletImpl extends Application {
 	public static final String WARNING_STATE = "Warning";
 
 	public static final String[] LlrpReaderTypeArrray = new String[] { "LLRP" };
-	
+
 	public static final String ReaderIDPropertyName = "readerID";
-	
-	public static final String[] ReadZoneRequiredProperties = new String[] {ReaderIDPropertyName};
-	
-	public static final String[] ReadZoneValidProperties = new String[] {ReaderIDPropertyName, 
-		"antennas", "tagPattern", "matchPattern"};
-	
-	public enum LLRPGetOperations { GET_ROSPECS, GET_READER_CONFIG }
-	
-	
+
+	public static final String[] ReadZoneRequiredProperties = new String[] { ReaderIDPropertyName };
+
+	public static final String[] ReadZoneValidProperties = new String[] { ReaderIDPropertyName, "antennas", "tagPattern", "matchPattern" };
+
+	public enum LLRPGetOperations {
+		GET_ROSPECS, GET_READER_CONFIG
+	}
+
 	/** The sensor manager service for sensor commands */
 	public SensorManagerService sensorManagerService;
 
 	/** The command manager service for command commands */
 	public CommandManagerService commandManagerService;
-	
+
 	/** The Provisioning Service */
 	private volatile ProvisioningService provisioningService;
 
@@ -127,8 +131,10 @@ public class SensorManagerServiceRestletImpl extends Application {
 
 	/** */
 	public ReaderDAO readerDAO;
-	
+
 	public CommandDAO commandDAO;
+
+	private RawTagMonitoringService rawTagMonitoringService;
 
 	/** Logger for this class */
 	private final Log logger = LogFactory.getLog(getClass());
@@ -137,25 +143,21 @@ public class SensorManagerServiceRestletImpl extends Application {
 	public Restlet createInboundRoot() {
 		return this.initRestlet();
 	}
-	
+
 	private void llrpGetOperation(Request request, Response response, LLRPGetOperations operation) {
 		LLRPReaderSession session = null;
-		
-		try {
-			String strReaderId = (String) request.getAttributes().get(
-					"readerID");
 
-			String strSessionID = (String) request.getAttributes().get(
-					"sessionID");
+		try {
+			String strReaderId = (String) request.getAttributes().get("readerID");
+
+			String strSessionID = (String) request.getAttributes().get("sessionID");
 
 			// Check if reader id exists
 			if (!readerExists(strReaderId)) {
-				throw new Exception("Reader with id " + strReaderId
-						+ " does not exist");
+				throw new Exception("Reader with id " + strReaderId + " does not exist");
 			}
 
-			SessionStatus checkSessionState = sensorManagerService.getSession(
-					strReaderId, strSessionID).getStatus();
+			SessionStatus checkSessionState = sensorManagerService.getSession(strReaderId, strSessionID).getStatus();
 
 			AbstractSensor<?> sensor = readerDAO.getReaderByID(strReaderId);
 
@@ -163,8 +165,7 @@ public class SensorManagerServiceRestletImpl extends Application {
 			Configuration config = configService.getConfiguration(strReaderId);
 
 			// Check if reader id is a LLRP reader type
-			String strCurrentReaderType = sensor.getDTO(config)
-					.getReaderFactoryID();
+			String strCurrentReaderType = sensor.getDTO(config).getReaderFactoryID();
 			boolean isLlrpReaderType = false;
 
 			// Iterate over defined llrp reader types
@@ -180,9 +181,7 @@ public class SensorManagerServiceRestletImpl extends Application {
 
 			if (!isLlrpReaderType) {
 				// It is not an llrp reader type
-				throw new Exception("Reader with id " + strReaderId
-						+ " of type " + strCurrentReaderType
-						+ " is not an LLRP reader type");
+				throw new Exception("Reader with id " + strReaderId + " of type " + strCurrentReaderType + " is not an LLRP reader type");
 			}
 
 			Map<String, SensorSession> sessionMap = sensor.getSensorSessions();
@@ -196,30 +195,24 @@ public class SensorManagerServiceRestletImpl extends Application {
 
 					if (operation.equals(LLRPGetOperations.GET_ROSPECS)) {
 						returnXML = session.getRospecs();
-					} else if (operation
-							.equals(LLRPGetOperations.GET_READER_CONFIG)) {
+					} else if (operation.equals(LLRPGetOperations.GET_READER_CONFIG)) {
 						returnXML = session.getReaderConfig();
 					} else {
-						throw new Exception("Operation with code " + operation
-								+ " is invalid. ");
+						throw new Exception("Operation with code " + operation + " is invalid. ");
 					}
 
 					response.setEntity(returnXML, MediaType.TEXT_XML);
 				} else {
-					throw new Exception("Session with id " + strSessionID
-							+ " is not in the PROCESSING state. ");
+					throw new Exception("Session with id " + strSessionID + " is not in the PROCESSING state. ");
 				}
 			} else {
 				// Session id does not exist
-				throw new Exception("Session with id " + strSessionID
-						+ " does not exist for reader with id " + strReaderId);
+				throw new Exception("Session with id " + strSessionID + " does not exist for reader with id " + strReaderId);
 			}
 
 		} catch (Exception e) {
 			// e.printStackTrace();
-			response.setEntity(
-					this.generateReturnString(this.generateErrorMessage(
-							e.getMessage(), null)), MediaType.TEXT_XML);
+			response.setEntity(this.generateReturnString(this.generateErrorMessage(e.getMessage(), null)), MediaType.TEXT_XML);
 		} finally {
 			// cleanup session
 			if (session != null) {
@@ -228,8 +221,7 @@ public class SensorManagerServiceRestletImpl extends Application {
 		}
 	}
 
-	private void executeLlrpOperation(Request request, Response response,
-			LLRPReaderSession.LLRP_OPERATION_CODE operationCode) {
+	private void executeLlrpOperation(Request request, Response response, LLRPReaderSession.LLRP_OPERATION_CODE operationCode) {
 
 		LLRPReaderSession session = null;
 
@@ -237,17 +229,15 @@ public class SensorManagerServiceRestletImpl extends Application {
 
 			// Variable to receive synchronous response if set
 			LLRPEncodeMessageDto llrpEncodeMessageDto = new LLRPEncodeMessageDto();
-			//llrpEncodeMessageDto.setStatus("Success !!!");
+			// llrpEncodeMessageDto.setStatus("Success !!!");
 
-			String strReaderId = (String) request.getAttributes().get(
-					"readerID");
+			String strReaderId = (String) request.getAttributes().get("readerID");
 
 			Object objSessionId = request.getAttributes().get("sessionID");
 
 			// Check if reader id exists
 			if (!readerExists(strReaderId)) {
-				throw new Exception("Reader with id " + strReaderId
-						+ " does not exist");
+				throw new Exception("Reader with id " + strReaderId + " does not exist");
 			}
 
 			AbstractSensor<?> sensor = readerDAO.getReaderByID(strReaderId);
@@ -256,8 +246,7 @@ public class SensorManagerServiceRestletImpl extends Application {
 			Configuration config = configService.getConfiguration(strReaderId);
 
 			// Check if reader id is a LLRP reader type
-			String strCurrentReaderType = sensor.getDTO(config)
-					.getReaderFactoryID();
+			String strCurrentReaderType = sensor.getDTO(config).getReaderFactoryID();
 			boolean isLlrpReaderType = false;
 
 			// Iterate over defined llrp reader types
@@ -275,9 +264,7 @@ public class SensorManagerServiceRestletImpl extends Application {
 			if (!isLlrpReaderType) {
 
 				// It is not an llrp reader type
-				throw new Exception("Reader with id " + strReaderId
-						+ " of type " + strCurrentReaderType
-						+ " is not an LLRP reader type");
+				throw new Exception("Reader with id " + strReaderId + " of type " + strCurrentReaderType + " is not an LLRP reader type");
 
 			}
 
@@ -292,12 +279,7 @@ public class SensorManagerServiceRestletImpl extends Application {
 				// running, and response to user if so
 				if (session.isRunningLLRPEncoding()) {
 
-					throw new Exception(
-							"Session with id "
-									+ objSessionId
-									+ " of reader with id "
-									+ strReaderId
-									+ " is currently in the middle of encoding operations. Try again in a while");
+					throw new Exception("Session with id " + objSessionId + " of reader with id " + strReaderId + " is currently in the middle of encoding operations. Try again in a while");
 
 				}
 
@@ -311,14 +293,10 @@ public class SensorManagerServiceRestletImpl extends Application {
 					if (numberOfTags < 1) {
 
 						// There is no tag in the scope of the reader
-						throw new Exception(
-								"There is no tag in the scope of reader with id "
-										+ strReaderId);
+						throw new Exception("There is no tag in the scope of reader with id " + strReaderId);
 					} else {
 
-						throw new Exception("There are " + numberOfTags
-								+ " tags in the scope of the reader with id "
-								+ strReaderId);
+						throw new Exception("There are " + numberOfTags + " tags in the scope of the reader with id " + strReaderId);
 
 					}
 
@@ -332,26 +310,27 @@ public class SensorManagerServiceRestletImpl extends Application {
 				// for session object
 				// Get jvm properties
 				setLlrpEncodeJvmProperties(session);
-				
-				
+
 				if (operationCode == null) {
-					
-					
-					//Try an access password read to see if tag is not yet encoded
-					//Hold a reference to boolean value indicating if session is executing in asynchronous mode
+
+					// Try an access password read to see if tag is not yet
+					// encoded
+					// Hold a reference to boolean value indicating if session
+					// is executing in asynchronous mode
 					boolean operationExecuteMode = session.isExecuteOperationsInAsynchronousMode();
-					
-					//Force session to execute in synchronous mode
+
+					// Force session to execute in synchronous mode
 					session.setExecuteOperationsInAsynchronousMode(false);
-									
-					//Check access password read before the encode operation
+
+					// Check access password read before the encode operation
 					llrpEncodeMessageDto = session.llrpReadAccessPasswordOperation();
-					
-					if (!llrpEncodeMessageDto.getStatus().equals("Success")){
-						throw new Exception("Given access password does not match expected access password - possibly old password is wrong or tag password has been changed via a previous encoding operation");
+
+					if (!llrpEncodeMessageDto.getStatus().equals("Success")) {
+						throw new Exception(
+								"Given access password does not match expected access password - possibly old password is wrong or tag password has been changed via a previous encoding operation");
 					}
-									
-					//Set the initial operation execute mode
+
+					// Set the initial operation execute mode
 					session.setExecuteOperationsInAsynchronousMode(operationExecuteMode);
 
 					// There is no operation code, so we submit the complete
@@ -360,8 +339,7 @@ public class SensorManagerServiceRestletImpl extends Application {
 					// Get the tag id from url
 					String strTag = (String) request.getAttributes().get("tag");
 
-					checkBlockLengthReminder(strTag,
-							session.getWriteDataBlockLength(), "tag");
+					checkBlockLengthReminder(strTag, session.getWriteDataBlockLength(), "tag");
 
 					llrpEncodeMessageDto = session.llrpEncode(strTag);
 
@@ -370,260 +348,210 @@ public class SensorManagerServiceRestletImpl extends Application {
 					// Single shot operation, according to operation code
 
 					// Get the properties
-					String strPropAttr = (String) request.getAttributes().get(
-							"properties");
-					
-					//Decode url attributes
+					String strPropAttr = (String) request.getAttributes().get("properties");
+
+					// Decode url attributes
 					strPropAttr = URLDecoder.decode(strPropAttr, "UTF-8");
 
 					// Validate that if there are parameters, they are well pair
 					// formed values
 					AttributeList attributes = getProcessedAttributes(strPropAttr);
 
-					if (operationCode
-							.equals(LLRPReaderSession.LLRP_OPERATION_CODE.LLRPEPCWrite)) {
+					if (operationCode.equals(LLRPReaderSession.LLRP_OPERATION_CODE.LLRPEPCWrite)) {
 
 						// check the required properties for epc write
 						// operation, and overwrite the properties got from jvm
 
 						// check for accesspwd and tag
-						String accesspwd = (String) getAttributeValue(
-								attributes, "accesspwd");
+						String accesspwd = (String) getAttributeValue(attributes, "accesspwd");
 						validatePassword(accesspwd, "Access");
 						session.setAccessPwd(accesspwd);
 
-						String strTag = (String) getAttributeValue(attributes,
-								"tag");
-						checkBlockLengthReminder(strTag,
-								session.getWriteDataBlockLength(), "tag");
+						String strTag = (String) getAttributeValue(attributes, "tag");
+						checkBlockLengthReminder(strTag, session.getWriteDataBlockLength(), "tag");
 
-						llrpEncodeMessageDto = session
-								.llrpWriteEpcOperation(strTag);
+						llrpEncodeMessageDto = session.llrpWriteEpcOperation(strTag);
 
-					}  else if (operationCode
-							.equals(LLRPReaderSession.LLRP_OPERATION_CODE.LLRPAccessPasswordWrite)) {
+					} else if (operationCode.equals(LLRPReaderSession.LLRP_OPERATION_CODE.LLRPAccessPasswordWrite)) {
 
 						// check for oldaccesspwd and accesspwd
-						String oldaccesspwd = (String) getAttributeValue(
-								attributes, "oldaccesspwd");
+						String oldaccesspwd = (String) getAttributeValue(attributes, "oldaccesspwd");
 						validatePassword(oldaccesspwd, "Old access");
 
-						String accesspwd = (String) getAttributeValue(
-								attributes, "accesspwd");
+						String accesspwd = (String) getAttributeValue(attributes, "accesspwd");
 						validatePassword(accesspwd, "Access");
 
 						session.setOldAccessPwd(oldaccesspwd);
 						session.setAccessPwd(accesspwd);
 
-						llrpEncodeMessageDto = session
-								.llrpWriteAccessPasswordOperation();
+						llrpEncodeMessageDto = session.llrpWriteAccessPasswordOperation();
 
-					} else if (operationCode
-							.equals(LLRPReaderSession.LLRP_OPERATION_CODE.LLRPKillPasswordWrite)) {
+					} else if (operationCode.equals(LLRPReaderSession.LLRP_OPERATION_CODE.LLRPKillPasswordWrite)) {
 
 						// check for accesspwd and kill password
-						String accesspwd = (String) getAttributeValue(
-								attributes, "accesspwd");
+						String accesspwd = (String) getAttributeValue(attributes, "accesspwd");
 						validatePassword(accesspwd, "Access");
 						session.setAccessPwd(accesspwd);
 
-						String killpwd = (String) getAttributeValue(attributes,
-								"killpwd");
+						String killpwd = (String) getAttributeValue(attributes, "killpwd");
 						validatePassword(killpwd, "Kill");
 						session.setKillPwd(killpwd);
 
-						llrpEncodeMessageDto = session
-								.llrpWriteKillPasswordOperation();
+						llrpEncodeMessageDto = session.llrpWriteKillPasswordOperation();
 
-					} else if (operationCode
-							.equals(LLRPReaderSession.LLRP_OPERATION_CODE.LLRPEPCLock)) {
+					} else if (operationCode.equals(LLRPReaderSession.LLRP_OPERATION_CODE.LLRPEPCLock)) {
 
 						// check for accesspwd
-						String accesspwd = (String) getAttributeValue(
-								attributes, "accesspwd");
+						String accesspwd = (String) getAttributeValue(attributes, "accesspwd");
 						validatePassword(accesspwd, "Access");
 						session.setAccessPwd(accesspwd);
 
 						// check for privilege type
-						String strPrivilege = (String) getAttributeValue(
-								attributes, "privilege");
+						String strPrivilege = (String) getAttributeValue(attributes, "privilege");
 
-						int intEpcLockPrivilege = LLRPReaderSession
-								.getLockPrivilege(strPrivilege);
+						int intEpcLockPrivilege = LLRPReaderSession.getLockPrivilege(strPrivilege);
 						session.setEpcLockPrivilege(intEpcLockPrivilege);
 
 						llrpEncodeMessageDto = session.llrpLockEpcOperation();
 
-					} else if (operationCode
-							.equals(LLRPReaderSession.LLRP_OPERATION_CODE.LLRPAccessPasswordLock)) {
+					} else if (operationCode.equals(LLRPReaderSession.LLRP_OPERATION_CODE.LLRPAccessPasswordLock)) {
 
 						// check for accesspwd
-						String accesspwd = (String) getAttributeValue(
-								attributes, "accesspwd");
+						String accesspwd = (String) getAttributeValue(attributes, "accesspwd");
 						validatePassword(accesspwd, "Access");
 						session.setAccessPwd(accesspwd);
 
 						// check for privilege type
-						String strPrivilege = (String) getAttributeValue(
-								attributes, "privilege");
+						String strPrivilege = (String) getAttributeValue(attributes, "privilege");
 
-						int intAccessPwdLockPrivilege = LLRPReaderSession
-								.getLockPrivilege(strPrivilege);
+						int intAccessPwdLockPrivilege = LLRPReaderSession.getLockPrivilege(strPrivilege);
 						session.setAccessPwdLockPrivilege(intAccessPwdLockPrivilege);
 
-						llrpEncodeMessageDto = session
-								.llrpLockAccessPasswordOperation();
+						llrpEncodeMessageDto = session.llrpLockAccessPasswordOperation();
 
-					} else if (operationCode
-							.equals(LLRPReaderSession.LLRP_OPERATION_CODE.LLRPKillPasswordLock)) {
+					} else if (operationCode.equals(LLRPReaderSession.LLRP_OPERATION_CODE.LLRPKillPasswordLock)) {
 
 						// check for accesspwd
-						String accesspwd = (String) getAttributeValue(
-								attributes, "accesspwd");
+						String accesspwd = (String) getAttributeValue(attributes, "accesspwd");
 						validatePassword(accesspwd, "Access");
 						session.setAccessPwd(accesspwd);
 
 						// check for privilege type
-						String strPrivilege = (String) getAttributeValue(
-								attributes, "privilege");
+						String strPrivilege = (String) getAttributeValue(attributes, "privilege");
 
-						int intKillPwdLockPrivilege = LLRPReaderSession
-								.getLockPrivilege(strPrivilege);
+						int intKillPwdLockPrivilege = LLRPReaderSession.getLockPrivilege(strPrivilege);
 						session.setKillPwdLockPrivilege(intKillPwdLockPrivilege);
 
-						llrpEncodeMessageDto = session
-								.llrpLockKillPasswordOperation();
+						llrpEncodeMessageDto = session.llrpLockKillPasswordOperation();
 
-					} else if (operationCode
-							.equals(LLRPReaderSession.LLRP_OPERATION_CODE.LLRPUserMemoryLock)) {
+					} else if (operationCode.equals(LLRPReaderSession.LLRP_OPERATION_CODE.LLRPUserMemoryLock)) {
 
 						// check for accesspwd
-						String accesspwd = (String) getAttributeValue(
-								attributes, "accesspwd");
+						String accesspwd = (String) getAttributeValue(attributes, "accesspwd");
 						validatePassword(accesspwd, "Access");
 						session.setAccessPwd(accesspwd);
 
 						// check for privilege type
-						String strPrivilege = (String) getAttributeValue(
-								attributes, "privilege");
+						String strPrivilege = (String) getAttributeValue(attributes, "privilege");
 
-						int intUserMemoryLockPrivilege = LLRPReaderSession
-								.getLockPrivilege(strPrivilege);
+						int intUserMemoryLockPrivilege = LLRPReaderSession.getLockPrivilege(strPrivilege);
 						session.setUserMemoryLockPrivilege(intUserMemoryLockPrivilege);
 
-						llrpEncodeMessageDto = session
-								.llrpLockUserMemoryOperation();
+						llrpEncodeMessageDto = session.llrpLockUserMemoryOperation();
 
-					} else if (operationCode
-							.equals(LLRPReaderSession.LLRP_OPERATION_CODE.LLRPEPCRead)) {
+					} else if (operationCode.equals(LLRPReaderSession.LLRP_OPERATION_CODE.LLRPEPCRead)) {
 
 						// check the required properties for epc read
 						// operation, and overwrite the properties got from jvm
 
 						// check for accesspwd and tag
-						String accesspwd = (String) getAttributeValue(
-								attributes, "accesspwd");
+						String accesspwd = (String) getAttributeValue(attributes, "accesspwd");
 						validatePassword(accesspwd, "Access");
 						session.setAccessPwd(accesspwd);
-						
-						//check for wordCount
+
+						// check for wordCount
 						String strWordCount = (String) getNonRequiredAttributeValue(attributes, "wordCount");
 						if (strWordCount != null && !strWordCount.isEmpty()) {
 
 							session.setWordCount(Integer.parseInt(strWordCount));
 
 						} else {
-							
-							//Set default word count value
+
+							// Set default word count value
 							session.setWordCount(LLRPReaderSession.DEFAULT_EPC_WORD_COUNT);
 						}
 
-						llrpEncodeMessageDto = session
-								.llrpReadEpcOperation();
+						llrpEncodeMessageDto = session.llrpReadEpcOperation();
 
-					} else if (operationCode
-							.equals(LLRPReaderSession.LLRP_OPERATION_CODE.LLRPAccessPasswordValidate)) {
+					} else if (operationCode.equals(LLRPReaderSession.LLRP_OPERATION_CODE.LLRPAccessPasswordValidate)) {
 
-						// check the required properties for access password read
+						// check the required properties for access password
+						// read
 						// operation, and overwrite the properties got from jvm
 
 						// check for accesspwd and tag
-						String accesspwd = (String) getAttributeValue(
-								attributes, "accesspwd");
+						String accesspwd = (String) getAttributeValue(attributes, "accesspwd");
 						validatePassword(accesspwd, "Access");
 						session.setOldAccessPwd(accesspwd);
 
-						llrpEncodeMessageDto = session
-								.llrpReadAccessPasswordOperation();
+						llrpEncodeMessageDto = session.llrpReadAccessPasswordOperation();
 
-					} else if (operationCode
-							.equals(LLRPReaderSession.LLRP_OPERATION_CODE.LLRPKillPasswordRead)) {
+					} else if (operationCode.equals(LLRPReaderSession.LLRP_OPERATION_CODE.LLRPKillPasswordRead)) {
 
 						// check the required properties for kill password read
 						// operation, and overwrite the properties got from jvm
 
 						// check for accesspwd and tag
-						String accesspwd = (String) getAttributeValue(
-								attributes, "accesspwd");
+						String accesspwd = (String) getAttributeValue(attributes, "accesspwd");
 						validatePassword(accesspwd, "Access");
 						session.setOldAccessPwd(accesspwd);
 
-						llrpEncodeMessageDto = session
-								.llrpReadKillPasswordOperation();
+						llrpEncodeMessageDto = session.llrpReadKillPasswordOperation();
 
-					} else if (operationCode
-							.equals(LLRPReaderSession.LLRP_OPERATION_CODE.LLRPUserMemoryRead)) {
+					} else if (operationCode.equals(LLRPReaderSession.LLRP_OPERATION_CODE.LLRPUserMemoryRead)) {
 
 						// check the required properties for user memory read
 						// operation, and overwrite the properties got from jvm
 
 						// check for accesspwd
-						String accesspwd = (String) getAttributeValue(
-								attributes, "accesspwd");
+						String accesspwd = (String) getAttributeValue(attributes, "accesspwd");
 						validatePassword(accesspwd, "Access");
 						session.setAccessPwd(accesspwd);
-						
-						//check for wordCount
+
+						// check for wordCount
 						String strWordCount = (String) getNonRequiredAttributeValue(attributes, "wordCount");
 						if (strWordCount != null && !strWordCount.isEmpty()) {
 
 							session.setWordCount(Integer.parseInt(strWordCount));
 
 						} else {
-							
-							//Set default user memory word count value
+
+							// Set default user memory word count value
 							session.setWordCount(LLRPReaderSession.DEFAULT_USER_MEMORY_WORD_COUNT);
 						}
 
-						llrpEncodeMessageDto = session
-								.llrpReadUserMemoryOperation();
+						llrpEncodeMessageDto = session.llrpReadUserMemoryOperation();
 
-					} else if (operationCode
-							.equals(LLRPReaderSession.LLRP_OPERATION_CODE.LLRPUserMemoryWrite)) {
+					} else if (operationCode.equals(LLRPReaderSession.LLRP_OPERATION_CODE.LLRPUserMemoryWrite)) {
 
 						// check the required properties for user memory read
 						// operation, and overwrite the properties got from jvm
 
 						// check for accesspwd
-						String accesspwd = (String) getAttributeValue(
-								attributes, "accesspwd");
+						String accesspwd = (String) getAttributeValue(attributes, "accesspwd");
 						validatePassword(accesspwd, "Access");
 						session.setAccessPwd(accesspwd);
-						
-						String strData = (String) getAttributeValue(attributes,
-								"data");
-						checkBlockLengthReminder(strData,
-								session.getWriteDataBlockLength(), "data");
-						
+
+						String strData = (String) getAttributeValue(attributes, "data");
+						checkBlockLengthReminder(strData, session.getWriteDataBlockLength(), "data");
+
 						session.setUserMemoryData(strData);
 
-						llrpEncodeMessageDto = session
-								.llrpWriteUserMemoryOperation();
+						llrpEncodeMessageDto = session.llrpWriteUserMemoryOperation();
 
 					} else {
 
-						throw new Exception("Operation with code "
-								+ operationCode + " is invalid. ");
+						throw new Exception("Operation with code " + operationCode + " is invalid. ");
 
 					}
 
@@ -638,15 +566,13 @@ public class SensorManagerServiceRestletImpl extends Application {
 			} else {
 
 				// Session id does not exist
-				throw new Exception("Session with id " + objSessionId
-						+ " does not exist for reader with id " + strReaderId);
+				throw new Exception("Session with id " + objSessionId + " does not exist for reader with id " + strReaderId);
 			}
 
 			// response.setEntity(self.generateReturnString(self
 			// .generateSuccessMessage()), MediaType.TEXT_XML);
 
-			response.setEntity(this.generateReturnString(llrpEncodeMessageDto),
-					MediaType.TEXT_XML);
+			response.setEntity(this.generateReturnString(llrpEncodeMessageDto), MediaType.TEXT_XML);
 
 		} catch (Exception e) {
 
@@ -660,9 +586,7 @@ public class SensorManagerServiceRestletImpl extends Application {
 
 			e.printStackTrace();
 
-			response.setEntity(
-					this.generateReturnString(this.generateErrorMessage(
-							e.getMessage(), null)), MediaType.TEXT_XML);
+			response.setEntity(this.generateReturnString(this.generateErrorMessage(e.getMessage(), null)), MediaType.TEXT_XML);
 
 		} finally {
 
@@ -686,7 +610,7 @@ public class SensorManagerServiceRestletImpl extends Application {
 			public void handle(Request request, Response response) {
 				logger.info("readers requested");
 				setResponseHeaders(request, response);
-				
+
 				Set<ReaderDTO> dtos = sensorManagerService.getReaders();
 				List<ReaderNameDTO> rnd = new LinkedList<ReaderNameDTO>();
 				for (ReaderDTO dto : dtos) {
@@ -697,8 +621,7 @@ public class SensorManagerServiceRestletImpl extends Application {
 				}
 				ReaderResponseMessageDTO rrmd = new ReaderResponseMessageDTO();
 				rrmd.setReaders(rnd);
-				response.setEntity(self.generateReturnString(rrmd),
-						MediaType.TEXT_XML);
+				response.setEntity(self.generateReturnString(rrmd), MediaType.TEXT_XML);
 			}
 		};
 
@@ -707,9 +630,8 @@ public class SensorManagerServiceRestletImpl extends Application {
 			public void handle(Request request, Response response) {
 				logger.info("commands requested");
 				setResponseHeaders(request, response);
-				
-				Set<CommandConfigurationDTO> dtos = commandManagerService
-						.getCommands();
+
+				Set<CommandConfigurationDTO> dtos = commandManagerService.getCommands();
 				List<CommandNameDTO> cnd = new LinkedList<CommandNameDTO>();
 				for (CommandConfigurationDTO dto : dtos) {
 					CommandNameDTO c = new CommandNameDTO();
@@ -719,8 +641,7 @@ public class SensorManagerServiceRestletImpl extends Application {
 				}
 				CommandResponseMessageDTO crmd = new CommandResponseMessageDTO();
 				crmd.setCommands(cnd);
-				response.setEntity(self.generateReturnString(crmd),
-						MediaType.TEXT_XML);
+				response.setEntity(self.generateReturnString(crmd), MediaType.TEXT_XML);
 			}
 		};
 
@@ -745,19 +666,15 @@ public class SensorManagerServiceRestletImpl extends Application {
 							for (SessionDTO sdto : dto.getSessions()) {
 								SessionNameDTO snd = new SessionNameDTO();
 								snd.setSessionId(sdto.getID());
-								snd.setSessionStatus(sdto.getStatus()
-										.toString());
+								snd.setSessionStatus(sdto.getStatus().toString());
 								List<ExecutingCommandDTO> exec = new ArrayList<ExecutingCommandDTO>();
 								for (CommandDTO command : sdto.getCommands()) {
 									ExecutingCommandDTO ecdto = new ExecutingCommandDTO();
 									ecdto.setCommandID(command.getCommandID());
-									Set<CommandConfigurationDTO> configdtos = commandManagerService
-											.getCommands();
+									Set<CommandConfigurationDTO> configdtos = commandManagerService.getCommands();
 									for (CommandConfigurationDTO configdto : configdtos) {
-										if (configdto.getCommandConfigID()
-												.equals(command.getCommandID())) {
-											ecdto.setFactoryID(configdto
-													.getCommandConfigFactoryID());
+										if (configdto.getCommandConfigID().equals(command.getCommandID())) {
+											ecdto.setFactoryID(configdto.getCommandConfigFactoryID());
 										}
 									}
 									ecdto.setInterval(command.getInterval());
@@ -767,21 +684,15 @@ public class SensorManagerServiceRestletImpl extends Application {
 								slist.add(snd);
 							}
 							rsrmd.setSessions(slist);
-							response.setEntity(
-									self.generateReturnString(rsrmd),
-									MediaType.TEXT_XML);
+							response.setEntity(self.generateReturnString(rsrmd), MediaType.TEXT_XML);
 							break;
 						}
 					}
 					if (!readerFound) {
-						throw new Exception("No reader with ID "
-								+ request.getAttributes().get("readerID")
-								+ " found.");
+						throw new Exception("No reader with ID " + request.getAttributes().get("readerID") + " found.");
 					}
 				} catch (Exception e) {
-					response.setEntity(self.generateReturnString(self
-							.generateErrorMessage(e.toString(), null)),
-							MediaType.TEXT_XML);
+					response.setEntity(self.generateReturnString(self.generateErrorMessage(e.toString(), null)), MediaType.TEXT_XML);
 				}
 			}
 		};
@@ -792,17 +703,13 @@ public class SensorManagerServiceRestletImpl extends Application {
 				try {
 					logger.info("startSession requested");
 					setResponseHeaders(request, response);
-					
-					String strReaderId = (String) request.getAttributes().get(
-							"readerID");
-					String strSessionID = (String) request.getAttributes().get(
-							"sessionID");
 
-					SessionStatus checkSessionState = sensorManagerService.getSession(
-							strReaderId, strSessionID).getStatus();
+					String strReaderId = (String) request.getAttributes().get("readerID");
+					String strSessionID = (String) request.getAttributes().get("sessionID");
 
-					
-					if ( !checkSessionState.equals(SessionStatus.PROCESSING) && !checkSessionState.equals(SessionStatus.CONNECTING) ) {
+					SessionStatus checkSessionState = sensorManagerService.getSession(strReaderId, strSessionID).getStatus();
+
+					if (!checkSessionState.equals(SessionStatus.PROCESSING) && !checkSessionState.equals(SessionStatus.CONNECTING)) {
 						sensorManagerService.startSession(strReaderId, strSessionID);
 
 						SessionStatus currentSessionState = checkSessionState(strReaderId, strSessionID, SessionStatus.PROCESSING);
@@ -816,18 +723,17 @@ public class SensorManagerServiceRestletImpl extends Application {
 
 							// Generate a failure message with
 							// currentSessionStatus
-							response.setEntity(self.generateReturnString(self.generateErrorMessage("Session already started, current state is " + currentSessionState
+							response.setEntity(
+									self.generateReturnString(self.generateErrorMessage("Session already started, current state is " + currentSessionState
 											+ "  - See Rifidi Edge Sever Log for details", currentSessionState.toString())), MediaType.TEXT_XML);
 
 						}
 					} else {
-						response.setEntity(self.generateReturnString(self.generateErrorMessage("Unable to start session, current state is " + checkSessionState
-								, checkSessionState.toString())), MediaType.TEXT_XML);
+						response.setEntity(self.generateReturnString(self.generateErrorMessage("Unable to start session, current state is " + checkSessionState, checkSessionState.toString())),
+								MediaType.TEXT_XML);
 					}
 				} catch (Exception e) {
-					response.setEntity(self.generateReturnString(self
-							.generateErrorMessage(e.toString(), null)),
-							MediaType.TEXT_XML);
+					response.setEntity(self.generateReturnString(self.generateErrorMessage(e.toString(), null)), MediaType.TEXT_XML);
 				}
 			}
 
@@ -839,40 +745,28 @@ public class SensorManagerServiceRestletImpl extends Application {
 					logger.info("stopSession requested");
 					setResponseHeaders(request, response);
 
-					String strReaderId = (String) request.getAttributes().get(
-							"readerID");
-					String strSessionID = (String) request.getAttributes().get(
-							"sessionID");
+					String strReaderId = (String) request.getAttributes().get("readerID");
+					String strSessionID = (String) request.getAttributes().get("sessionID");
 
 					sensorManagerService.stopSession(strReaderId, strSessionID);
 
-					SessionStatus currentSessionState = checkSessionState(
-							strReaderId, strSessionID, SessionStatus.CLOSED);
+					SessionStatus currentSessionState = checkSessionState(strReaderId, strSessionID, SessionStatus.CLOSED);
 
 					if (currentSessionState.equals(SessionStatus.CLOSED)) {
 
 						// Generate a success message
-						response.setEntity(self.generateReturnString(self
-								.generateSuccessMessage()), MediaType.TEXT_XML);
+						response.setEntity(self.generateReturnString(self.generateSuccessMessage()), MediaType.TEXT_XML);
 
 					} else {
 
 						// Generate a failure message with currentSessionStatus
-						response.setEntity(
-								self.generateReturnString(self
-										.generateErrorMessage(
-												"Unable to stop session, current state is "
-														+ currentSessionState
-														+ "  - See Rifidi Edge Sever Log for details",
-												currentSessionState.toString())),
-								MediaType.TEXT_XML);
+						response.setEntity(self.generateReturnString(self.generateErrorMessage("Unable to stop session, current state is " + currentSessionState
+								+ "  - See Rifidi Edge Sever Log for details", currentSessionState.toString())), MediaType.TEXT_XML);
 
 					}
 				} catch (Exception e) {
 
-					response.setEntity(self.generateReturnString(self
-							.generateErrorMessage(e.toString(), null)),
-							MediaType.TEXT_XML);
+					response.setEntity(self.generateReturnString(self.generateErrorMessage(e.toString(), null)), MediaType.TEXT_XML);
 				}
 			}
 		};
@@ -883,44 +777,38 @@ public class SensorManagerServiceRestletImpl extends Application {
 					logger.info("createSession requested");
 					String readerID = (String) request.getAttributes().get("readerID");
 					List<SessionDTO> sessions = sensorManagerService.getReader(readerID).getSessions();
-					//only one session allowed.  
-					if(!sessions.isEmpty()) {
-						throw new Exception("Reader " + readerID + " already has a session." );
+					// only one session allowed.
+					if (!sessions.isEmpty()) {
+						throw new Exception("Reader " + readerID + " already has a session.");
 					}
 					setResponseHeaders(request, response);
-					
+
 					sensorManagerService.createSession(readerID);
 					CreateSessionResponseMessageDTO sr = new CreateSessionResponseMessageDTO();
-					sr.setSessionID(1); // The sessionID for any reader should be 1.  
+					sr.setSessionID(1); // The sessionID for any reader should
+										// be 1.
 					response.setEntity(self.generateReturnString(sr), MediaType.TEXT_XML);
 				} catch (Exception e) {
 
-					response.setEntity(self.generateReturnString(self
-							.generateErrorMessage(e.toString(), null)),
-							MediaType.TEXT_XML);
+					response.setEntity(self.generateReturnString(self.generateErrorMessage(e.toString(), null)), MediaType.TEXT_XML);
 				}
 			}
 		};
 		Restlet deleteSession = new Restlet() {
 			@Override
 			public void handle(Request request, Response response) {
-				try {	
+				try {
 					logger.info("deleteSession requested");
-					setResponseHeaders(request, response);					
-					sensorManagerService.deleteSession((String) request
-							.getAttributes().get("readerID"), (String) request
-							.getAttributes().get("sessionID"));
-					response.setEntity(self.generateReturnString(self
-							.generateSuccessMessage()), MediaType.TEXT_XML);
+					setResponseHeaders(request, response);
+					sensorManagerService.deleteSession((String) request.getAttributes().get("readerID"), (String) request.getAttributes().get("sessionID"));
+					response.setEntity(self.generateReturnString(self.generateSuccessMessage()), MediaType.TEXT_XML);
 				} catch (Exception e) {
 
-					response.setEntity(self.generateReturnString(self
-							.generateErrorMessage(e.toString(), null)),
-							MediaType.TEXT_XML);
+					response.setEntity(self.generateReturnString(self.generateErrorMessage(e.toString(), null)), MediaType.TEXT_XML);
 				}
 			}
 		};
-		
+
 		Restlet deleteReader = new Restlet() {
 			@Override
 			public void handle(Request request, Response response) {
@@ -928,16 +816,13 @@ public class SensorManagerServiceRestletImpl extends Application {
 					logger.info("deleteReader requested");
 					setResponseHeaders(request, response);
 					sensorManagerService.deleteReader((String) request.getAttributes().get("readerID"));
-					response.setEntity(self.generateReturnString(self
-							.generateSuccessMessage()), MediaType.TEXT_XML);
+					response.setEntity(self.generateReturnString(self.generateSuccessMessage()), MediaType.TEXT_XML);
 				} catch (Exception e) {
-					response.setEntity(self.generateReturnString(self
-							.generateErrorMessage(e.toString(), null)),
-							MediaType.TEXT_XML);
+					response.setEntity(self.generateReturnString(self.generateErrorMessage(e.toString(), null)), MediaType.TEXT_XML);
 				}
 			}
 		};
-		
+
 		Restlet deleteCommand = new Restlet() {
 			@Override
 			public void handle(Request request, Response response) {
@@ -945,45 +830,31 @@ public class SensorManagerServiceRestletImpl extends Application {
 					logger.info("deleteCommand requested");
 					setResponseHeaders(request, response);
 					commandManagerService.deleteCommand((String) request.getAttributes().get("commandID"));
-					response.setEntity(self.generateReturnString(self
-							.generateSuccessMessage()), MediaType.TEXT_XML);
+					response.setEntity(self.generateReturnString(self.generateSuccessMessage()), MediaType.TEXT_XML);
 				} catch (Exception e) {
-					response.setEntity(self.generateReturnString(self
-							.generateErrorMessage(e.toString(), null)),
-							MediaType.TEXT_XML);
+					response.setEntity(self.generateReturnString(self.generateErrorMessage(e.toString(), null)), MediaType.TEXT_XML);
 				}
 			}
 		};
-		
+
 		Restlet executeCommand = new Restlet() {
 			@Override
 			public void handle(Request request, Response response) {
 				try {
 					logger.info("executeCommand requested");
 					setResponseHeaders(request, response);
-					
-					sensorManagerService.submitCommand((String) request
-							.getAttributes().get("readerID"), (String) request
-							.getAttributes().get("sessionID"), (String) request
-							.getAttributes().get("commandID"), Long
-							.parseLong((String) request.getAttributes().get(
-									"repeatInterval")), TimeUnit.MILLISECONDS);
-					response.setEntity(self.generateReturnString(self
-							.generateSuccessMessage()), MediaType.TEXT_XML);
+
+					sensorManagerService.submitCommand((String) request.getAttributes().get("readerID"), (String) request.getAttributes().get("sessionID"),
+							(String) request.getAttributes().get("commandID"), Long.parseLong((String) request.getAttributes().get("repeatInterval")), TimeUnit.MILLISECONDS);
+					response.setEntity(self.generateReturnString(self.generateSuccessMessage()), MediaType.TEXT_XML);
 				} catch (NumberFormatException nEx) {
-					response.setEntity(self.generateReturnString(self
-							.generateErrorMessage(nEx.getMessage(), null)),
-							MediaType.TEXT_XML);
+					response.setEntity(self.generateReturnString(self.generateErrorMessage(nEx.getMessage(), null)), MediaType.TEXT_XML);
 				} catch (CommandSubmissionException cEx) {
 
-					response.setEntity(self.generateReturnString(self
-							.generateErrorMessage(cEx.getMessage(), null)),
-							MediaType.TEXT_XML);
+					response.setEntity(self.generateReturnString(self.generateErrorMessage(cEx.getMessage(), null)), MediaType.TEXT_XML);
 
 				} catch (Exception e) {
-					response.setEntity(self.generateReturnString(self
-							.generateErrorMessage(e.toString(), null)),
-							MediaType.TEXT_XML);
+					response.setEntity(self.generateReturnString(self.generateErrorMessage(e.toString(), null)), MediaType.TEXT_XML);
 				}
 
 			}
@@ -995,14 +866,12 @@ public class SensorManagerServiceRestletImpl extends Application {
 				try {
 
 					setResponseHeaders(request, response);
-					
-					String strObjectId = (String) request.getAttributes().get(
-							"readerID");
 
-					String strPropAttr = (String) request.getAttributes().get(
-							"properties");
-					
-					//Decode url attributes
+					String strObjectId = (String) request.getAttributes().get("readerID");
+
+					String strPropAttr = (String) request.getAttributes().get("properties");
+
+					// Decode url attributes
 					strPropAttr = URLDecoder.decode(strPropAttr, "UTF-8");
 
 					boolean readerExists = readerExists(strObjectId);
@@ -1011,9 +880,7 @@ public class SensorManagerServiceRestletImpl extends Application {
 					// Check if command or reader exists before submit
 					// getproperties
 					if (!commandExists && !readerExists) {
-						throw new Exception(
-								"Neither reader nor command with id "
-										+ strObjectId + " exist");
+						throw new Exception("Neither reader nor command with id " + strObjectId + " exist");
 					}
 
 					AttributeList attributes = getProcessedAttributes(strPropAttr);
@@ -1023,35 +890,27 @@ public class SensorManagerServiceRestletImpl extends Application {
 
 						// Set properties for reader, if parameter is a reader
 						// id
-						sensorManagerService.setReaderProperties(strObjectId,
-								attributes);
+						sensorManagerService.setReaderProperties(strObjectId, attributes);
 
 					} else if (commandExists) { // Check if command exists
 
 						// Set properties for command, if parameter is a command
 						// id
-						commandManagerService.setCommandProperties(strObjectId,
-								attributes);
+						commandManagerService.setCommandProperties(strObjectId, attributes);
 					}
 
 					// Validate properties for this reader or command
-					validateAttributesForReaderOrCommand(strObjectId,
-							attributes);
+					validateAttributesForReaderOrCommand(strObjectId, attributes);
 
-					response.setEntity(self.generateReturnString(self
-							.generateSuccessMessage()), MediaType.TEXT_XML);
+					response.setEntity(self.generateReturnString(self.generateSuccessMessage()), MediaType.TEXT_XML);
 
 				} catch (NotValidPropertyForObjectException nEx) {
 
-					response.setEntity(self.generateReturnString(self
-							.generateWarningMessage(nEx.getMessage())),
-							MediaType.TEXT_XML);
+					response.setEntity(self.generateReturnString(self.generateWarningMessage(nEx.getMessage())), MediaType.TEXT_XML);
 
 				} catch (Exception e) {
 
-					response.setEntity(self.generateReturnString(self
-							.generateErrorMessage(e.getMessage(), null)),
-							MediaType.TEXT_XML);
+					response.setEntity(self.generateReturnString(self.generateErrorMessage(e.getMessage(), null)), MediaType.TEXT_XML);
 
 				}
 			}
@@ -1062,31 +921,25 @@ public class SensorManagerServiceRestletImpl extends Application {
 			public void handle(Request request, Response response) {
 				logger.info("getProperties requested");
 				try {
-					
+
 					setResponseHeaders(request, response);
 
-					String strObjectId = (String) request.getAttributes().get(
-							"readerID");
+					String strObjectId = (String) request.getAttributes().get("readerID");
 
 					// Check if reader or command exists before submit
 					// getproperties
-					if (!commandExists(strObjectId)
-							&& !readerExists(strObjectId)) {
-						throw new Exception(
-								"Neither reader nor command with id "
-										+ strObjectId + " exist");
+					if (!commandExists(strObjectId) && !readerExists(strObjectId)) {
+						throw new Exception("Neither reader nor command with id " + strObjectId + " exist");
 					}
 
-					Configuration configuration = configService
-							.getConfiguration(strObjectId);
+					Configuration configuration = configService.getConfiguration(strObjectId);
 					PropertyResponseMessageDTO prmd = new PropertyResponseMessageDTO();
 					List<PropertyNameDTO> pndList = new LinkedList<PropertyNameDTO>();
 					for (String key : configuration.getAttributes().keySet()) {
 						PropertyNameDTO pnd = new PropertyNameDTO();
 						pnd.setPropertyName(key);
 						if (configuration.getAttributes().get(key) != null) {
-							pnd.setPropertyValue(configuration.getAttributes()
-									.get(key).toString());
+							pnd.setPropertyValue(configuration.getAttributes().get(key).toString());
 						} else {
 							pnd.setPropertyValue("null");
 						}
@@ -1095,14 +948,11 @@ public class SensorManagerServiceRestletImpl extends Application {
 					prmd.setProperties(pndList);
 					// System.out.println(self.generateReturnString(prmd)
 					// .toString());
-					response.setEntity(self.generateReturnString(prmd)
-							.toString(), MediaType.TEXT_XML);
+					response.setEntity(self.generateReturnString(prmd).toString(), MediaType.TEXT_XML);
 
 				} catch (Exception e) {
 
-					response.setEntity(self.generateReturnString(self
-							.generateErrorMessage(e.getMessage(), null)),
-							MediaType.TEXT_XML);
+					response.setEntity(self.generateReturnString(self.generateErrorMessage(e.getMessage(), null)), MediaType.TEXT_XML);
 				}
 			}
 		};
@@ -1115,16 +965,14 @@ public class SensorManagerServiceRestletImpl extends Application {
 				String readerId = null;
 
 				try {
-					
+
 					setResponseHeaders(request, response);
 
-					String strReaderType = (String) request.getAttributes()
-							.get("readerType");
+					String strReaderType = (String) request.getAttributes().get("readerType");
 
-					String strPropAttr = (String) request.getAttributes().get(
-							"properties");
-					
-					//Decode url attributes
+					String strPropAttr = (String) request.getAttributes().get("properties");
+
+					// Decode url attributes
 					AttributeList attributes = new AttributeList();
 					if (strPropAttr != null) {
 						strPropAttr = URLDecoder.decode(strPropAttr, "UTF-8");
@@ -1135,15 +983,19 @@ public class SensorManagerServiceRestletImpl extends Application {
 						// there
 						Attribute attributeToDelete = null;
 						for (Attribute attribute : attributes.asList()) {
-							if (attribute.getName()
-									.equals(ReaderIDPropertyName)) {
+							if (attribute.getName().equals(ReaderIDPropertyName)) {
 								readerId = (String) attribute.getValue();
 
-								// remove readerID from attributes, so when the time
-								// to validate the properties for reader comes, it does
-								// not throw error because of this readerID property name
-								// Hold a reference of attribute to be deleted,  to delete
-								// outside this loop, because if try to delete inside,
+								// remove readerID from attributes, so when the
+								// time
+								// to validate the properties for reader comes,
+								// it does
+								// not throw error because of this readerID
+								// property name
+								// Hold a reference of attribute to be deleted,
+								// to delete
+								// outside this loop, because if try to delete
+								// inside,
 								// we get an ConcurrentModificationException
 								attributeToDelete = attribute;
 							}
@@ -1155,23 +1007,22 @@ public class SensorManagerServiceRestletImpl extends Application {
 					}
 
 					// Create reader
-					if (readerId == null){
-						//no reader id is provided, so call the default create method
-						readerId = sensorManagerService.createReader(strReaderType,
-								attributes);
+					if (readerId == null) {
+						// no reader id is provided, so call the default create
+						// method
+						readerId = sensorManagerService.createReader(strReaderType, attributes);
 					} else {
-						//reader id is provided
-						readerId = sensorManagerService.createReader(strReaderType,
-								attributes, readerId);
+						// reader id is provided
+						readerId = sensorManagerService.createReader(strReaderType, attributes, readerId);
 					}
-					
+
 					// Validate what properties are wrong for this created
 					// reader
 					validateAttributesForReaderOrCommand(readerId, attributes);
 
 					CreateReaderResponseMessageDTO crmd = new CreateReaderResponseMessageDTO();
 					crmd.setReaderID(readerId);
-					
+
 					response.setEntity(self.generateReturnString(crmd), MediaType.TEXT_XML);
 
 				} catch (NotValidPropertyForObjectException nE) {
@@ -1182,18 +1033,14 @@ public class SensorManagerServiceRestletImpl extends Application {
 						sensorManagerService.deleteReader(readerId);
 					}
 
-					response.setEntity(self.generateReturnString(self
-							.generateErrorMessage(nE.getMessage(), null)),
-							MediaType.TEXT_XML);
+					response.setEntity(self.generateReturnString(self.generateErrorMessage(nE.getMessage(), null)), MediaType.TEXT_XML);
 
 				}
 
 				catch (Exception e) {
 
 					e.printStackTrace();
-					response.setEntity(self.generateReturnString(self
-							.generateErrorMessage(e.toString(), null)),
-							MediaType.TEXT_XML);
+					response.setEntity(self.generateReturnString(self.generateErrorMessage(e.toString(), null)), MediaType.TEXT_XML);
 
 				}
 			}
@@ -1206,33 +1053,29 @@ public class SensorManagerServiceRestletImpl extends Application {
 				String strCommandId = null;
 
 				try {
-					
+
 					setResponseHeaders(request, response);
 
-					String strPropAttr = (String) request.getAttributes().get(
-							"properties");
+					String strPropAttr = (String) request.getAttributes().get("properties");
 
 					AttributeList attributes = new AttributeList();
-					
+
 					if (strPropAttr != null) {
 						// Decode url attributes
 						strPropAttr = URLDecoder.decode(strPropAttr, "UTF-8");
 
 						attributes = getProcessedAttributes(strPropAttr);
 					}
-					
+
 					// Create the command
-					strCommandId = self.commandManagerService
-							.createCommand((String) request.getAttributes()
-									.get("commandType"), attributes);
+					strCommandId = self.commandManagerService.createCommand((String) request.getAttributes().get("commandType"), attributes);
 
 					// Validate properties for this command
-					validateAttributesForReaderOrCommand(strCommandId,
-							attributes);
+					validateAttributesForReaderOrCommand(strCommandId, attributes);
 
 					CreateCommandResponseMessageDTO ccrmd = new CreateCommandResponseMessageDTO();
 					ccrmd.setCommandID(strCommandId);
-					
+
 					response.setEntity(self.generateReturnString(ccrmd), MediaType.TEXT_XML);
 
 				} catch (NotValidPropertyForObjectException nE) {
@@ -1243,17 +1086,13 @@ public class SensorManagerServiceRestletImpl extends Application {
 						commandManagerService.deleteCommand(strCommandId);
 					}
 
-					response.setEntity(self.generateReturnString(self
-							.generateErrorMessage(nE.getMessage(), null)),
-							MediaType.TEXT_XML);
+					response.setEntity(self.generateReturnString(self.generateErrorMessage(nE.getMessage(), null)), MediaType.TEXT_XML);
 
 				}
 
 				catch (Exception e) {
 
-					response.setEntity(self.generateReturnString(self
-							.generateErrorMessage(e.toString(), null)),
-							MediaType.TEXT_XML);
+					response.setEntity(self.generateReturnString(self.generateErrorMessage(e.toString(), null)), MediaType.TEXT_XML);
 
 				}
 			}
@@ -1264,18 +1103,14 @@ public class SensorManagerServiceRestletImpl extends Application {
 			public void handle(Request request, Response response) {
 				logger.info("startApp requested");
 				try {
-					
+
 					setResponseHeaders(request, response);
-					
-					appManager.startApp((Integer.parseInt((String) request
-							.getAttributes().get("appID"))));
-					response.setEntity(self.generateReturnString(self
-							.generateSuccessMessage()), MediaType.TEXT_XML);
+
+					appManager.startApp((Integer.parseInt((String) request.getAttributes().get("appID"))));
+					response.setEntity(self.generateReturnString(self.generateSuccessMessage()), MediaType.TEXT_XML);
 				} catch (Exception e) {
 
-					response.setEntity(self.generateReturnString(self
-							.generateErrorMessage(e.toString(), null)),
-							MediaType.TEXT_XML);
+					response.setEntity(self.generateReturnString(self.generateErrorMessage(e.toString(), null)), MediaType.TEXT_XML);
 				}
 			}
 		};
@@ -1285,18 +1120,14 @@ public class SensorManagerServiceRestletImpl extends Application {
 			public void handle(Request request, Response response) {
 				logger.info("stopApp requested");
 				try {
-					
+
 					setResponseHeaders(request, response);
-					
-					appManager.stopApp((Integer.parseInt((String) request
-							.getAttributes().get("appID"))));
-					response.setEntity(self.generateReturnString(self
-							.generateSuccessMessage()), MediaType.TEXT_XML);
+
+					appManager.stopApp((Integer.parseInt((String) request.getAttributes().get("appID"))));
+					response.setEntity(self.generateReturnString(self.generateSuccessMessage()), MediaType.TEXT_XML);
 				} catch (Exception e) {
 
-					response.setEntity(self.generateReturnString(self
-							.generateErrorMessage(e.toString(), null)),
-							MediaType.TEXT_XML);
+					response.setEntity(self.generateReturnString(self.generateErrorMessage(e.toString(), null)), MediaType.TEXT_XML);
 				}
 			}
 		};
@@ -1306,12 +1137,11 @@ public class SensorManagerServiceRestletImpl extends Application {
 			public void handle(Request request, Response response) {
 				logger.info("readerTypes requested");
 				try {
-					
+
 					setResponseHeaders(request, response);
-					
+
 					ReaderTypesReponseMessageDTO rtr = new ReaderTypesReponseMessageDTO();
-					Set<ReaderFactoryDTO> grf = self.sensorManagerService
-							.getReaderFactories();
+					Set<ReaderFactoryDTO> grf = self.sensorManagerService.getReaderFactories();
 					List<ReaderTypeDTO> ret = new LinkedList<ReaderTypeDTO>();
 					for (ReaderFactoryDTO rfd : grf) {
 						ReaderTypeDTO rtd = new ReaderTypeDTO();
@@ -1320,39 +1150,36 @@ public class SensorManagerServiceRestletImpl extends Application {
 						ret.add(rtd);
 					}
 					rtr.setSensors(ret);
-					response.setEntity(self.generateReturnString(rtr)
-							.toString(), MediaType.TEXT_XML);
+					response.setEntity(self.generateReturnString(rtr).toString(), MediaType.TEXT_XML);
 				} catch (Exception e) {
 
-					response.setEntity(self.generateReturnString(self
-							.generateErrorMessage(e.toString(), null)),
-							MediaType.TEXT_XML);
+					response.setEntity(self.generateReturnString(self.generateErrorMessage(e.toString(), null)), MediaType.TEXT_XML);
 				}
 			}
 		};
-		
+
 		Restlet readerMetadata = new Restlet() {
 			@Override
 			public void handle(Request request, Response response) {
 				logger.info("readerMetadata requested");
 				try {
-					
+
 					setResponseHeaders(request, response);
-					
+
 					ReaderMetadataResponseMessageDTO rmrmd = new ReaderMetadataResponseMessageDTO();
-					
+
 					String cat_str = "org.rifidi.edge.category";
 					String order_value = "org.rifidi.edge.ordervalue";
 					String display_name = "displayName";
-					
-					List<ReaderFactoryMetadataDTO> readerFactoryMetadataList = new ArrayList<ReaderFactoryMetadataDTO>();					
+
+					List<ReaderFactoryMetadataDTO> readerFactoryMetadataList = new ArrayList<ReaderFactoryMetadataDTO>();
 					Set<AbstractSensorFactory<?>> readerfactories = self.readerDAO.getReaderFactories();
-					for(AbstractSensorFactory<?> factory:readerfactories) {	
+					for (AbstractSensorFactory<?> factory : readerfactories) {
 						List<ReaderMetadataDTO> readerMetadataList = new ArrayList<ReaderMetadataDTO>();
 						MBeanAttributeInfo[] attArray = factory.getServiceDescription(factory.getFactoryID()).getAttributes();
-						for(MBeanAttributeInfo att:attArray) {
+						for (MBeanAttributeInfo att : attArray) {
 							ReaderMetadataDTO readerMetadata = new ReaderMetadataDTO();
-							OpenMBeanAttributeInfoSupport supp = (OpenMBeanAttributeInfoSupport)att;
+							OpenMBeanAttributeInfoSupport supp = (OpenMBeanAttributeInfoSupport) att;
 							if (supp.getDefaultValue() != null) {
 								readerMetadata.setDefaultValue(supp.getDefaultValue().toString());
 							}
@@ -1371,17 +1198,17 @@ public class SensorManagerServiceRestletImpl extends Application {
 							if (supp.getName() != null) {
 								readerMetadata.setName(supp.getName());
 							}
-							if(supp.getDescriptor().getFieldValue(cat_str)!=null) {
-								readerMetadata.setCategory((String)supp.getDescriptor().getFieldValue(cat_str));
+							if (supp.getDescriptor().getFieldValue(cat_str) != null) {
+								readerMetadata.setCategory((String) supp.getDescriptor().getFieldValue(cat_str));
 							}
-							if(supp.getDescriptor().getFieldValue(order_value)!=null) {
-								readerMetadata.setOrderValue((Float)supp.getDescriptor().getFieldValue(order_value));
+							if (supp.getDescriptor().getFieldValue(order_value) != null) {
+								readerMetadata.setOrderValue((Float) supp.getDescriptor().getFieldValue(order_value));
 							}
-							if(supp.getDescriptor().getFieldValue(display_name)!=null) {
-								readerMetadata.setDisplayName((String)supp.getDescriptor().getFieldValue(display_name));
+							if (supp.getDescriptor().getFieldValue(display_name) != null) {
+								readerMetadata.setDisplayName((String) supp.getDescriptor().getFieldValue(display_name));
 							}
 							readerMetadata.setWritable(supp.isWritable());
-							
+
 							readerMetadataList.add(readerMetadata);
 						}
 
@@ -1390,15 +1217,15 @@ public class SensorManagerServiceRestletImpl extends Application {
 						readerMetaFactory.setId(factory.getFactoryID());
 						readerFactoryMetadataList.add(readerMetaFactory);
 					}
-					
-					List<CommandFactoryMetadataDTO> commandFactoryMetadataList = new ArrayList<CommandFactoryMetadataDTO>();		
+
+					List<CommandFactoryMetadataDTO> commandFactoryMetadataList = new ArrayList<CommandFactoryMetadataDTO>();
 					Set<AbstractCommandConfigurationFactory<?>> commandfactories = self.commandDAO.getCommandFactories();
-					for(AbstractCommandConfigurationFactory<?> factory:commandfactories) {			
+					for (AbstractCommandConfigurationFactory<?> factory : commandfactories) {
 						List<CommandMetadataDTO> commandMetadataList = new ArrayList<CommandMetadataDTO>();
 						MBeanAttributeInfo[] attArray = factory.getServiceDescription(factory.getFactoryID()).getAttributes();
-						for(MBeanAttributeInfo att:attArray) {
+						for (MBeanAttributeInfo att : attArray) {
 							CommandMetadataDTO commandMetadata = new CommandMetadataDTO();
-							OpenMBeanAttributeInfoSupport supp = (OpenMBeanAttributeInfoSupport)att;
+							OpenMBeanAttributeInfoSupport supp = (OpenMBeanAttributeInfoSupport) att;
 							if (supp.getDefaultValue() != null) {
 								commandMetadata.setDefaultValue(supp.getDefaultValue().toString());
 							}
@@ -1417,17 +1244,17 @@ public class SensorManagerServiceRestletImpl extends Application {
 							if (supp.getName() != null) {
 								commandMetadata.setName(supp.getName());
 							}
-							if(supp.getDescriptor().getFieldValue(cat_str)!=null) {
-								commandMetadata.setCategory((String)supp.getDescriptor().getFieldValue(cat_str));
+							if (supp.getDescriptor().getFieldValue(cat_str) != null) {
+								commandMetadata.setCategory((String) supp.getDescriptor().getFieldValue(cat_str));
 							}
-							if(supp.getDescriptor().getFieldValue(order_value)!=null) {
-								commandMetadata.setOrderValue((Float)supp.getDescriptor().getFieldValue(order_value));
+							if (supp.getDescriptor().getFieldValue(order_value) != null) {
+								commandMetadata.setOrderValue((Float) supp.getDescriptor().getFieldValue(order_value));
 							}
-							if(supp.getDescriptor().getFieldValue(display_name)!=null) {
-								commandMetadata.setDisplayName((String)supp.getDescriptor().getFieldValue(display_name));
+							if (supp.getDescriptor().getFieldValue(display_name) != null) {
+								commandMetadata.setDisplayName((String) supp.getDescriptor().getFieldValue(display_name));
 							}
 							commandMetadata.setWritable(supp.isWritable());
-							
+
 							commandMetadataList.add(commandMetadata);
 						}
 						CommandFactoryMetadataDTO commandMetaFactory = new CommandFactoryMetadataDTO();
@@ -1436,16 +1263,13 @@ public class SensorManagerServiceRestletImpl extends Application {
 						commandMetaFactory.setReaderID(factory.getReaderFactoryID());
 						commandFactoryMetadataList.add(commandMetaFactory);
 					}
-					
+
 					rmrmd.setCommandMetaList(commandFactoryMetadataList);
 					rmrmd.setReaderMetaList(readerFactoryMetadataList);
-					
-					response.setEntity(self.generateReturnString(rmrmd)
-							.toString(), MediaType.TEXT_XML);
-				} catch (Exception e) {					
-					response.setEntity(self.generateReturnString(self
-							.generateErrorMessage(e.toString(), null)),
-							MediaType.TEXT_XML);
+
+					response.setEntity(self.generateReturnString(rmrmd).toString(), MediaType.TEXT_XML);
+				} catch (Exception e) {
+					response.setEntity(self.generateReturnString(self.generateErrorMessage(e.toString(), null)), MediaType.TEXT_XML);
 				}
 			}
 		};
@@ -1455,12 +1279,11 @@ public class SensorManagerServiceRestletImpl extends Application {
 			public void handle(Request request, Response response) {
 				logger.info("commandTypes requested");
 				try {
-					
+
 					setResponseHeaders(request, response);
-					
+
 					CommandTypesResponseMessageDTO rtr = new CommandTypesResponseMessageDTO();
-					Set<CommandConfigFactoryDTO> grf = self.commandManagerService
-							.getCommandConfigFactories();
+					Set<CommandConfigFactoryDTO> grf = self.commandManagerService.getCommandConfigFactories();
 					List<CommandTypeDTO> ret = new LinkedList<CommandTypeDTO>();
 					for (CommandConfigFactoryDTO rfd : grf) {
 						CommandTypeDTO rtd = new CommandTypeDTO();
@@ -1470,13 +1293,10 @@ public class SensorManagerServiceRestletImpl extends Application {
 						ret.add(rtd);
 					}
 					rtr.setCommands(ret);
-					response.setEntity(self.generateReturnString(rtr)
-							.toString(), MediaType.TEXT_XML);
+					response.setEntity(self.generateReturnString(rtr).toString(), MediaType.TEXT_XML);
 				} catch (Exception e) {
 
-					response.setEntity(self.generateReturnString(self
-							.generateErrorMessage(e.toString(), null)),
-							MediaType.TEXT_XML);
+					response.setEntity(self.generateReturnString(self.generateErrorMessage(e.toString(), null)), MediaType.TEXT_XML);
 				}
 			}
 		};
@@ -1486,29 +1306,25 @@ public class SensorManagerServiceRestletImpl extends Application {
 			public void handle(Request request, Response response) {
 				logger.info("apps requested");
 				try {
-					
+
 					setResponseHeaders(request, response);
-					
+
 					Map<Integer, RifidiApp> apps = appManager.getApps();
 					List<AppNameDTO> appNames = new LinkedList<AppNameDTO>();
 					for (Integer i : apps.keySet()) {
 						AppNameDTO and = new AppNameDTO();
-						and.setAppName(apps.get(i).getGroup() + ":"
-								+ apps.get(i).getName());
+						and.setAppName(apps.get(i).getGroup() + ":" + apps.get(i).getName());
 						and.setAppNumber(Integer.toString(i));
 						and.setAppStatus(apps.get(i).getState().toString());
 						appNames.add(and);
 					}
 					AppResponseMessageDTO armd = new AppResponseMessageDTO();
 					armd.setApps(appNames);
-					response.setEntity(self.generateReturnString(armd),
-							MediaType.TEXT_XML);
+					response.setEntity(self.generateReturnString(armd), MediaType.TEXT_XML);
 					Thread.sleep(200000);
 				} catch (Exception e) {
 
-					response.setEntity(self.generateReturnString(self
-							.generateErrorMessage(e.toString(), null)),
-							MediaType.TEXT_XML);
+					response.setEntity(self.generateReturnString(self.generateErrorMessage(e.toString(), null)), MediaType.TEXT_XML);
 				}
 			}
 		};
@@ -1517,14 +1333,11 @@ public class SensorManagerServiceRestletImpl extends Application {
 			public void handle(Request request, Response response) {
 				logger.info("loadApp requested");
 				try {
-					provisioningService.provision((String)request.getAttributes().get("path"));
-					response.setEntity(self.generateReturnString(self
-							.generateSuccessMessage()), MediaType.TEXT_XML);
-				} catch(Exception e) {
+					provisioningService.provision((String) request.getAttributes().get("path"));
+					response.setEntity(self.generateReturnString(self.generateSuccessMessage()), MediaType.TEXT_XML);
+				} catch (Exception e) {
 					e.printStackTrace();
-					response.setEntity(self.generateReturnString(self
-							.generateErrorMessage(e.toString(), null)),
-							MediaType.TEXT_XML);
+					response.setEntity(self.generateReturnString(self.generateErrorMessage(e.toString(), null)), MediaType.TEXT_XML);
 				}
 			}
 		};
@@ -1533,23 +1346,46 @@ public class SensorManagerServiceRestletImpl extends Application {
 			public void handle(Request request, Response response) {
 				logger.info("save requested");
 				try {
-					
+
 					setResponseHeaders(request, response);
-					
+
 					configService.storeConfiguration();
-					response.setEntity(self.generateReturnString(self
-							.generateSuccessMessage()), MediaType.TEXT_XML);
+					response.setEntity(self.generateReturnString(self.generateSuccessMessage()), MediaType.TEXT_XML);
 				} catch (Exception e) {
 
-					response.setEntity(self.generateReturnString(self
-							.generateErrorMessage(e.toString(), null)),
-							MediaType.TEXT_XML);
+					response.setEntity(self.generateReturnString(self.generateErrorMessage(e.toString(), null)), MediaType.TEXT_XML);
 				}
 			}
 		};
-		
-		
-		
+
+		Restlet currenttags = new Restlet() {
+			@Override
+			public void handle(Request request, Response response) {
+				logger.info("apps requested");
+				try {
+					setResponseHeaders(request, response);
+					Set<String> currenttags = new HashSet<String>();
+					CurrentTagsSubscriber sub = new CurrentTagsSubscriber(currenttags);
+					String attribute = (String) request.getAttributes().get("readerID");
+					System.out.println("ReaderID: " + attribute);
+					ReadZone zone = new ReadZone((String) request.getAttributes().get("readerID"));
+
+					CurrentTagsAggregator agg = new CurrentTagsAggregator(sub, zone, rawTagMonitoringService);
+					agg.initstart();
+
+					CurrentTagsReponseMessageDTO tagresponse = new CurrentTagsReponseMessageDTO();
+					List<String> tempList = new ArrayList<String>();
+					tempList.addAll(currenttags);
+					tagresponse.setTags(tempList);
+					response.setEntity(self.generateReturnString(tagresponse), MediaType.TEXT_XML);
+
+				} catch (Exception e) {
+
+					response.setEntity(self.generateReturnString(self.generateErrorMessage(e.toString(), null)), MediaType.TEXT_XML);
+				}
+			}
+		};
+
 		Restlet llrpGetReaderConfig = new Restlet() {
 			@Override
 			public void handle(Request request, Response response) {
@@ -1558,12 +1394,12 @@ public class SensorManagerServiceRestletImpl extends Application {
 				llrpGetOperation(request, response, LLRPGetOperations.GET_READER_CONFIG);
 			}
 		};
-		
+
 		Restlet llrpGetRospecs = new Restlet() {
 			@Override
 			public void handle(Request request, Response response) {
-				logger.info("llrpGetRospecs requested");				
-				setResponseHeaders(request, response);				
+				logger.info("llrpGetRospecs requested");
+				setResponseHeaders(request, response);
 				llrpGetOperation(request, response, LLRPGetOperations.GET_ROSPECS);
 			}
 		};
@@ -1573,9 +1409,9 @@ public class SensorManagerServiceRestletImpl extends Application {
 			public void handle(Request request, Response response) {
 
 				logger.info("llrpEncode requested");
-				
+
 				setResponseHeaders(request, response);
-				
+
 				executeLlrpOperation(request, response, null);
 
 			}
@@ -1584,29 +1420,25 @@ public class SensorManagerServiceRestletImpl extends Application {
 		Restlet llrpEpcWrite = new Restlet() {
 			@Override
 			public void handle(Request request, Response response) {
-				
+
 				logger.info("llrpEpcWrite requested");
-				
+
 				setResponseHeaders(request, response);
-				
-				executeLlrpOperation(request, response,
-						LLRPReaderSession.LLRP_OPERATION_CODE.LLRPEPCWrite);
+
+				executeLlrpOperation(request, response, LLRPReaderSession.LLRP_OPERATION_CODE.LLRPEPCWrite);
 
 			}
 		};
-		
+
 		Restlet llrpAccessPasswordWrite = new Restlet() {
 			@Override
 			public void handle(Request request, Response response) {
 
 				logger.info("llrpAccessPasswordWrite requested");
-				
+
 				setResponseHeaders(request, response);
-				
-				executeLlrpOperation(
-						request,
-						response,
-						LLRPReaderSession.LLRP_OPERATION_CODE.LLRPAccessPasswordWrite);
+
+				executeLlrpOperation(request, response, LLRPReaderSession.LLRP_OPERATION_CODE.LLRPAccessPasswordWrite);
 
 			}
 		};
@@ -1616,13 +1448,10 @@ public class SensorManagerServiceRestletImpl extends Application {
 			public void handle(Request request, Response response) {
 
 				logger.info("llrpKillPasswordWrite requested");
-				
+
 				setResponseHeaders(request, response);
-				
-				executeLlrpOperation(
-						request,
-						response,
-						LLRPReaderSession.LLRP_OPERATION_CODE.LLRPKillPasswordWrite);
+
+				executeLlrpOperation(request, response, LLRPReaderSession.LLRP_OPERATION_CODE.LLRPKillPasswordWrite);
 
 			}
 		};
@@ -1632,11 +1461,10 @@ public class SensorManagerServiceRestletImpl extends Application {
 			public void handle(Request request, Response response) {
 
 				logger.info("llrpEPCLock requested");
-				
+
 				setResponseHeaders(request, response);
-				
-				executeLlrpOperation(request, response,
-						LLRPReaderSession.LLRP_OPERATION_CODE.LLRPEPCLock);
+
+				executeLlrpOperation(request, response, LLRPReaderSession.LLRP_OPERATION_CODE.LLRPEPCLock);
 
 			}
 		};
@@ -1646,13 +1474,10 @@ public class SensorManagerServiceRestletImpl extends Application {
 			public void handle(Request request, Response response) {
 
 				logger.info("llrpAccessPasswordLock requested");
-				
+
 				setResponseHeaders(request, response);
-				
-				executeLlrpOperation(
-						request,
-						response,
-						LLRPReaderSession.LLRP_OPERATION_CODE.LLRPAccessPasswordLock);
+
+				executeLlrpOperation(request, response, LLRPReaderSession.LLRP_OPERATION_CODE.LLRPAccessPasswordLock);
 
 			}
 		};
@@ -1662,100 +1487,88 @@ public class SensorManagerServiceRestletImpl extends Application {
 			public void handle(Request request, Response response) {
 
 				logger.info("llrpKillPasswordLock requested");
-				
+
 				setResponseHeaders(request, response);
 
-				executeLlrpOperation(
-						request,
-						response,
-						LLRPReaderSession.LLRP_OPERATION_CODE.LLRPKillPasswordLock);
+				executeLlrpOperation(request, response, LLRPReaderSession.LLRP_OPERATION_CODE.LLRPKillPasswordLock);
 
 			}
 		};
-		
-		
+
 		Restlet llrpUserMemoryLock = new Restlet() {
 			@Override
 			public void handle(Request request, Response response) {
 
 				logger.info("llrpUserMemoryLock requested");
-				
+
 				setResponseHeaders(request, response);
 
-				executeLlrpOperation(
-						request,
-						response,
-						LLRPReaderSession.LLRP_OPERATION_CODE.LLRPUserMemoryLock);
+				executeLlrpOperation(request, response, LLRPReaderSession.LLRP_OPERATION_CODE.LLRPUserMemoryLock);
 
 			}
 		};
-		
+
 		Restlet llrpEpcRead = new Restlet() {
 			@Override
 			public void handle(Request request, Response response) {
-				
+
 				logger.info("llrpEpcRead requested");
-				
+
 				setResponseHeaders(request, response);
-				
-				executeLlrpOperation(request, response,
-						LLRPReaderSession.LLRP_OPERATION_CODE.LLRPEPCRead);
+
+				executeLlrpOperation(request, response, LLRPReaderSession.LLRP_OPERATION_CODE.LLRPEPCRead);
 
 			}
 		};
-		
+
 		Restlet llrpAccessPwdValidate = new Restlet() {
 			@Override
 			public void handle(Request request, Response response) {
-				
+
 				logger.info("llrpAccessPwdValidate requested");
-				
+
 				setResponseHeaders(request, response);
-				
-				executeLlrpOperation(request, response,
-						LLRPReaderSession.LLRP_OPERATION_CODE.LLRPAccessPasswordValidate);
+
+				executeLlrpOperation(request, response, LLRPReaderSession.LLRP_OPERATION_CODE.LLRPAccessPasswordValidate);
 
 			}
 		};
-		
+
 		Restlet llrpKillPwdRead = new Restlet() {
 			@Override
 			public void handle(Request request, Response response) {
-				
+
 				logger.info("llrpKillPwdRead requested");
-				
+
 				setResponseHeaders(request, response);
-				
-				executeLlrpOperation(request, response,
-						LLRPReaderSession.LLRP_OPERATION_CODE.LLRPKillPasswordRead);
+
+				executeLlrpOperation(request, response, LLRPReaderSession.LLRP_OPERATION_CODE.LLRPKillPasswordRead);
 
 			}
 		};
-		
+
 		Restlet llrpUserMemoryRead = new Restlet() {
 			@Override
 			public void handle(Request request, Response response) {
-				
+
 				logger.info("llrpUserMemoryRead requested");
-				
+
 				setResponseHeaders(request, response);
-				
-				executeLlrpOperation(request, response,
-						LLRPReaderSession.LLRP_OPERATION_CODE.LLRPUserMemoryRead);
+
+				executeLlrpOperation(request, response, LLRPReaderSession.LLRP_OPERATION_CODE.LLRPUserMemoryRead);
 
 			}
 		};
-		
+
 		Restlet llrpUserMemoryWrite = new Restlet() {
 			@Override
 			public void handle(Request request, Response response) {
-				
+
 				logger.info("llrpUserMemoryWrite requested");
-				
+
 				setResponseHeaders(request, response);
-				
-				executeLlrpOperation(request, response,
-						LLRPReaderSession.LLRP_OPERATION_CODE.LLRPUserMemoryWrite);
+
+				executeLlrpOperation(request, response, LLRPReaderSession.LLRP_OPERATION_CODE.LLRPUserMemoryWrite);
 
 			}
 		};
@@ -1766,40 +1579,31 @@ public class SensorManagerServiceRestletImpl extends Application {
 				try {
 
 					logger.info("llrpMessage requested");
-					
+
 					setResponseHeaders(request, response);
 
-					AbstractSensor<?> sensor = readerDAO
-							.getReaderByID((String) request.getAttributes()
-									.get("readerID"));
+					AbstractSensor<?> sensor = readerDAO.getReaderByID((String) request.getAttributes().get("readerID"));
 
 					if (sensor == null) {
 						throw new Exception("ReaderID is missing or invalid");
 					}
 
-					Map<String, SensorSession> sessionMap = sensor
-							.getSensorSessions();
+					Map<String, SensorSession> sessionMap = sensor.getSensorSessions();
 					String llrpResponse = "";
-					if (sessionMap != null
-							&& sessionMap.containsKey(request.getAttributes()
-									.get("sessionID"))) {
-						LLRPReaderSession session = (LLRPReaderSession) sessionMap
-								.get(request.getAttributes().get("sessionID"));
+					if (sessionMap != null && sessionMap.containsKey(request.getAttributes().get("sessionID"))) {
+						LLRPReaderSession session = (LLRPReaderSession) sessionMap.get(request.getAttributes().get("sessionID"));
 
 						SAXBuilder sb = new SAXBuilder();
 
 						String strEntityAsText = request.getEntityAsText();
-						Document doc = sb.build(new StringReader(
-								strEntityAsText));
+						Document doc = sb.build(new StringReader(strEntityAsText));
 						llrpResponse = session.sendLLRPMessage(doc);
 						response.setEntity(llrpResponse, MediaType.TEXT_XML);
 					} else {
 						throw new Exception("SessionID is missing or invalid");
 					}
 				} catch (Exception e) {
-					response.setEntity(self.generateReturnString(self
-							.generateErrorMessage(e.getMessage(), null)),
-							MediaType.TEXT_XML);
+					response.setEntity(self.generateReturnString(self.generateErrorMessage(e.getMessage(), null)), MediaType.TEXT_XML);
 				}
 			}
 		};
@@ -1807,13 +1611,12 @@ public class SensorManagerServiceRestletImpl extends Application {
 		Restlet ping = new Restlet() {
 			@Override
 			public void handle(Request request, Response response) {
-				
+
 				setResponseHeaders(request, response);
-				
+
 				PingDTO ping = new PingDTO();
 				ping.setTimestamp(Long.toString(System.currentTimeMillis()));
-				response.setEntity(self.generateReturnString(ping),
-						MediaType.TEXT_XML);
+				response.setEntity(self.generateReturnString(ping), MediaType.TEXT_XML);
 			}
 		};
 
@@ -1823,26 +1626,22 @@ public class SensorManagerServiceRestletImpl extends Application {
 				try {
 
 					logger.info("getAppProperties requested");
-					
+
 					setResponseHeaders(request, response);
 
-					Integer intAppId = Integer.parseInt((String) request
-							.getAttributes().get("appID"));
+					Integer intAppId = Integer.parseInt((String) request.getAttributes().get("appID"));
 
 					Map<Integer, RifidiApp> appMap = appManager.getApps();
 
 					if (appMap != null && appMap.get(intAppId) != null) {
 
 						RifidiApp app = appMap.get(intAppId);
-						Properties appProperties = RifidiEdgeHelper
-								.getApplicationProperties(app.getGroup(),
-										app.getName());
+						Properties appProperties = RifidiEdgeHelper.getApplicationProperties(app.getGroup(), app.getName());
 
 						PropertyResponseMessageDTO responseMessageDTO = new PropertyResponseMessageDTO();
 						List<PropertyNameDTO> propertyNameList = new LinkedList<PropertyNameDTO>();
 
-						for (Map.Entry<Object, Object> mapEntry : appProperties
-								.entrySet()) {
+						for (Map.Entry<Object, Object> mapEntry : appProperties.entrySet()) {
 
 							PropertyNameDTO pnd = new PropertyNameDTO();
 							pnd.setPropertyName((String) mapEntry.getKey());
@@ -1852,20 +1651,16 @@ public class SensorManagerServiceRestletImpl extends Application {
 
 						responseMessageDTO.setProperties(propertyNameList);
 
-						response.setEntity(
-								self.generateReturnString(responseMessageDTO)
-										.toString(), MediaType.TEXT_XML);
+						response.setEntity(self.generateReturnString(responseMessageDTO).toString(), MediaType.TEXT_XML);
 
 					} else {
-						
+
 						throw new Exception("Application with id " + intAppId + " does not exist.");
-						
+
 					}
 
 				} catch (Exception e) {
-					response.setEntity(self.generateReturnString(self
-							.generateErrorMessage(e.getMessage(), null)),
-							MediaType.TEXT_XML);
+					response.setEntity(self.generateReturnString(self.generateErrorMessage(e.getMessage(), null)), MediaType.TEXT_XML);
 				}
 			}
 		};
@@ -1876,25 +1671,22 @@ public class SensorManagerServiceRestletImpl extends Application {
 				try {
 
 					logger.info("getGroupProperties requested");
-					
+
 					setResponseHeaders(request, response);
 
-					Integer intAppId = Integer.parseInt((String) request
-							.getAttributes().get("appID"));
+					Integer intAppId = Integer.parseInt((String) request.getAttributes().get("appID"));
 
 					Map<Integer, RifidiApp> appMap = appManager.getApps();
 
 					if (appMap != null && appMap.get(intAppId) != null) {
 
 						RifidiApp app = appMap.get(intAppId);
-						Properties groupProperties = RifidiEdgeHelper
-								.getGroupProperties(app.getGroup());
+						Properties groupProperties = RifidiEdgeHelper.getGroupProperties(app.getGroup());
 
 						PropertyResponseMessageDTO responseMessageDTO = new PropertyResponseMessageDTO();
 						List<PropertyNameDTO> propertyNameList = new LinkedList<PropertyNameDTO>();
 
-						for (Map.Entry<Object, Object> mapEntry : groupProperties
-								.entrySet()) {
+						for (Map.Entry<Object, Object> mapEntry : groupProperties.entrySet()) {
 
 							PropertyNameDTO pnd = new PropertyNameDTO();
 							pnd.setPropertyName((String) mapEntry.getKey());
@@ -1904,20 +1696,16 @@ public class SensorManagerServiceRestletImpl extends Application {
 
 						responseMessageDTO.setProperties(propertyNameList);
 
-						response.setEntity(
-								self.generateReturnString(responseMessageDTO)
-										.toString(), MediaType.TEXT_XML);
+						response.setEntity(self.generateReturnString(responseMessageDTO).toString(), MediaType.TEXT_XML);
 
 					} else {
-						
+
 						throw new Exception("Application with id " + intAppId + " does not exist.");
-						
+
 					}
 
 				} catch (Exception e) {
-					response.setEntity(self.generateReturnString(self
-							.generateErrorMessage(e.getMessage(), null)),
-							MediaType.TEXT_XML);
+					response.setEntity(self.generateReturnString(self.generateErrorMessage(e.getMessage(), null)), MediaType.TEXT_XML);
 				}
 			}
 		};
@@ -1928,19 +1716,17 @@ public class SensorManagerServiceRestletImpl extends Application {
 				try {
 
 					logger.info("getReadZones requested");
-					
+
 					setResponseHeaders(request, response);
 
-					Integer intAppId = Integer.parseInt((String) request
-							.getAttributes().get("appID"));
+					Integer intAppId = Integer.parseInt((String) request.getAttributes().get("appID"));
 
 					Map<Integer, RifidiApp> appMap = appManager.getApps();
 
 					if (appMap != null && appMap.get(intAppId) != null) {
 
 						RifidiApp app = appMap.get(intAppId);
-						HashMap<String, ReadZone> readZones = RifidiEdgeHelper
-								.getReadZones(app.getGroup());
+						HashMap<String, ReadZone> readZones = RifidiEdgeHelper.getReadZones(app.getGroup());
 
 						PropertyResponseMessageDTO responseMessageDTO = new PropertyResponseMessageDTO();
 						List<PropertyNameDTO> propertyNameList = new LinkedList<PropertyNameDTO>();
@@ -1955,36 +1741,31 @@ public class SensorManagerServiceRestletImpl extends Application {
 
 						responseMessageDTO.setProperties(propertyNameList);
 
-						response.setEntity(
-								self.generateReturnString(responseMessageDTO)
-										.toString(), MediaType.TEXT_XML);
+						response.setEntity(self.generateReturnString(responseMessageDTO).toString(), MediaType.TEXT_XML);
 
 					} else {
-						
+
 						throw new Exception("Application with id " + intAppId + " does not exist.");
-						
+
 					}
 
 				} catch (Exception e) {
-					response.setEntity(self.generateReturnString(self
-							.generateErrorMessage(e.getMessage(), null)),
-							MediaType.TEXT_XML);
+					response.setEntity(self.generateReturnString(self.generateErrorMessage(e.getMessage(), null)), MediaType.TEXT_XML);
 				}
 			}
 		};
-		
+
 		Restlet deleteReadZone = new Restlet() {
 			@Override
 			public void handle(Request request, Response response) {
 				try {
 
 					logger.info("deleteReadZone requested");
-					
+
 					setResponseHeaders(request, response);
 
-					Integer intAppId = Integer.parseInt((String) request
-							.getAttributes().get("appID"));
-					
+					Integer intAppId = Integer.parseInt((String) request.getAttributes().get("appID"));
+
 					String readZone = (String) request.getAttributes().get("readZone");
 
 					Map<Integer, RifidiApp> appMap = appManager.getApps();
@@ -1994,19 +1775,16 @@ public class SensorManagerServiceRestletImpl extends Application {
 						RifidiApp app = appMap.get(intAppId);
 						RifidiEdgeHelper.deleteReadZone(app.getGroup(), readZone);
 
-						response.setEntity(self.generateReturnString(self
-								.generateSuccessMessage()), MediaType.TEXT_XML);
+						response.setEntity(self.generateReturnString(self.generateSuccessMessage()), MediaType.TEXT_XML);
 
 					} else {
-						
+
 						throw new Exception("Application with id " + intAppId + " does not exist.");
-						
+
 					}
 
 				} catch (Exception e) {
-					response.setEntity(self.generateReturnString(self
-							.generateErrorMessage(e.getMessage(), null)),
-							MediaType.TEXT_XML);
+					response.setEntity(self.generateReturnString(self.generateErrorMessage(e.getMessage(), null)), MediaType.TEXT_XML);
 				}
 			}
 		};
@@ -2017,14 +1795,12 @@ public class SensorManagerServiceRestletImpl extends Application {
 				try {
 
 					logger.info("getReadZoneProperties requested");
-					
+
 					setResponseHeaders(request, response);
 
-					Integer intAppId = Integer.parseInt((String) request
-							.getAttributes().get("appID"));
+					Integer intAppId = Integer.parseInt((String) request.getAttributes().get("appID"));
 
-					String readZoneName = (String) request.getAttributes().get(
-							"readZoneName");
+					String readZoneName = (String) request.getAttributes().get("readZoneName");
 
 					Map<Integer, RifidiApp> appMap = appManager.getApps();
 
@@ -2032,15 +1808,12 @@ public class SensorManagerServiceRestletImpl extends Application {
 
 						RifidiApp app = appMap.get(intAppId);
 
-						Properties readZoneProperties = RifidiEdgeHelper
-								.getReadZoneProperties(app.getGroup(),
-										app.getName(), readZoneName);
+						Properties readZoneProperties = RifidiEdgeHelper.getReadZoneProperties(app.getGroup(), app.getName(), readZoneName);
 
 						PropertyResponseMessageDTO responseMessageDTO = new PropertyResponseMessageDTO();
 						List<PropertyNameDTO> propertyNameList = new LinkedList<PropertyNameDTO>();
 
-						for (Map.Entry<Object, Object> mapEntry : readZoneProperties
-								.entrySet()) {
+						for (Map.Entry<Object, Object> mapEntry : readZoneProperties.entrySet()) {
 
 							PropertyNameDTO pnd = new PropertyNameDTO();
 							pnd.setPropertyName((String) mapEntry.getKey());
@@ -2050,20 +1823,16 @@ public class SensorManagerServiceRestletImpl extends Application {
 
 						responseMessageDTO.setProperties(propertyNameList);
 
-						response.setEntity(
-								self.generateReturnString(responseMessageDTO)
-										.toString(), MediaType.TEXT_XML);
+						response.setEntity(self.generateReturnString(responseMessageDTO).toString(), MediaType.TEXT_XML);
 
 					} else {
-						
+
 						throw new Exception("Application with id " + intAppId + " does not exist.");
-						
+
 					}
 
 				} catch (Exception e) {
-					response.setEntity(self.generateReturnString(self
-							.generateErrorMessage(e.getMessage(), null)),
-							MediaType.TEXT_XML);
+					response.setEntity(self.generateReturnString(self.generateErrorMessage(e.getMessage(), null)), MediaType.TEXT_XML);
 				}
 			}
 		};
@@ -2077,56 +1846,48 @@ public class SensorManagerServiceRestletImpl extends Application {
 				try {
 
 					logger.info("setAppProperties requested");
-					
+
 					setResponseHeaders(request, response);
 
-					Integer intAppId = Integer.parseInt((String) request
-							.getAttributes().get("appID"));
+					Integer intAppId = Integer.parseInt((String) request.getAttributes().get("appID"));
 
-					String strPropAttr = (String) request.getAttributes().get(
-							"properties");
-					
-					//Decode url attributes
+					String strPropAttr = (String) request.getAttributes().get("properties");
+
+					// Decode url attributes
 					strPropAttr = URLDecoder.decode(strPropAttr, "UTF-8");
-					
+
 					AttributeList attributes = getProcessedAttributes(strPropAttr);
 
 					Map<Integer, RifidiApp> appMap = appManager.getApps();
 
 					if (appMap != null && appMap.get(intAppId) != null) {
-						
+
 						RifidiApp app = appMap.get(intAppId);
 
-						RifidiEdgeHelper.setApplicationProperties(app.getGroup(),
-								app.getName(), attributes);
+						RifidiEdgeHelper.setApplicationProperties(app.getGroup(), app.getName(), attributes);
 
-						response.setEntity(self.generateReturnString(self
-								.generateSuccessMessage()), MediaType.TEXT_XML);
+						response.setEntity(self.generateReturnString(self.generateSuccessMessage()), MediaType.TEXT_XML);
 					} else {
-						
+
 						throw new Exception("Application with id " + intAppId + " does not exist.");
-						
+
 					}
 
 				} catch (NotValidPropertyForObjectException nE) {
 
-					response.setEntity(self.generateReturnString(self
-							.generateErrorMessage(nE.getMessage(), null)),
-							MediaType.TEXT_XML);
+					response.setEntity(self.generateReturnString(self.generateErrorMessage(nE.getMessage(), null)), MediaType.TEXT_XML);
 
 				}
 
 				catch (Exception e) {
 
-					//e.printStackTrace();
-					response.setEntity(self.generateReturnString(self
-							.generateErrorMessage(e.getMessage(), null)),
-							MediaType.TEXT_XML);
+					// e.printStackTrace();
+					response.setEntity(self.generateReturnString(self.generateErrorMessage(e.getMessage(), null)), MediaType.TEXT_XML);
 
 				}
 			}
 		};
-		
+
 		Restlet setGroupProperties = new Restlet() {
 			@Override
 			public void handle(Request request, Response response) {
@@ -2134,55 +1895,48 @@ public class SensorManagerServiceRestletImpl extends Application {
 				try {
 
 					logger.info("setGroupProperties requested");
-					
+
 					setResponseHeaders(request, response);
 
-					Integer intAppId = Integer.parseInt((String) request
-							.getAttributes().get("appID"));
+					Integer intAppId = Integer.parseInt((String) request.getAttributes().get("appID"));
 
-					String strPropAttr = (String) request.getAttributes().get(
-							"properties");
-					
-					//Decode url attributes
+					String strPropAttr = (String) request.getAttributes().get("properties");
+
+					// Decode url attributes
 					strPropAttr = URLDecoder.decode(strPropAttr, "UTF-8");
-					
+
 					AttributeList attributes = getProcessedAttributes(strPropAttr);
 
 					Map<Integer, RifidiApp> appMap = appManager.getApps();
 
 					if (appMap != null && appMap.get(intAppId) != null) {
-						
+
 						RifidiApp app = appMap.get(intAppId);
 
 						RifidiEdgeHelper.setGroupProperties(app.getGroup(), attributes);
 
-						response.setEntity(self.generateReturnString(self
-								.generateSuccessMessage()), MediaType.TEXT_XML);
+						response.setEntity(self.generateReturnString(self.generateSuccessMessage()), MediaType.TEXT_XML);
 					} else {
-						
+
 						throw new Exception("Application with id " + intAppId + " does not exist.");
-						
+
 					}
 
 				} catch (NotValidPropertyForObjectException nE) {
 
-					response.setEntity(self.generateReturnString(self
-							.generateErrorMessage(nE.getMessage(), null)),
-							MediaType.TEXT_XML);
+					response.setEntity(self.generateReturnString(self.generateErrorMessage(nE.getMessage(), null)), MediaType.TEXT_XML);
 
 				}
 
 				catch (Exception e) {
 
-					//e.printStackTrace();
-					response.setEntity(self.generateReturnString(self
-							.generateErrorMessage(e.getMessage(), null)),
-							MediaType.TEXT_XML);
+					// e.printStackTrace();
+					response.setEntity(self.generateReturnString(self.generateErrorMessage(e.getMessage(), null)), MediaType.TEXT_XML);
 
 				}
 			}
 		};
-		
+
 		Restlet addReadZone = new Restlet() {
 			@Override
 			public void handle(Request request, Response response) {
@@ -2190,63 +1944,57 @@ public class SensorManagerServiceRestletImpl extends Application {
 				try {
 
 					logger.info("addReadZone requested");
-					
+
 					setResponseHeaders(request, response);
 
-					Integer intAppId = Integer.parseInt((String) request
-							.getAttributes().get("appID"));
-					
+					Integer intAppId = Integer.parseInt((String) request.getAttributes().get("appID"));
+
 					String readZone = (String) request.getAttributes().get("readZone");
 
-					String strPropAttr = (String) request.getAttributes().get(
-							"properties");
-					
-					//Decode url attributes
+					String strPropAttr = (String) request.getAttributes().get("properties");
+
+					// Decode url attributes
 					strPropAttr = URLDecoder.decode(strPropAttr, "UTF-8");
-					
+
 					AttributeList attributes = getProcessedAttributes(strPropAttr);
-					
-					//Validate that properties are valid for readzone
+
+					// Validate that properties are valid for readzone
 					validateReadzoneProperties(attributes);
-					
-					//Validate that properties contain the minimum required ones
+
+					// Validate that properties contain the minimum required
+					// ones
 					validateMinumimRequiredReadzoneProperties(attributes);
 
 					Map<Integer, RifidiApp> appMap = appManager.getApps();
 
 					if (appMap != null && appMap.get(intAppId) != null) {
-						
+
 						RifidiApp app = appMap.get(intAppId);
 
 						RifidiEdgeHelper.addReadZone(app.getGroup(), readZone, attributes);
 
-						response.setEntity(self.generateReturnString(self
-								.generateSuccessMessage()), MediaType.TEXT_XML);
+						response.setEntity(self.generateReturnString(self.generateSuccessMessage()), MediaType.TEXT_XML);
 					} else {
-						
+
 						throw new Exception("Application with id " + intAppId + " does not exist.");
-						
+
 					}
 
 				} catch (NotValidPropertyForObjectException nE) {
 
-					response.setEntity(self.generateReturnString(self
-							.generateErrorMessage(nE.getMessage(), null)),
-							MediaType.TEXT_XML);
+					response.setEntity(self.generateReturnString(self.generateErrorMessage(nE.getMessage(), null)), MediaType.TEXT_XML);
 
 				}
 
 				catch (Exception e) {
 
-					//e.printStackTrace();
-					response.setEntity(self.generateReturnString(self
-							.generateErrorMessage(e.getMessage(), null)),
-							MediaType.TEXT_XML);
+					// e.printStackTrace();
+					response.setEntity(self.generateReturnString(self.generateErrorMessage(e.getMessage(), null)), MediaType.TEXT_XML);
 
 				}
 			}
 		};
-		
+
 		Restlet setReadZoneProperties = new Restlet() {
 			@Override
 			public void handle(Request request, Response response) {
@@ -2254,139 +2002,122 @@ public class SensorManagerServiceRestletImpl extends Application {
 				try {
 
 					logger.info("setReadZoneProperties requested");
-					
+
 					setResponseHeaders(request, response);
 
-					Integer intAppId = Integer.parseInt((String) request
-							.getAttributes().get("appID"));
-					
+					Integer intAppId = Integer.parseInt((String) request.getAttributes().get("appID"));
+
 					String readZone = (String) request.getAttributes().get("readZoneName");
 
-					String strPropAttr = (String) request.getAttributes().get(
-							"properties");
-					
-					//Decode url attributes
+					String strPropAttr = (String) request.getAttributes().get("properties");
+
+					// Decode url attributes
 					strPropAttr = URLDecoder.decode(strPropAttr, "UTF-8");
-					
+
 					AttributeList attributes = getProcessedAttributes(strPropAttr);
-					
-					//Validate that properties are valid for readzone
+
+					// Validate that properties are valid for readzone
 					validateReadzoneProperties(attributes);
 
 					Map<Integer, RifidiApp> appMap = appManager.getApps();
 
 					if (appMap != null && appMap.get(intAppId) != null) {
-						
+
 						RifidiApp app = appMap.get(intAppId);
 
 						RifidiEdgeHelper.setReadZoneProperties(app.getGroup(), readZone, attributes);
 
-						response.setEntity(self.generateReturnString(self
-								.generateSuccessMessage()), MediaType.TEXT_XML);
+						response.setEntity(self.generateReturnString(self.generateSuccessMessage()), MediaType.TEXT_XML);
 					} else {
-						
+
 						throw new Exception("Application with id " + intAppId + " does not exist.");
-						
+
 					}
 
 				} catch (NotValidPropertyForObjectException nE) {
 
-					response.setEntity(self.generateReturnString(self
-							.generateErrorMessage(nE.getMessage(), null)),
-							MediaType.TEXT_XML);
+					response.setEntity(self.generateReturnString(self.generateErrorMessage(nE.getMessage(), null)), MediaType.TEXT_XML);
 
 				}
 
 				catch (Exception e) {
 
-					//e.printStackTrace();
-					response.setEntity(self.generateReturnString(self
-							.generateErrorMessage(e.getMessage(), null)),
-							MediaType.TEXT_XML);
+					// e.printStackTrace();
+					response.setEntity(self.generateReturnString(self.generateErrorMessage(e.getMessage(), null)), MediaType.TEXT_XML);
 
 				}
 			}
 		};
-		
+
 		Restlet updateServersFile = new Restlet() {
 			@Override
 			public void handle(Request request, Response response) {
 				try {
-					
+
 					setResponseHeaders(request, response);
-					
+
 					String data = (String) request.getAttributes().get("data");
 					String decodedData = URLDecoder.decode(data, "UTF-8");
 					RifidiEdgeHelper.updateServersFile(decodedData);
-					response.setEntity(self.generateReturnString(self
-							.generateSuccessMessage()), MediaType.TEXT_XML);
+					response.setEntity(self.generateReturnString(self.generateSuccessMessage()), MediaType.TEXT_XML);
 				} catch (Exception e) {
 
-					response.setEntity(self.generateReturnString(self
-							.generateErrorMessage(e.toString(), null)),
-							MediaType.TEXT_XML);
+					response.setEntity(self.generateReturnString(self.generateErrorMessage(e.toString(), null)), MediaType.TEXT_XML);
 				}
 			}
 		};
-		
+
 		Restlet getServersFile = new Restlet() {
 			@Override
 			public void handle(Request request, Response response) {
 				try {
-					
+
 					setResponseHeaders(request, response);
-					
+
 					byte[] data = RifidiEdgeHelper.getServersFile();
 					String str = new String(data, "UTF-8");
 					response.setEntity(str, MediaType.APPLICATION_JSON);
 				} catch (Exception e) {
 
-					response.setEntity(self.generateReturnString(self
-							.generateErrorMessage(e.toString(), null)),
-							MediaType.TEXT_XML);
+					response.setEntity(self.generateReturnString(self.generateErrorMessage(e.toString(), null)), MediaType.TEXT_XML);
 				}
 			}
 		};
-		
+
 		Restlet updateUIPropertiesFile = new Restlet() {
 			@Override
 			public void handle(Request request, Response response) {
 				try {
-					
+
 					setResponseHeaders(request, response);
-					
+
 					String data = (String) request.getAttributes().get("data");
 					String decodedData = URLDecoder.decode(data, "UTF-8");
 					RifidiEdgeHelper.updateUIPropertiesFile(decodedData);
-					response.setEntity(self.generateReturnString(self
-							.generateSuccessMessage()), MediaType.TEXT_XML);
+					response.setEntity(self.generateReturnString(self.generateSuccessMessage()), MediaType.TEXT_XML);
 				} catch (Exception e) {
 
-					response.setEntity(self.generateReturnString(self
-							.generateErrorMessage(e.toString(), null)),
-							MediaType.TEXT_XML);
+					response.setEntity(self.generateReturnString(self.generateErrorMessage(e.toString(), null)), MediaType.TEXT_XML);
 				}
 			}
 		};
-		
+
 		Restlet getUIPropertiesFile = new Restlet() {
 			@Override
 			public void handle(Request request, Response response) {
 				try {
-					
+
 					setResponseHeaders(request, response);
-					
+
 					byte[] data = RifidiEdgeHelper.getUIPropertiesFile();
 					String str = new String(data, "UTF-8");
 					response.setEntity(str, MediaType.APPLICATION_JSON);
 				} catch (Exception e) {
-					response.setEntity(self.generateReturnString(self
-							.generateErrorMessage(e.toString(), null)),
-							MediaType.TEXT_XML);
+					response.setEntity(self.generateReturnString(self.generateErrorMessage(e.toString(), null)), MediaType.TEXT_XML);
 				}
 			}
 		};
-		
+
 		Restlet addDefaultApplication = new Restlet() {
 			@Override
 			public void handle(Request request, Response response) {
@@ -2394,14 +2125,11 @@ public class SensorManagerServiceRestletImpl extends Application {
 					setResponseHeaders(request, response);
 					String group = (String) request.getAttributes().get("group");
 					RifidiEdgeHelper.addDefaultApp(group);
-					response.setEntity(self.generateReturnString(self
-							.generateSuccessMessage()), MediaType.TEXT_XML);					
-				} catch(Exception e) {
-					response.setEntity(self.generateReturnString(self
-							.generateErrorMessage(e.toString(), null)),
-							MediaType.TEXT_XML);					
+					response.setEntity(self.generateReturnString(self.generateSuccessMessage()), MediaType.TEXT_XML);
+				} catch (Exception e) {
+					response.setEntity(self.generateReturnString(self.generateErrorMessage(e.toString(), null)), MediaType.TEXT_XML);
 				}
-				
+
 			}
 		};
 
@@ -2425,32 +2153,28 @@ public class SensorManagerServiceRestletImpl extends Application {
 		router.attach("/getAppProperties/{appID}", getAppProperties);
 
 		// set properties for an application
-		router.attach("/setAppProperties/{appID}/{properties}",
-				setAppProperties);
+		router.attach("/setAppProperties/{appID}/{properties}", setAppProperties);
 
 		// get properties for a group
 		router.attach("/getGroupProperties/{appID}", getGroupProperties);
-		
+
 		// set properties for a group
-		router.attach("/setGroupProperties/{appID}/{properties}",
-				setGroupProperties);
+		router.attach("/setGroupProperties/{appID}/{properties}", setGroupProperties);
 
 		// get readzones
 		router.attach("/getReadZones/{appID}", getReadZones);
-		
+
 		// delete readzone
 		router.attach("/deleteReadZone/{appID}/{readZone}", deleteReadZone);
-		
+
 		// add readzone
 		router.attach("/addReadZone/{appID}/{readZone}/{properties}", addReadZone);
 
 		// get readzone properties
-		router.attach("/getReadZoneProperties/{appID}/{readZoneName}",
-				getReadZoneProperties);
-		
+		router.attach("/getReadZoneProperties/{appID}/{readZoneName}", getReadZoneProperties);
+
 		// set readzone properties
-		router.attach("/setReadZoneProperties/{appID}/{readZoneName}/{properties}",
-				setReadZoneProperties);
+		router.attach("/setReadZoneProperties/{appID}/{readZoneName}/{properties}", setReadZoneProperties);
 
 		// createreader with properties
 		router.attach("/createreader/{readerType}/{properties}", createReader);
@@ -2459,8 +2183,7 @@ public class SensorManagerServiceRestletImpl extends Application {
 		router.attach("/createreader/{readerType}", createReader);
 
 		// createcommand with properties
-		router.attach("/createcommand/{commandType}/{properties}",
-				createCommand);
+		router.attach("/createcommand/{commandType}/{properties}", createCommand);
 
 		// createcommand with no properties
 		router.attach("/createcommand/{commandType}", createCommand);
@@ -2468,126 +2191,90 @@ public class SensorManagerServiceRestletImpl extends Application {
 		router.attach("/startapp/{appID}", startApp);
 		router.attach("/stopapp/{appID}", stopApp);
 		router.attach("/loadapp/{path}", loadApp);
-		router.attach("/adddefaultapp/{group}", addDefaultApplication);		
+		router.attach("/adddefaultapp/{group}", addDefaultApplication);
 		router.attach("/commandtypes", commandTypes);
 		router.attach("/readertypes", readerTypes);
 		router.attach("/readermetadata", readerMetadata);
 		router.attach("/apps", apps);
 		router.attach("/save", save);
+		router.attach("/currenttags/{readerID}", currenttags);
 
 		// single shot commands
-		
+
 		router.attach("/llrpgetrospecs/{readerID}/{sessionID}", llrpGetRospecs);
 		router.attach("/llrpgetreaderconfig/{readerID}/{sessionID}", llrpGetReaderConfig);
 
 		// LLRPEPCWrite single shot command with no properties
-		router.attach("/llrpencode/{readerID}/{sessionID}/LLRPEPCWrite",
-				llrpEpcWrite);
+		router.attach("/llrpencode/{readerID}/{sessionID}/LLRPEPCWrite", llrpEpcWrite);
 
 		// LLRPEPCWrite single shot command with properties
-		router.attach(
-				"/llrpencode/{readerID}/{sessionID}/LLRPEPCWrite/{properties}",
-				llrpEpcWrite);
-		
+		router.attach("/llrpencode/{readerID}/{sessionID}/LLRPEPCWrite/{properties}", llrpEpcWrite);
+
 		// llrpAccessPasswordWrite single shot command with no properties
-		router.attach(
-				"/llrpencode/{readerID}/{sessionID}/LLRPAccessPasswordWrite",
-				llrpAccessPasswordWrite);
+		router.attach("/llrpencode/{readerID}/{sessionID}/LLRPAccessPasswordWrite", llrpAccessPasswordWrite);
 
 		// llrpAccessPasswordWrite single shot command with properties
-		router.attach(
-				"/llrpencode/{readerID}/{sessionID}/LLRPAccessPasswordWrite/{properties}",
-				llrpAccessPasswordWrite);
+		router.attach("/llrpencode/{readerID}/{sessionID}/LLRPAccessPasswordWrite/{properties}", llrpAccessPasswordWrite);
 
 		// llrpKillPasswordWrite single shot command with no properties
-		router.attach(
-				"/llrpencode/{readerID}/{sessionID}/LLRPKillPasswordWrite",
-				llrpKillPasswordWrite);
+		router.attach("/llrpencode/{readerID}/{sessionID}/LLRPKillPasswordWrite", llrpKillPasswordWrite);
 
 		// llrpKillPasswordWrite single shot command with properties
-		router.attach(
-				"/llrpencode/{readerID}/{sessionID}/LLRPKillPasswordWrite/{properties}",
-				llrpKillPasswordWrite);
+		router.attach("/llrpencode/{readerID}/{sessionID}/LLRPKillPasswordWrite/{properties}", llrpKillPasswordWrite);
 
 		// llrpEPCLock single shot command with no properties
-		router.attach("/llrpencode/{readerID}/{sessionID}/LLRPEPCLock",
-				llrpEPCLock);
+		router.attach("/llrpencode/{readerID}/{sessionID}/LLRPEPCLock", llrpEPCLock);
 
 		// llrpEPCLock single shot command with properties
-		router.attach(
-				"/llrpencode/{readerID}/{sessionID}/LLRPEPCLock/{properties}",
-				llrpEPCLock);
+		router.attach("/llrpencode/{readerID}/{sessionID}/LLRPEPCLock/{properties}", llrpEPCLock);
 
 		// llrpAccessPasswordLock single shot command with no properties
-		router.attach(
-				"/llrpencode/{readerID}/{sessionID}/LLRPAccessPasswordLock",
-				llrpAccessPasswordLock);
+		router.attach("/llrpencode/{readerID}/{sessionID}/LLRPAccessPasswordLock", llrpAccessPasswordLock);
 
 		// llrpAccessPasswordLock single shot command with properties
-		router.attach(
-				"/llrpencode/{readerID}/{sessionID}/LLRPAccessPasswordLock/{properties}",
-				llrpAccessPasswordLock);
+		router.attach("/llrpencode/{readerID}/{sessionID}/LLRPAccessPasswordLock/{properties}", llrpAccessPasswordLock);
 
 		// llrpKillPasswordLock single shot command with no properties
-		router.attach(
-				"/llrpencode/{readerID}/{sessionID}/LLRPKillPasswordLock",
-				llrpKillPasswordLock);
+		router.attach("/llrpencode/{readerID}/{sessionID}/LLRPKillPasswordLock", llrpKillPasswordLock);
 
 		// llrpKillPasswordLock single shot command with properties
-		router.attach(
-				"/llrpencode/{readerID}/{sessionID}/LLRPKillPasswordLock/{properties}",
-				llrpKillPasswordLock);
-		
+		router.attach("/llrpencode/{readerID}/{sessionID}/LLRPKillPasswordLock/{properties}", llrpKillPasswordLock);
+
 		// llrpUserMemoryLock single shot command with no properties
-		router.attach(
-				"/llrpencode/{readerID}/{sessionID}/LLRPUserMemoryLock",
-				llrpUserMemoryLock);
+		router.attach("/llrpencode/{readerID}/{sessionID}/LLRPUserMemoryLock", llrpUserMemoryLock);
 
 		// llrpUserMemoryLock single shot command with properties
-		router.attach(
-				"/llrpencode/{readerID}/{sessionID}/LLRPUserMemoryLock/{properties}",
-				llrpUserMemoryLock);
-		
+		router.attach("/llrpencode/{readerID}/{sessionID}/LLRPUserMemoryLock/{properties}", llrpUserMemoryLock);
+
 		// LLRPEPCRead single shot command with no properties
-		router.attach("/llrpencode/{readerID}/{sessionID}/LLRPEPCRead",
-				llrpEpcRead);
+		router.attach("/llrpencode/{readerID}/{sessionID}/LLRPEPCRead", llrpEpcRead);
 
 		// LLRPEPCRead single shot command with properties
-		router.attach("/llrpencode/{readerID}/{sessionID}/LLRPEPCRead/{properties}",
-				llrpEpcRead);
-		
+		router.attach("/llrpencode/{readerID}/{sessionID}/LLRPEPCRead/{properties}", llrpEpcRead);
+
 		// LLRPAccessPasswordValidate single shot command with no properties
-		router.attach("/llrpencode/{readerID}/{sessionID}/LLRPAccessPasswordValidate",
-				llrpAccessPwdValidate);
+		router.attach("/llrpencode/{readerID}/{sessionID}/LLRPAccessPasswordValidate", llrpAccessPwdValidate);
 
 		// LLRPAccessPasswordValidate single shot command with properties
-		router.attach("/llrpencode/{readerID}/{sessionID}/LLRPAccessPasswordValidate/{properties}",
-				llrpAccessPwdValidate);
-		
+		router.attach("/llrpencode/{readerID}/{sessionID}/LLRPAccessPasswordValidate/{properties}", llrpAccessPwdValidate);
+
 		// LLRPKillPasswordRead single shot command with no properties
-		router.attach("/llrpencode/{readerID}/{sessionID}/LLRPKillPasswordRead",
-				llrpKillPwdRead);
+		router.attach("/llrpencode/{readerID}/{sessionID}/LLRPKillPasswordRead", llrpKillPwdRead);
 
 		// LLRPKillPasswordRead single shot command with properties
-		router.attach("/llrpencode/{readerID}/{sessionID}/LLRPKillPasswordRead/{properties}",
-				llrpKillPwdRead);
-		
+		router.attach("/llrpencode/{readerID}/{sessionID}/LLRPKillPasswordRead/{properties}", llrpKillPwdRead);
+
 		// LLRPUserMemoryRead single shot command with no properties
-		router.attach("/llrpencode/{readerID}/{sessionID}/LLRPUserMemoryRead",
-				llrpUserMemoryRead);
+		router.attach("/llrpencode/{readerID}/{sessionID}/LLRPUserMemoryRead", llrpUserMemoryRead);
 
 		// LLRPUserMemoryRead single shot command with properties
-		router.attach("/llrpencode/{readerID}/{sessionID}/LLRPUserMemoryRead/{properties}",
-				llrpUserMemoryRead);
-		
+		router.attach("/llrpencode/{readerID}/{sessionID}/LLRPUserMemoryRead/{properties}", llrpUserMemoryRead);
+
 		// LLRPUserMemoryWrite single shot command with no properties
-		router.attach("/llrpencode/{readerID}/{sessionID}/LLRPUserMemoryWrite",
-				llrpUserMemoryWrite);
+		router.attach("/llrpencode/{readerID}/{sessionID}/LLRPUserMemoryWrite", llrpUserMemoryWrite);
 
 		// LLRPUserMemoryWrite single shot command with properties
-		router.attach("/llrpencode/{readerID}/{sessionID}/LLRPUserMemoryWrite/{properties}",
-				llrpUserMemoryWrite);
-		
+		router.attach("/llrpencode/{readerID}/{sessionID}/LLRPUserMemoryWrite/{properties}", llrpUserMemoryWrite);
 
 		// llrp encode
 		router.attach("/llrpencode/{readerID}/{sessionID}/{tag}", llrpEncode);
@@ -2595,26 +2282,25 @@ public class SensorManagerServiceRestletImpl extends Application {
 		router.attach("/llrpmessage/{readerID}/{sessionID}", llrpMessage);
 
 		router.attach("/ping", ping);
-		
-		//router to update servers file
+
+		// router to update servers file
 		router.attach("/updateServersFile/{data}", updateServersFile);
-		
-		//router to get servers file
+
+		// router to get servers file
 		router.attach("/getServersFile", getServersFile);
-		
-		//router to update ui properties file
+
+		// router to update ui properties file
 		router.attach("/updateUIPropertiesFile/{data}", updateUIPropertiesFile);
-		
-		//router to get properties file
+
+		// router to get properties file
 		router.attach("/getUIPropertiesFile", getUIPropertiesFile);
-		
-		//Attach web administration dashboard app
-		String appPath = "file:///" + System.getProperty("org.rifidi.home") + File.separator
-					+ "admin" + File.separator + "app" + File.separator;
-		
+
+		// Attach web administration dashboard app
+		String appPath = "file:///" + System.getProperty("org.rifidi.home") + File.separator + "admin" + File.separator + "app" + File.separator;
+
 		Directory directory = new Directory(getContext(), appPath);
 		router.attach("/dashboard", directory);
-		
+
 		return router;
 	}
 
@@ -2624,8 +2310,7 @@ public class SensorManagerServiceRestletImpl extends Application {
 		return message;
 	}
 
-	public RestResponseMessageDTO generateErrorMessage(String description,
-			String currentState) {
+	public RestResponseMessageDTO generateErrorMessage(String description, String currentState) {
 		RestResponseMessageDTO message = new RestResponseMessageDTO();
 		message.setMessage(FAIL_MESSAGE);
 		message.setDescription(description);
@@ -2643,8 +2328,7 @@ public class SensorManagerServiceRestletImpl extends Application {
 
 	public String generateReturnString(Serializable message) {
 		try {
-			JAXBContext jaxbContext = JAXBContext.newInstance(message
-					.getClass());
+			JAXBContext jaxbContext = JAXBContext.newInstance(message.getClass());
 			Marshaller jaxbMarshaller = jaxbContext.createMarshaller();
 			Writer writer = new StringWriter();
 			jaxbMarshaller.marshal(message, writer);
@@ -2666,7 +2350,7 @@ public class SensorManagerServiceRestletImpl extends Application {
 	public void setCommandManagerService(CommandManagerService commandManagerService) {
 		this.commandManagerService = commandManagerService;
 	}
-	
+
 	public void setProvisioningService(ProvisioningService provisioningService) {
 		this.provisioningService = provisioningService;
 	}
@@ -2678,9 +2362,13 @@ public class SensorManagerServiceRestletImpl extends Application {
 	public void setReaderDAO(ReaderDAO readerDAO) {
 		this.readerDAO = readerDAO;
 	}
-	
+
 	public void setCommandDAO(CommandDAO commandDAO) {
 		this.commandDAO = commandDAO;
+	}
+
+	public void setRawTagMonitoringService(RawTagMonitoringService rzms) {
+		this.rawTagMonitoringService = rzms;
 	}
 
 	// End Spring Inject
@@ -2707,8 +2395,7 @@ public class SensorManagerServiceRestletImpl extends Application {
 	 *            the desired state to check for the session
 	 * @return current session state for session
 	 */
-	private SessionStatus checkSessionState(String strReaderId,
-			String strSessionID, SessionStatus desiredState) {
+	private SessionStatus checkSessionState(String strReaderId, String strSessionID, SessionStatus desiredState) {
 
 		// Define a session state to track the actual status of session
 		SessionStatus currentSessionState = null;
@@ -2733,8 +2420,7 @@ public class SensorManagerServiceRestletImpl extends Application {
 
 			// Check if session is already in desired state
 			// and return successful message
-			SessionDTO sessionDto = sensorManagerService.getSession(
-					strReaderId, strSessionID);
+			SessionDTO sessionDto = sensorManagerService.getSession(strReaderId, strSessionID);
 
 			// Ask if its state is in desired state
 			currentSessionState = sessionDto.getStatus();
@@ -2762,8 +2448,7 @@ public class SensorManagerServiceRestletImpl extends Application {
 	 * @throws Exception
 	 *             if any property has no recognizable value
 	 */
-	private AttributeList getProcessedAttributes(String propertiesChain)
-			throws Exception {
+	private AttributeList getProcessedAttributes(String propertiesChain) throws Exception {
 
 		AttributeList attributes = new AttributeList();
 
@@ -2786,8 +2471,7 @@ public class SensorManagerServiceRestletImpl extends Application {
 
 					// Property with no recognizable value, for example
 					// Port=123=456, or Port,
-					throw new Exception("Property with no recognizable value: "
-							+ prop[0]);
+					throw new Exception("Property with no recognizable value: " + prop[0]);
 
 				}
 			}
@@ -2830,8 +2514,7 @@ public class SensorManagerServiceRestletImpl extends Application {
 
 		boolean commandExists = false;
 
-		CommandConfigurationDTO commandConfigurationDTO = commandManagerService
-				.getCommandConfiguration(strCommandId);
+		CommandConfigurationDTO commandConfigurationDTO = commandManagerService.getCommandConfiguration(strCommandId);
 		;
 
 		if (commandConfigurationDTO != null) {
@@ -2853,15 +2536,13 @@ public class SensorManagerServiceRestletImpl extends Application {
 	 * @throws NotValidPropertyForObjectException
 	 *             if there is a non valid property for reader or command
 	 */
-	private void validateAttributesForReaderOrCommand(String strObjectId,
-			AttributeList attributes) throws NotValidPropertyForObjectException {
+	private void validateAttributesForReaderOrCommand(String strObjectId, AttributeList attributes) throws NotValidPropertyForObjectException {
 
 		// List of non valid property=value pair
 		List<String> notValidPropertiesList = new ArrayList<String>();
 
 		// Check if properties are valid for this reader or command
-		Configuration configuration = configService
-				.getConfiguration(strObjectId);
+		Configuration configuration = configService.getConfiguration(strObjectId);
 
 		// Get the possible attribute list for this reader or command
 		String[] attributeNameVector = configuration.getAttributeNames();
@@ -2885,8 +2566,7 @@ public class SensorManagerServiceRestletImpl extends Application {
 			}
 
 			if (!isValidAttribute) {
-				notValidPropertiesList.add(attribute.getName() + "="
-						+ attribute.getValue());
+				notValidPropertiesList.add(attribute.getName() + "=" + attribute.getValue());
 			}
 
 		}
@@ -2895,12 +2575,10 @@ public class SensorManagerServiceRestletImpl extends Application {
 		if (!notValidPropertiesList.isEmpty()) {
 
 			// There is at least one non valid property
-			NotValidPropertyForObjectException notValidPropertyForObjectException = new NotValidPropertyForObjectException(
-					"Not valid properties: "
-							+ getFormatedListOfNonValidProperties(notValidPropertiesList));
+			NotValidPropertyForObjectException notValidPropertyForObjectException = new NotValidPropertyForObjectException("Not valid properties: "
+					+ getFormatedListOfNonValidProperties(notValidPropertiesList));
 
-			notValidPropertyForObjectException
-					.setNotValidPropertiesList(notValidPropertiesList);
+			notValidPropertyForObjectException.setNotValidPropertiesList(notValidPropertiesList);
 
 			throw notValidPropertyForObjectException;
 		}
@@ -2916,8 +2594,7 @@ public class SensorManagerServiceRestletImpl extends Application {
 	 * @return a string containing the values located inside
 	 *         notValidPropertiesList and separated by |
 	 */
-	private String getFormatedListOfNonValidProperties(
-			List<String> notValidPropertiesList) {
+	private String getFormatedListOfNonValidProperties(List<String> notValidPropertiesList) {
 
 		if (!notValidPropertiesList.isEmpty()) {
 
@@ -2945,67 +2622,49 @@ public class SensorManagerServiceRestletImpl extends Application {
 	 * @throws Exception
 	 *             if there is a validation error on a property
 	 */
-	private void setLlrpEncodeJvmProperties(LLRPReaderSession session)
-			throws Exception {
+	private void setLlrpEncodeJvmProperties(LLRPReaderSession session) throws Exception {
 
-		String strTargetEpc = System
-				.getProperty("org.rifidi.llrp.encode.targetepc");
+		String strTargetEpc = System.getProperty("org.rifidi.llrp.encode.targetepc");
 
-		checkBlockLengthReminder(strTargetEpc,
-				session.getWriteDataBlockLength(), "targetEpc");
+		checkBlockLengthReminder(strTargetEpc, session.getWriteDataBlockLength(), "targetEpc");
 
-		session.setTargetEpc(strTargetEpc != null ? strTargetEpc
-				: LLRPReaderSession.DEFAULT_TARGET_EPC);
+		session.setTargetEpc(strTargetEpc != null ? strTargetEpc : LLRPReaderSession.DEFAULT_TARGET_EPC);
 
-		String strTagMask = System
-				.getProperty("org.rifidi.llrp.encode.tagmask");
+		String strTagMask = System.getProperty("org.rifidi.llrp.encode.tagmask");
 
-		checkBlockLengthReminder(strTagMask, session.getWriteDataBlockLength(),
-				"tagMask");
+		checkBlockLengthReminder(strTagMask, session.getWriteDataBlockLength(), "tagMask");
 
-		session.setTagMask(strTagMask != null ? strTagMask
-				: LLRPReaderSession.DEFAULT_TAG_MASK);
+		session.setTagMask(strTagMask != null ? strTagMask : LLRPReaderSession.DEFAULT_TAG_MASK);
 
-		String strTimeout = System
-				.getProperty("org.rifidi.llrp.encode.timeout");
+		String strTimeout = System.getProperty("org.rifidi.llrp.encode.timeout");
 
-		session.setOperationsTimeout(strTimeout != null ? Integer
-				.parseInt(strTimeout)
-				: LLRPReaderSession.DEFAULT_OPERATIONS_TIMEOUT);
+		session.setOperationsTimeout(strTimeout != null ? Integer.parseInt(strTimeout) : LLRPReaderSession.DEFAULT_OPERATIONS_TIMEOUT);
 
-		String strAccessPwd = System
-				.getProperty("org.rifidi.llrp.encode.accesspwd");
+		String strAccessPwd = System.getProperty("org.rifidi.llrp.encode.accesspwd");
 
 		validatePassword(strAccessPwd, "Access");
 
-		session.setAccessPwd(strAccessPwd != null ? strAccessPwd
-				: LLRPReaderSession.DEFAULT_ACCESS_PASSWORD);
+		session.setAccessPwd(strAccessPwd != null ? strAccessPwd : LLRPReaderSession.DEFAULT_ACCESS_PASSWORD);
 
-		String strOldAccessPwd = System
-				.getProperty("org.rifidi.llrp.encode.oldaccesspwd");
+		String strOldAccessPwd = System.getProperty("org.rifidi.llrp.encode.oldaccesspwd");
 
 		validatePassword(strOldAccessPwd, "Old access");
 
-		session.setOldAccessPwd(strOldAccessPwd != null ? strOldAccessPwd
-				: LLRPReaderSession.DEFAULT_OLD_ACCESS_PASSWORD);
+		session.setOldAccessPwd(strOldAccessPwd != null ? strOldAccessPwd : LLRPReaderSession.DEFAULT_OLD_ACCESS_PASSWORD);
 
-		String strKillPwd = System
-				.getProperty("org.rifidi.llrp.encode.killpwd");
+		String strKillPwd = System.getProperty("org.rifidi.llrp.encode.killpwd");
 
 		validatePassword(strKillPwd, "Kill");
 
-		session.setKillPwd(strKillPwd != null ? strKillPwd
-				: LLRPReaderSession.DEFAULT_KILL_PASSWORD);
+		session.setKillPwd(strKillPwd != null ? strKillPwd : LLRPReaderSession.DEFAULT_KILL_PASSWORD);
 
 		// Set the lock privileges
 
-		String strKillPwdLockPrivilege = System
-				.getProperty("org.rifidi.llrp.encode.killpwdlockprivilege");
+		String strKillPwdLockPrivilege = System.getProperty("org.rifidi.llrp.encode.killpwdlockprivilege");
 
 		if (strKillPwdLockPrivilege != null) {
 
-			int intKillPwdLockPrivilege = LLRPReaderSession
-					.getLockPrivilege(strKillPwdLockPrivilege);
+			int intKillPwdLockPrivilege = LLRPReaderSession.getLockPrivilege(strKillPwdLockPrivilege);
 			session.setKillPwdLockPrivilege(intKillPwdLockPrivilege);
 
 		} else {
@@ -3013,13 +2672,11 @@ public class SensorManagerServiceRestletImpl extends Application {
 			session.setKillPwdLockPrivilege(LLRPReaderSession.DEFAULT_KILL_PASSWORD_LOCK_PRIVILEGE);
 		}
 
-		String strAccessPwdLockPrivilege = System
-				.getProperty("org.rifidi.llrp.encode.accesspwdlockprivilege");
+		String strAccessPwdLockPrivilege = System.getProperty("org.rifidi.llrp.encode.accesspwdlockprivilege");
 
 		if (strAccessPwdLockPrivilege != null) {
 
-			int intAccessPwdLockPrivilege = LLRPReaderSession
-					.getLockPrivilege(strAccessPwdLockPrivilege);
+			int intAccessPwdLockPrivilege = LLRPReaderSession.getLockPrivilege(strAccessPwdLockPrivilege);
 			session.setAccessPwdLockPrivilege(intAccessPwdLockPrivilege);
 
 		} else {
@@ -3027,27 +2684,23 @@ public class SensorManagerServiceRestletImpl extends Application {
 			session.setAccessPwdLockPrivilege(LLRPReaderSession.DEFAULT_ACCESS_PASSWORD_LOCK_PRIVILEGE);
 		}
 
-		String strEpcLockPrivilege = System
-				.getProperty("org.rifidi.llrp.encode.epclockprivilege");
+		String strEpcLockPrivilege = System.getProperty("org.rifidi.llrp.encode.epclockprivilege");
 
 		if (strEpcLockPrivilege != null) {
 
-			int intEpcLockPrivilege = LLRPReaderSession
-					.getLockPrivilege(strEpcLockPrivilege);
+			int intEpcLockPrivilege = LLRPReaderSession.getLockPrivilege(strEpcLockPrivilege);
 			session.setEpcLockPrivilege(intEpcLockPrivilege);
 
 		} else {
 
 			session.setEpcLockPrivilege(LLRPReaderSession.DEFAULT_EPC_LOCK_PRIVILEGE);
 		}
-		
-		String strUserMemoryLockPrivilege = System
-				.getProperty("org.rifidi.llrp.encode.usermemorylockprivilege");
+
+		String strUserMemoryLockPrivilege = System.getProperty("org.rifidi.llrp.encode.usermemorylockprivilege");
 
 		if (strUserMemoryLockPrivilege != null) {
 
-			int intUserMemoryLockPrivilege = LLRPReaderSession
-					.getLockPrivilege(strUserMemoryLockPrivilege);
+			int intUserMemoryLockPrivilege = LLRPReaderSession.getLockPrivilege(strUserMemoryLockPrivilege);
 			session.setUserMemoryLockPrivilege(intUserMemoryLockPrivilege);
 
 		} else {
@@ -3063,8 +2716,7 @@ public class SensorManagerServiceRestletImpl extends Application {
 		boolean asynchronousMode = true;
 
 		// Check mqttbroker
-		String mqttBroker = System
-				.getProperty("org.rifidi.llrp.encode.mqttbroker");
+		String mqttBroker = System.getProperty("org.rifidi.llrp.encode.mqttbroker");
 
 		if (mqttBroker != null && !mqttBroker.isEmpty()) {
 
@@ -3086,8 +2738,7 @@ public class SensorManagerServiceRestletImpl extends Application {
 		}
 
 		// Check mqttclientid
-		String mqttClientId = System
-				.getProperty("org.rifidi.llrp.encode.mqttclientid");
+		String mqttClientId = System.getProperty("org.rifidi.llrp.encode.mqttclientid");
 
 		if (mqttClientId != null && !mqttClientId.isEmpty()) {
 
@@ -3115,22 +2766,18 @@ public class SensorManagerServiceRestletImpl extends Application {
 	 *             if password length is one and value is different to '0' or if
 	 *             password length is different to eight
 	 */
-	private void validatePassword(String strPassword, String whichPassword)
-			throws Exception {
+	private void validatePassword(String strPassword, String whichPassword) throws Exception {
 
 		if (strPassword != null && strPassword.isEmpty()) {
 			throw new Exception(whichPassword + " password is empty");
 		}
 
-		if ((strPassword.length() == 1 && !strPassword.equals("0"))
-				&& (strPassword.length() != 8)) {
-			throw new Exception(whichPassword
-					+ " password must be 8 characters or value of 0");
+		if ((strPassword.length() == 1 && !strPassword.equals("0")) && (strPassword.length() != 8)) {
+			throw new Exception(whichPassword + " password must be 8 characters or value of 0");
 		}
 	}
 
-	private Object getAttributeValue(AttributeList attributes,
-			String attributeName) throws Exception {
+	private Object getAttributeValue(AttributeList attributes, String attributeName) throws Exception {
 
 		for (Attribute attr : attributes.asList()) {
 
@@ -3140,13 +2787,11 @@ public class SensorManagerServiceRestletImpl extends Application {
 
 		}
 
-		throw new Exception("The property " + attributeName
-				+ " is required and is not present");
+		throw new Exception("The property " + attributeName + " is required and is not present");
 
 	}
-	
-	private Object getNonRequiredAttributeValue(AttributeList attributes,
-			String attributeName) throws Exception {
+
+	private Object getNonRequiredAttributeValue(AttributeList attributes, String attributeName) throws Exception {
 
 		for (Attribute attr : attributes.asList()) {
 
@@ -3173,148 +2818,193 @@ public class SensorManagerServiceRestletImpl extends Application {
 	 * @throws Exception
 	 *             if the remainder of value / blockLength is different to zero
 	 */
-	private void checkBlockLengthReminder(String value, int blockLength,
-			String valueName) throws Exception {
+	private void checkBlockLengthReminder(String value, int blockLength, String valueName) throws Exception {
 
 		int reminder = value.length() % blockLength;
 		if (reminder != 0) {
-			throw new Exception("The value for " + valueName
-					+ " has a wrong length of " + value.length()
-					+ ". It is expected this length to be a multiple of "
-					+ blockLength);
+			throw new Exception("The value for " + valueName + " has a wrong length of " + value.length() + ". It is expected this length to be a multiple of " + blockLength);
 		}
 
 	}
-	
+
 	/**
-	 * Validate that properties for a readzone are valid and there is at least 
+	 * Validate that properties for a readzone are valid and there is at least
 	 * the minimum required properties
-	 * @param attributes list of attributes to validate
-	 * @throws Exception if there is a non valid property or the properties list has
-	 * an invalid property for a readzone
+	 * 
+	 * @param attributes
+	 *            list of attributes to validate
+	 * @throws Exception
+	 *             if there is a non valid property or the properties list has
+	 *             an invalid property for a readzone
 	 */
-	private void validateReadzoneProperties(AttributeList attributes)
-			throws Exception {
-		
-		for(Attribute attribute : attributes.asList()){
-			
-			//Validate if this property is valid for readzone
+	private void validateReadzoneProperties(AttributeList attributes) throws Exception {
+
+		for (Attribute attribute : attributes.asList()) {
+
+			// Validate if this property is valid for readzone
 			boolean isValidProperty = false;
-			for(int i = 0; i < ReadZoneValidProperties.length; i++){
-				
-				if ( attribute.getName().trim().equals(ReadZoneValidProperties[i]) ){
+			for (int i = 0; i < ReadZoneValidProperties.length; i++) {
+
+				if (attribute.getName().trim().equals(ReadZoneValidProperties[i])) {
 					isValidProperty = true;
 					break;
 				}
-				
+
 			}
-			
-			if (!isValidProperty){
-				
+
+			if (!isValidProperty) {
+
 				String validProperties = "";
-				for(int i = 0; i < ReadZoneValidProperties.length; i++){
+				for (int i = 0; i < ReadZoneValidProperties.length; i++) {
 					validProperties += ReadZoneValidProperties[i] + "\n";
 				}
-				
-				throw new Exception("Invalid property " + attribute.getName() 
-						+ " for readzone. Valid ones are: " + validProperties);
+
+				throw new Exception("Invalid property " + attribute.getName() + " for readzone. Valid ones are: " + validProperties);
 			}
-			
+
 		}
 	}
-	
-	private void validateMinumimRequiredReadzoneProperties(AttributeList attributes)
-			throws Exception {
-		
-		//Validate all minimum required properties are provided
-		for(int i = 0; i < ReadZoneRequiredProperties.length; i++){
-			
+
+	private void validateMinumimRequiredReadzoneProperties(AttributeList attributes) throws Exception {
+
+		// Validate all minimum required properties are provided
+		for (int i = 0; i < ReadZoneRequiredProperties.length; i++) {
+
 			boolean requiredPropertyFound = false;
-			for(Attribute attribute : attributes.asList()){
-								
-				if ( ReadZoneRequiredProperties[i].equals(attribute.getName().trim()) ){
+			for (Attribute attribute : attributes.asList()) {
+
+				if (ReadZoneRequiredProperties[i].equals(attribute.getName().trim())) {
 					requiredPropertyFound = true;
 					break;
 				}
-				
+
 			}
-			
-			if (!requiredPropertyFound){
-				
+
+			if (!requiredPropertyFound) {
+
 				String requiredProperties = "";
-				for(int j = 0; j < ReadZoneRequiredProperties.length; j++){
+				for (int j = 0; j < ReadZoneRequiredProperties.length; j++) {
 					requiredProperties += ReadZoneRequiredProperties[j] + "\n";
 				}
-				
-				throw new Exception("Required property " + ReadZoneRequiredProperties[i] 
-						+ " not found. Required ones are : " + requiredProperties);
-				
+
+				throw new Exception("Required property " + ReadZoneRequiredProperties[i] + " not found. Required ones are : " + requiredProperties);
+
 			}
-			
+
 		}
-		
+
 	}
-	
+
 	static Series<Header> getMessageHeaders(Message message) {
-        ConcurrentMap<String, Object> attrs = message.getAttributes();
-        Series<Header> headers = (Series<Header>) attrs.get(HEADERS_KEY);
-        if (headers == null) {
-            headers = new Series<Header>(Header.class);
-            Series<Header> prev = (Series<Header>)
-                attrs.putIfAbsent(HEADERS_KEY, headers);
-            if (prev != null) { headers = prev; }
-        }
-        return headers;
-    }
-	
+		ConcurrentMap<String, Object> attrs = message.getAttributes();
+		Series<Header> headers = (Series<Header>) attrs.get(HEADERS_KEY);
+		if (headers == null) {
+			headers = new Series<Header>(Header.class);
+			Series<Header> prev = (Series<Header>) attrs.putIfAbsent(HEADERS_KEY, headers);
+			if (prev != null) {
+				headers = prev;
+			}
+		}
+		return headers;
+	}
+
 	/**
 	 * Allows Cross-Origin Resource Sharing (CORS)
-	 * @param response the response to allow CORS
+	 * 
+	 * @param response
+	 *            the response to allow CORS
 	 */
-	private void setCorsHeaders(Response response){
-		
+	private void setCorsHeaders(Response response) {
+
 		Series<Header> responseHeaders = (Series<Header>) response.getAttributes().get("org.restlet.http.headers");
 
-		if (responseHeaders == null) { 
-	        responseHeaders = new Series(Header.class);
-	        response.getAttributes().put("org.restlet.http.headers", responseHeaders); 
-	    }
-		
+		if (responseHeaders == null) {
+			responseHeaders = new Series(Header.class);
+			response.getAttributes().put("org.restlet.http.headers", responseHeaders);
+		}
+
 		responseHeaders.add(new Header("Access-Control-Allow-Headers", "Access-Control-Allow-Origin, Origin, X-Requested-With, Content-Type, Accept"));
 		responseHeaders.add(new Header("Access-Control-Allow-Origin", "*"));
-		
+
 	}
-	
-	private void setResponseHeaders(Request request, Response response){
-		
+
+	private void setResponseHeaders(Request request, Response response) {
+
 		Series<Header> responseHeaders = (Series<Header>) response.getAttributes().get("org.restlet.http.headers");
 
-		if (responseHeaders == null) { 
-	        responseHeaders = new Series(Header.class);
-	        response.getAttributes().put("org.restlet.http.headers", responseHeaders); 
-	    }
-		
-		Reference hostRef = (request.getResourceRef().getBaseRef() != null) ? request
-                .getResourceRef().getBaseRef() : request.getResourceRef();
- 
-        if (hostRef.getHostDomain() != null) {
-        	
-           String host = hostRef.getHostDomain();
-            int hostRefPortValue = hostRef.getHostPort();
- 
-            if ((hostRefPortValue != -1)
-                    && (hostRefPortValue != request.getProtocol()
-                            .getDefaultPort())) {
-                host = hostRef.getScheme() + "://" + host + ':' + hostRefPortValue;
-            }
- 
-            //addHeader(HeaderConstants.HEADER_HOST, host, headers);
-            responseHeaders.add(new Header("Access-Control-Expose-Headers", "Host"));
-            responseHeaders.add(new Header("Host", host));
-        }
+		if (responseHeaders == null) {
+			responseHeaders = new Series(Header.class);
+			response.getAttributes().put("org.restlet.http.headers", responseHeaders);
+		}
 
-        setCorsHeaders(response);
-				
+		Reference hostRef = (request.getResourceRef().getBaseRef() != null) ? request.getResourceRef().getBaseRef() : request.getResourceRef();
+
+		if (hostRef.getHostDomain() != null) {
+
+			String host = hostRef.getHostDomain();
+			int hostRefPortValue = hostRef.getHostPort();
+
+			if ((hostRefPortValue != -1) && (hostRefPortValue != request.getProtocol().getDefaultPort())) {
+				host = hostRef.getScheme() + "://" + host + ':' + hostRefPortValue;
+			}
+
+			// addHeader(HeaderConstants.HEADER_HOST, host, headers);
+			responseHeaders.add(new Header("Access-Control-Expose-Headers", "Host"));
+			responseHeaders.add(new Header("Host", host));
+		}
+
+		setCorsHeaders(response);
+
+	}
+
+	private class CurrentTagsAggregator implements Runnable {
+
+		public CurrentTagsSubscriber subscriber;
+		public RawTagMonitoringService service;
+		public ReadZone readzone;
+
+		public CurrentTagsAggregator(CurrentTagsSubscriber subscriber, ReadZone readzone, RawTagMonitoringService service) {
+			this.subscriber = subscriber;
+			this.service = service;
+			this.readzone = readzone;
+		}
+
+		public void initstart() {
+			this.service.subscribe(subscriber, readzone);
+			try {
+				Thread.sleep(5000);
+			} catch (Exception e) {
+				// Don't care
+			} finally {
+				this.service.unsubscribe(subscriber);
+			}
+		}
+
+		@Override
+		public void run() {
+		}
+	}
+
+	private class CurrentTagsSubscriber implements RawTagSubscriber {
+
+		public Set<String> currenttags;
+
+		public CurrentTagsSubscriber(Set<String> currenttags) {
+			this.currenttags = currenttags;
+		}
+
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see
+		 * org.rifidi.edge.api.service.tagmonitor.RawTagSubscriber#tagArrived
+		 * (org.rifidi.edge.notification.TagReadEvent)
+		 */
+		@Override
+		public void tagArrived(TagReadEvent tag) {
+			this.currenttags.add(tag.getTag().getFormattedID());
+		}
+
 	}
 
 	/*

@@ -25,6 +25,8 @@
 	<osgi:reference id="readerDAOImpl" interface="org.rifidi.edge.daos.ReaderDAO"/>
 	
 	<osgi:reference id="commandDAOImpl" interface="org.rifidi.edge.daos.CommandDAO"/>
+	
+	<osgi:reference id="rawTagMonitoringService" interface="org.rifidi.edge.api.service.tagmonitor.RawTagMonitoringService" />
 
 	<bean id="restletManagerStub" class="org.rifidi.edge.rest.SensorManagerServiceRestletImpl">
 		<property name="sensorManagerService" ref="sensorManagerServiceRef"/>
@@ -34,6 +36,7 @@
 		<property name="provisioningService" ref="provisioningServiceRegistration" />
 		<property name="readerDAO" ref="readerDAOImpl" />
 		<property name="commandDAO" ref="commandDAOImpl" />
+		<property name="rawTagMonitoringService" ref="rawTagMonitoringService" />
 	</bean>
 	
 	<bean id="restletServer" class="org.rifidi.edge.rest.RestletServer">
