@@ -1361,13 +1361,12 @@ public class SensorManagerServiceRestletImpl extends Application {
 		Restlet currenttags = new Restlet() {
 			@Override
 			public void handle(Request request, Response response) {
-				logger.info("apps requested");
+				logger.info("currenttags requested");
 				try {
 					setResponseHeaders(request, response);
 					Set<String> currenttags = new HashSet<String>();
 					CurrentTagsSubscriber sub = new CurrentTagsSubscriber(currenttags);
 					String attribute = (String) request.getAttributes().get("readerID");
-					System.out.println("ReaderID: " + attribute);
 					ReadZone zone = new ReadZone((String) request.getAttributes().get("readerID"));
 
 					CurrentTagsAggregator agg = new CurrentTagsAggregator(sub, zone, rawTagMonitoringService);
