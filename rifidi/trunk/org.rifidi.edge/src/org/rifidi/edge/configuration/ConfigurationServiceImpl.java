@@ -96,8 +96,7 @@ public class ConfigurationServiceImpl implements ConfigurationService,
 		configToRegsitration = new ConcurrentHashMap<Configuration, ServiceRegistration>();
 		JAXBContext jcontext = null;
 		try {
-			jcontext = JAXBContext.newInstance(ConfigurationStore.class,
-					ServiceStore.class);
+			jcontext = JAXBContext.newInstance(ConfigurationStore.class,ServiceStore.class);
 		} catch (JAXBException e) {
 			logger.error(e);
 		}
@@ -119,8 +118,7 @@ public class ConfigurationServiceImpl implements ConfigurationService,
 
 		ConfigurationStore store;
 		try {
-			store = (ConfigurationStore) jaxbContext.createUnmarshaller()
-					.unmarshal(persistanceResource.getFile());
+			store = (ConfigurationStore) jaxbContext.createUnmarshaller().unmarshal(persistanceResource.getFile());
 		} catch (IOException e) {
 			logger.error("Error loading config/rifidi.xml, no configuration loaded");
 			return ret;
