@@ -1,7 +1,7 @@
 #version=1
 org.restlet,2.3.5.v20151003-1559,plugins/org.restlet_2.3.5.jar,4,true
 org.restlet.ext.servlet,2.3.5.v20151003-1559,plugins/org.restlet.ext.servlet_2.3.5.jar,4,true
-org.restlet.ext.simple,2.3.5.v20151003-1559,plugins/org.restlet.ext.simple_2.3.5.jar,4,true 
+org.restlet.ext.jetty,2.3.5.v20151003-1559,plugins/org.restlet.ext.jetty_2.3.5.jar,4,true 
 org.jsslutils,1.0.0,plugins/org.jsslutils_1.0.0.jar,4,true
 org.moquette,0.7.0,plugins/org.moquette_0.7.0.jar,4,true
 org.eclipse.paho,0.4.0,plugins/org.eclipse.paho_0.4.0.jar,4,true
