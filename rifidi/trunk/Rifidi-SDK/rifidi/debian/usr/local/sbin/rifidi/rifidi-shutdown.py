@@ -25,7 +25,7 @@ if __name__ == '__main__':
         
     # kill anything that is left
     p1 = Popen(['ps','ax'], stdout=PIPE)
-    p2 = Popen(['grep', 'rifidi'], stdin=p1.stdout, stdout=PIPE)
+    p2 = Popen(['grep', 'org.rifidi.edge'], stdin=p1.stdout, stdout=PIPE)
     output = p2.communicate()[0]    
     output = output.split('\n')
     if output:
