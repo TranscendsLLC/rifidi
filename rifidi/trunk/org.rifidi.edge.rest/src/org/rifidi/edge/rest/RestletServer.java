@@ -35,8 +35,7 @@ public class RestletServer {
 					.getProperty("org.rifidi.restlet.enabled"));
 			if (restletEnabled) {
 				
-				int port = Integer.parseInt(System
-						.getProperty("org.rifidi.restlet.port"));
+				int port = Integer.parseInt(System.getProperty("org.rifidi.restlet.port"));
 				logger.info("Starting restlet server on port: " + port);
 				Component component = new Component();
 				Server jettyServer = new Server(component.getContext(), Protocol.HTTP, port);
@@ -53,8 +52,7 @@ public class RestletServer {
 			}
 
 			// Check if ssl is enabled
-			boolean sslEnabled = Boolean.parseBoolean(System
-					.getProperty("org.rifidi.restlet.ssl.enabled"));
+			boolean sslEnabled = Boolean.parseBoolean(System.getProperty("org.rifidi.restlet.ssl.enabled"));
 
 			if (sslEnabled) {
 				logger.info("Restlet SSL Server enabled");
