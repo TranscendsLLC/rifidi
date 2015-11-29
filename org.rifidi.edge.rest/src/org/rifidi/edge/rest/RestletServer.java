@@ -49,6 +49,7 @@ public class RestletServer {
 
 				component.getDefaultHost().attach(app);
 				component.start();
+				Activator.addToComponents(component);
 			}
 
 			// Check if ssl is enabled
@@ -73,16 +74,10 @@ public class RestletServer {
 				Component sslComponent = new Component();
 				Server sjettyServer = new Server(sslComponent.getContext(), Protocol.HTTPS, sslPort);
 
-				//Server server = sslComponent.getServers().add(Protocol.HTTPS, sslPort);
-
 				sjettyServer.getProtocols().add(Protocol.FILE);
 
-				// sslComponent.getClients().add(Protocol.FILE);
-
 				Series<Parameter> parameters = sjettyServer.getContext().getParameters();
-
-				// parameters.add("sslContextFactory",
-				// "org.restlet.ext.ssl.PkixSslContextFactory");
+				
 				parameters.add("sslContextFactory", "org.restlet.ext.jsslutils.PkixSslContextFactory");
 				parameters.add("keystorePath", keystorepath);
 				parameters.add("keystorePassword", keystorepassword);
@@ -95,7 +90,7 @@ public class RestletServer {
 
 				sslComponent.getDefaultHost().attach(app);
 				sslComponent.start();
-
+				Activator.addToComponents(sslComponent);
 			}
 
 		} catch (Exception e) {
