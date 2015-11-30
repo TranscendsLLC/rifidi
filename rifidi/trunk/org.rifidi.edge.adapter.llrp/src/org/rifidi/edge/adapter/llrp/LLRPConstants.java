@@ -94,7 +94,7 @@ public class LLRPConstants {
 		tagReportContentSelector.setEnableTagSeenCount(new Bit(0));
 		C1G2EPCMemorySelector epcMemSel = new C1G2EPCMemorySelector();
 		epcMemSel.setEnableCRC(new Bit(0));
-		epcMemSel.setEnablePCBits(new Bit(0));
+		epcMemSel.setEnablePCBits(new Bit(1));
 		tagReportContentSelector
 				.addToAirProtocolEPCMemorySelectorList(epcMemSel);
 		roReportSpec.setTagReportContentSelector(tagReportContentSelector);
