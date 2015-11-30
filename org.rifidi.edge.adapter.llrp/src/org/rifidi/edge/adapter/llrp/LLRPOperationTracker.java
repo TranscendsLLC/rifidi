@@ -5,10 +5,8 @@ import java.io.Serializable;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 import java.util.TimerTask;
 
 import javax.xml.bind.JAXBContext;
@@ -22,7 +20,6 @@ import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
 import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
-import org.llrp.ltk.exceptions.InvalidLLRPMessageException;
 import org.llrp.ltk.generated.enumerations.C1G2BlockEraseResultType;
 import org.llrp.ltk.generated.enumerations.C1G2BlockWriteResultType;
 import org.llrp.ltk.generated.enumerations.C1G2KillResultType;

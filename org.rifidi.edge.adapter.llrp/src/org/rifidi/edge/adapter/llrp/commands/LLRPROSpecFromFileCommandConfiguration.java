@@ -22,8 +22,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jdom.JDOMException;
 import org.llrp.ltk.exceptions.InvalidLLRPMessageException;
-import org.llrp.ltk.generated.messages.ADD_ROSPEC;
-import org.llrp.ltk.types.LLRPMessage;
 import org.llrp.ltk.util.Util;
 import org.rifidi.edge.configuration.AnnotationMBeanInfoStrategy;
 import org.rifidi.edge.configuration.JMXMBean;
