@@ -23,7 +23,7 @@
       <llrp:EnableAccessSpecID>1</llrp:EnableAccessSpecID>
       <llrp:C1G2EPCMemorySelector>
         <llrp:EnableCRC>0</llrp:EnableCRC>
-        <llrp:EnablePCBits>0</llrp:EnablePCBits>
+        <llrp:EnablePCBits>1</llrp:EnablePCBits>
       </llrp:C1G2EPCMemorySelector>
     </llrp:TagReportContentSelector>
   </llrp:ROReportSpec>
