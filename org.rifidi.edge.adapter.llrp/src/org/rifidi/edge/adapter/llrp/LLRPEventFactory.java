@@ -31,6 +31,7 @@ import org.llrp.ltk.generated.parameters.EPC_96;
 import org.llrp.ltk.generated.parameters.GPIEvent;
 import org.llrp.ltk.generated.parameters.TagReportData;
 import org.llrp.ltk.types.LLRPMessage;
+import org.llrp.ltk.types.UnsignedShort;
 import org.rifidi.edge.notification.EPCGeneration2Event;
 import org.rifidi.edge.notification.ReadCycle;
 import org.rifidi.edge.notification.StandardTagReadEventFieldNames;
@@ -91,19 +92,42 @@ public class LLRPEventFactory {
 			AntennaID antid = t.getAntennaID();
 			EPCGeneration2Event gen2event = new EPCGeneration2Event();
 			if (t.getEPCParameter() instanceof EPCData) {
+				int epcLength = 0; // in 16-bit words
+				List<AirProtocolTagData> aptdList = t.getAirProtocolTagDataList();
+				if (aptdList != null) {
+					for (AirProtocolTagData aptd : aptdList) {
+						if (aptd instanceof C1G2_PC) {
+							UnsignedShort pcBits = ((C1G2_PC) aptd).getPC_Bits();
+							if (pcBits != null && pcBits.toInteger() != null) {
+								epcLength = pcBits.intValue() >>> 11;
+								// Multiply by 4 to get the length
+								epcLength = epcLength * 4;
+							}
+						}
+					}
+				}
 				EPCData id = (EPCData) t.getEPCParameter();
 				String EPCData = id.getEPC().toString();
-				//Left padding non-significant zeros, as they are not preserved.  
-				//FIXME: This has not been tested yet.  
-				EPCData = StringUtils.leftPad(EPCData,
-						(id.getByteLength()-1) * 2, "0");
-				gen2event.setEPCMemory(parseString(EPCData), EPCData, (id
-						.getByteLength()-1) * 8);
+				EPCData = StringUtils.leftPad(EPCData, epcLength * 2, "0");
+				gen2event.setEPCMemory(parseString(EPCData), EPCData, (id.getByteLength()-1) * 8);
 			} else {
+				int epcLength = 0;
+				List<AirProtocolTagData> aptdList = t.getAirProtocolTagDataList();
+				if (aptdList != null) {
+					for (AirProtocolTagData aptd : aptdList) {
+						if (aptd instanceof C1G2_PC) {
+							UnsignedShort pcBits = ((C1G2_PC) aptd).getPC_Bits();
+							if (pcBits != null && pcBits.toInteger() != null) {
+								epcLength = pcBits.intValue() >>> 11;
+								// Multiply by 4 to get the length
+								epcLength = epcLength * 4;
+							}
+						}
+					}
+				}
 				EPC_96 id = (EPC_96) t.getEPCParameter();
 				String EPCData = id.getEPC().toString();
-				//Left padding, as non-significant zeros are not preserved.  
-				EPCData = StringUtils.leftPad(EPCData, 24, "0");
+				EPCData = StringUtils.leftPad(EPCData, epcLength, "0");
 				gen2event.setEPCMemory(parseString(EPCData), EPCData, 96);
 			}
 			TagReadEvent tag;
@@ -204,11 +228,7 @@ public class LLRPEventFactory {
 				logger.debug(tag.getTag().getFormattedID() + " ANT: "
 						+ tag.getAntennaID());
 			}
-
-			// for (String key : tag.getExtraInformation().keySet()) {
-			// System.out.println(key + ", "
-			// + tag.getExtraInformation().get(key));
-			// }
+			
 			tagreaderevents.add(tag);
 		}
 		return new ReadCycle(tagreaderevents, readerID, System
