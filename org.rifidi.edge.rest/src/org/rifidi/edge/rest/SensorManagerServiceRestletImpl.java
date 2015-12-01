@@ -1321,7 +1321,6 @@ public class SensorManagerServiceRestletImpl extends Application {
 					AppResponseMessageDTO armd = new AppResponseMessageDTO();
 					armd.setApps(appNames);
 					response.setEntity(self.generateReturnString(armd), MediaType.TEXT_XML);
-					Thread.sleep(200000);
 				} catch (Exception e) {
 
 					response.setEntity(self.generateReturnString(self.generateErrorMessage(e.toString(), null)), MediaType.TEXT_XML);
