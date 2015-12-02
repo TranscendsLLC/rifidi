@@ -2131,7 +2131,7 @@ public class SensorManagerServiceRestletImpl extends Application {
 			}
 		};
 
-		Router router = new Router(getContext());
+		Router router = new Router(getContext().createChildContext());
 		router.attach("/readers", readers);
 		router.attach("/commands", commands);
 		router.attach("/readerstatus/{readerID}", readerStatus);

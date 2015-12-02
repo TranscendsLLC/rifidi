@@ -38,7 +38,7 @@ public class RestletServer {
 				int port = Integer.parseInt(System.getProperty("org.rifidi.restlet.port"));
 				logger.info("Starting restlet server on port: " + port);
 				Component component = new Component();
-				Server jettyServer = new Server(component.getContext(), Protocol.HTTP, port);
+				Server jettyServer = new Server(component.getContext().createChildContext(), Protocol.HTTP, port);
 				Series<Parameter> parameters = jettyServer.getContext().getParameters();
 				
 				//jetty parameters
@@ -70,7 +70,7 @@ public class RestletServer {
 				logger.info("Starting ssl restlet server on port: " + sslPort);
 
 				Component sslComponent = new Component();
-				Server sjettyServer = new Server(sslComponent.getContext(), Protocol.HTTPS, sslPort);
+				Server sjettyServer = new Server(sslComponent.getContext().createChildContext(), Protocol.HTTPS, sslPort);
 
 				sjettyServer.getProtocols().add(Protocol.FILE);
 
