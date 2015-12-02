@@ -2,11 +2,13 @@
 org.restlet,2.3.5.v20151003-1559,plugins/org.restlet_2.3.5.jar,4,true
 org.restlet.ext.servlet,2.3.5.v20151003-1559,plugins/org.restlet.ext.servlet_2.3.5.jar,4,true
 org.restlet.ext.jetty,2.3.5.v20151003-1559,plugins/org.restlet.ext.jetty.jar,4,true 
+#org.restlet.ext.simple,2.3.5.v20151003-1559,plugins/org.restlet.ext.simple.jar,4,true 
 org.eclipse.jetty.util,9.2.13.v20150730,plugins/jetty-util-9.2.13.v20150730.jar,4,true
 org.eclipse.jetty.server,9.2.13.v20150730,plugins/jetty-server-9.2.13.v20150730.jar,4,true
 org.eclipse.jetty.servlet,9.2.13.v20150730,plugins/jetty-servlet-9.2.13.v20150730.jar,4,true
 org.eclipse.jetty.http,9.2.13.v20150730,plugins/jetty-http-9.2.13.v20150730.jar,4,true
 org.eclipse.jetty.io,9.2.13.v20150730,plugins/jetty-io-9.2.13.v20150730.jar,4,true
+org.eclipse.jetty.security,9.2.13.v20150730,plugins/jetty-security-9.2.13.v20150730.jar,4,true
 javax.servlet,3.1.0.v201410161800,plugins/javax.servlet_3.1.0.v201410161800.jar,4,true
 org.jsslutils,1.0.0,plugins/org.jsslutils_1.0.0.jar,4,true
 org.moquette,0.7.0,plugins/org.moquette_0.7.0.jar,4,true
@@ -99,7 +101,7 @@ org.rifidi.edge.adapter.opticon,1.0.1,plugins/org.rifidi.edge.adapter.opticon_1.
 org.rifidi.edge.adapter.thinkify50,1.0.2,plugins/org.rifidi.edge.adapter.thinkify50_1.0.2.jar,4,true
 #org.rifidi.edge.adapter.thingmagic6,1.0.1,plugins/org.rifidi.edge.adapter.thingmagic6_1.0.1.jar,4,true
 org.rifidi.edge.adapter.thingmagic,1.0.5,plugins/org.rifidi.edge.adapter.thingmagic_1.0.5.jar,4,true
-org.rifidi.edge.rest,1.5.1,plugins/org.rifidi.edge.rest_1.5.1.jar,4,true
+org.rifidi.edge.rest,1.5.2,plugins/org.rifidi.edge.rest_1.5.2.jar,4,true
 #org.rifidi.com.thingmagic,1.0.0,/plugins/org.rifidi.com.thingmagic_1.0.0.jar,4,true
 org.rifidi.edge.tools,1.0.1,plugins/org.rifidi.edge.tools_1.0.1.jar,4,true
 #org.rifidi.gnu.io,2.1.7,plugins/org.rifidi.gnu.io_2.1.7,4,true
