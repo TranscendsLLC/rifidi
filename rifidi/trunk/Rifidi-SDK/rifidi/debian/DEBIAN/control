@@ -1,6 +1,6 @@
 Package: rifidi
 Version: 3.4
-Installed-Size: 79000
+Installed-Size: 109000
 Section: web 
 Depends: 
 Suggests: python, openjdk-7-jre
