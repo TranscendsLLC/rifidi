@@ -3,12 +3,6 @@ org.restlet,2.3.5.v20151003-1559,plugins/org.restlet_2.3.5.jar,4,true
 org.restlet.ext.servlet,2.3.5.v20151003-1559,plugins/org.restlet.ext.servlet_2.3.5.jar,4,true
 org.restlet.ext.jetty,2.3.5.v20151003-1559,plugins/org.restlet.ext.jetty.jar,4,true 
 #org.restlet.ext.simple,2.3.5.v20151003-1559,plugins/org.restlet.ext.simple.jar,4,true 
-org.eclipse.jetty.util,9.2.13.v20150730,plugins/jetty-util-9.2.13.v20150730.jar,4,true
-org.eclipse.jetty.server,9.2.13.v20150730,plugins/jetty-server-9.2.13.v20150730.jar,4,true
-org.eclipse.jetty.servlet,9.2.13.v20150730,plugins/jetty-servlet-9.2.13.v20150730.jar,4,true
-org.eclipse.jetty.http,9.2.13.v20150730,plugins/jetty-http-9.2.13.v20150730.jar,4,true
-org.eclipse.jetty.io,9.2.13.v20150730,plugins/jetty-io-9.2.13.v20150730.jar,4,true
-org.eclipse.jetty.security,9.2.13.v20150730,plugins/jetty-security-9.2.13.v20150730.jar,4,true
 javax.servlet,3.1.0.v201410161800,plugins/javax.servlet_3.1.0.v201410161800.jar,4,true
 org.jsslutils,1.0.0,plugins/org.jsslutils_1.0.0.jar,4,true
 org.moquette,0.7.0,plugins/org.moquette_0.7.0.jar,4,true
