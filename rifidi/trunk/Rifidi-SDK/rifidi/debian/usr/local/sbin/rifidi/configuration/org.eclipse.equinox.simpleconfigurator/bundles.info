@@ -131,3 +131,5 @@ org.thingworx.common,1.0.0,plugins/org.thingworx.common_1.0.0.jar,4,true
 com.google.gson,2.4,plugins/gson-2.4.jar,4,true
 com.google.guava,19.0.0,plugins/guava-19.0.jar,4,true
 com.github.oxo42.stateless4j,2.5.0,plugins/stateless4j-2.5.0.jar,4,true
+org.objenesis,2.2.0,plugins/objenesis-2.2.jar,4,true
+uk.com.robust-it.cloning,1.9.2,plugins/cloning-1.9.2.jar,4,true
