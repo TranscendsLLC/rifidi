@@ -133,3 +133,6 @@ com.google.guava,19.0.0,plugins/guava-19.0.jar,4,true
 com.github.oxo42.stateless4j,2.5.0,plugins/stateless4j-2.5.0.jar,4,true
 org.objenesis,2.2.0,plugins/objenesis-2.2.jar,4,true
 uk.com.robust-it.cloning,1.9.2,plugins/cloning-1.9.2.jar,4,true
+org.apache.openjpa,2.4.0,plugins/org.apache.openjpa_2.4.0,4,true
+org.apache.cxf.xjc-utils.cxf-xjc-runtime,3.0.5,plugins/cxf-xjc-runtime-3.0.5.jar,4,true
+org.hsqldb.hsqldb,2.3.3,plugins/hsqldb-2.3.3.jar,4,true
