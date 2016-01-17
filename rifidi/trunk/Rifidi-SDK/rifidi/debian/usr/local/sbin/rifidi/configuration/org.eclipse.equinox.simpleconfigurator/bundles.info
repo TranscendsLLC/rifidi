@@ -136,3 +136,4 @@ uk.com.robust-it.cloning,1.9.2,plugins/cloning-1.9.2.jar,4,true
 org.apache.openjpa,2.4.0,plugins/org.apache.openjpa_2.4.0,4,true
 org.apache.cxf.xjc-utils.cxf-xjc-runtime,3.0.5,plugins/cxf-xjc-runtime-3.0.5.jar,4,true
 org.hsqldb.hsqldb,2.3.3,plugins/hsqldb-2.3.3.jar,4,true
+org.jvnet.hyperjaxb3,0.6.1,plugins/org.jvnet.hyperjaxb3_0.6.1.jar,4,true
