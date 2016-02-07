@@ -108,7 +108,7 @@ public class SensorManagerServiceRestletImpl extends Application {
 	public static final String[] ReadZoneValidProperties = new String[] { ReaderIDPropertyName, "antennas", "tagPattern", "matchPattern" };
 
 	public enum LLRPGetOperations {
-		GET_ROSPECS, GET_READER_CONFIG
+		GET_ROSPECS, GET_READER_CONFIG, GET_READER_CAPABILITIES
 	}
 
 	/** The sensor manager service for sensor commands */
@@ -197,6 +197,8 @@ public class SensorManagerServiceRestletImpl extends Application {
 						returnXML = session.getRospecs();
 					} else if (operation.equals(LLRPGetOperations.GET_READER_CONFIG)) {
 						returnXML = session.getReaderConfig();
+					} else if (operation.equals(LLRPGetOperations.GET_READER_CAPABILITIES)) {
+						returnXML = session.getReaderCapabilities();
 					} else {
 						throw new Exception("Operation with code " + operation + " is invalid. ");
 					}
@@ -1401,6 +1403,15 @@ public class SensorManagerServiceRestletImpl extends Application {
 				llrpGetOperation(request, response, LLRPGetOperations.GET_ROSPECS);
 			}
 		};
+		
+		Restlet llrpGetReaderCapabilities = new Restlet() {
+			@Override
+			public void handle(Request request, Response response) {
+				logger.info("llrpGetReaderCapabilities requested");
+				setResponseHeaders(request, response);
+				llrpGetOperation(request, response, LLRPGetOperations.GET_READER_CAPABILITIES);
+			}
+		};
 
 		Restlet llrpEncode = new Restlet() {
 			@Override
@@ -2201,6 +2212,7 @@ public class SensorManagerServiceRestletImpl extends Application {
 
 		router.attach("/llrpgetrospecs/{readerID}/{sessionID}", llrpGetRospecs);
 		router.attach("/llrpgetreaderconfig/{readerID}/{sessionID}", llrpGetReaderConfig);
+		router.attach("/llrpgetreadercapabilities/{readerID}/{sessionID}", llrpGetReaderCapabilities);
 
 		// LLRPEPCWrite single shot command with no properties
 		router.attach("/llrpencode/{readerID}/{sessionID}/LLRPEPCWrite", llrpEpcWrite);
