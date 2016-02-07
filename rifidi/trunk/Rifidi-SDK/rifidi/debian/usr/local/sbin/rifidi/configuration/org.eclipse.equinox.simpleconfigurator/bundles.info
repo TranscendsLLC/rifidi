@@ -102,7 +102,7 @@ org.rifidi.edge.adapter.opticon,1.0.1,plugins/org.rifidi.edge.adapter.opticon_1.
 org.rifidi.edge.adapter.thinkify50,1.0.2,plugins/org.rifidi.edge.adapter.thinkify50_1.0.2.jar,4,true
 #org.rifidi.edge.adapter.thingmagic6,1.0.1,plugins/org.rifidi.edge.adapter.thingmagic6_1.0.1.jar,4,true
 org.rifidi.edge.adapter.thingmagic,1.0.5,plugins/org.rifidi.edge.adapter.thingmagic_1.0.5.jar,4,true
-org.rifidi.edge.rest,1.5.2,plugins/org.rifidi.edge.rest_1.5.2.jar,4,true
+org.rifidi.edge.rest,1.5.3,plugins/org.rifidi.edge.rest_1.5.3.jar,4,true
 #org.rifidi.com.thingmagic,1.0.0,/plugins/org.rifidi.com.thingmagic_1.0.0.jar,4,true
 org.rifidi.edge.tools,1.0.2,plugins/org.rifidi.edge.tools_1.0.2.jar,4,true
 #org.rifidi.org.antlr.runtime,3.1.1,plugins/org.rifidi.org.antlr.runtime_3.1.1.jar,4,true
