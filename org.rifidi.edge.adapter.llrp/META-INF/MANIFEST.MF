@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Rifidi Edge LLRP Adapter
 Bundle-SymbolicName: org.rifidi.edge.adapter.llrp
-Bundle-Version: 2.3.1
+Bundle-Version: 2.3.2
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Import-Package: javax.xml.bind,
@@ -16,6 +16,7 @@ Import-Package: javax.xml.bind,
  org.eclipse.paho.client.mqttv3,
  org.eclipse.paho.client.mqttv3.persist,
  org.jdom,
+ org.jdom.input;version="1.0.0",
  org.llrp.ltk.exceptions,
  org.llrp.ltk.generated,
  org.llrp.ltk.generated.enumerations,

@@ -14,6 +14,7 @@ package org.rifidi.edge.adapter.llrp;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
@@ -29,6 +30,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.mina.common.RuntimeIOException;
 import org.jdom.Document;
+import org.jdom.input.SAXBuilder;
 import org.llrp.ltk.exceptions.InvalidLLRPMessageException;
 import org.llrp.ltk.generated.LLRPMessageFactory;
 import org.llrp.ltk.generated.enumerations.AccessReportTriggerType;
@@ -45,7 +47,9 @@ import org.llrp.ltk.generated.interfaces.AccessCommandOpSpecResult;
 import org.llrp.ltk.generated.messages.ADD_ACCESSSPEC;
 import org.llrp.ltk.generated.messages.ADD_ACCESSSPEC_RESPONSE;
 import org.llrp.ltk.generated.messages.DELETE_ACCESSSPEC;
+import org.llrp.ltk.generated.messages.DELETE_ROSPEC;
 import org.llrp.ltk.generated.messages.ENABLE_ACCESSSPEC;
+import org.llrp.ltk.generated.messages.ENABLE_ROSPEC;
 import org.llrp.ltk.generated.messages.GET_READER_CAPABILITIES;
 import org.llrp.ltk.generated.messages.GET_READER_CONFIG;
 import org.llrp.ltk.generated.messages.GET_ROSPECS;
@@ -964,6 +968,22 @@ public class LLRPReaderSession extends AbstractSensorSession implements
 		grc.setRequestedData(data);
 		grc.setGPIPortNum(new UnsignedShort(0));
 		grc.setGPOPortNum(new UnsignedShort(0));		
+		String retVal = this.transact(grc).toXMLString();
+		return retVal;
+	}
+	
+	/**
+	 * Gets the reader config and returns the xml representation.  
+	 * 
+	 * @return
+	 * @throws TimeoutException 
+	 * @throws InvalidLLRPMessageException 
+	 */
+	public String getReaderCapabilities() throws InvalidLLRPMessageException, TimeoutException {
+		GET_READER_CAPABILITIES grc = new GET_READER_CAPABILITIES();
+		GetReaderCapabilitiesRequestedData data = new GetReaderCapabilitiesRequestedData();
+		data.set(0);
+		grc.setRequestedData(data);
 		String retVal = this.transact(grc).toXMLString();
 		return retVal;
 	}
