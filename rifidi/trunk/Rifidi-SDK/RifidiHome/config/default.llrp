@@ -22,17 +22,6 @@
       <llrp:InventoryParameterSpec>
         <llrp:InventoryParameterSpecID>40</llrp:InventoryParameterSpecID>
         <llrp:ProtocolID>EPCGlobalClass1Gen2</llrp:ProtocolID>
-        <llrp:AntennaConfiguration>
-          <llrp:AntennaID>0</llrp:AntennaID>
-          <llrp:C1G2InventoryCommand>
-            <llrp:TagInventoryStateAware>1</llrp:TagInventoryStateAware>
-            <llrp:C1G2SingulationControl>
-              <llrp:Session>0</llrp:Session>
-              <llrp:TagPopulation>100</llrp:TagPopulation>
-              <llrp:TagTransitTime>0</llrp:TagTransitTime>
-            </llrp:C1G2SingulationControl>
-          </llrp:C1G2InventoryCommand>
-        </llrp:AntennaConfiguration>
       </llrp:InventoryParameterSpec>
     </llrp:AISpec>
     <llrp:ROReportSpec>
