@@ -9,7 +9,7 @@
  */
 angular.module('rifidiApp')
   .controller('CreateReadzoneWizardCtrl', function ($rootScope, $scope, $http, $routeParams, $location, ngDialog, commonVariableService
-                                                    , CommonService, SensorService, AppService) {
+                                                    , CommonService, SensorService, AppService, MenuService) {
 
 
       $scope.booleanValues = CommonService.getBooleanValues();
@@ -208,10 +208,10 @@ angular.module('rifidiApp')
 
                 setSuccessMessage("Success adding readzone");
                 $rootScope.operationSuccessMsg = getSuccessMessage();
-                  MenuService.createUpdateMenu();
+                MenuService.createUpdateMenu();
 
-              //Show a modal dialog to confirm if user wants to restart apps in order for properties to take effect
-              openRestartAppsDialog(host, groupName);
+              	//Show a modal dialog to confirm if user wants to restart apps in order for properties to take effect
+              	openRestartAppsDialog(host, groupName);
 
               } else {
 
@@ -295,10 +295,10 @@ angular.module('rifidiApp')
                     if (app.status == 'STARTED') {
 
                         console.log("restartAppsIfRunning. Going to stop app:");
-                        console.log(app.number);
+                        console.log(app.appId);
 
                         //Call the service to stop this app
-                        AppService.callStopAppService(host, app.number)
+                        AppService.callStopAppService(host, app.appId)
                             .success(function (data, status, headers, config) {
 
                                 console.log("restartAppsIfRunning. Success calling stop app service");
@@ -339,7 +339,7 @@ angular.module('rifidiApp')
                                                 var localAppName;
                                                 apps.forEach( function (app) {
 
-                                                    if (app.number == appIdReturned){
+                                                    if (app.appId == appIdReturned){
                                                         localAppName = app.appName;
                                                     }
 
@@ -355,8 +355,6 @@ angular.module('rifidiApp')
                                                 showErrorDialog('Error starting app with id ' + appIdReturned + ': ' + description);
 
                                             }
-
-                                            MenuService.createUpdateMenu();
 
 
                                         })
@@ -395,7 +393,7 @@ angular.module('rifidiApp')
                     } else {
 
                         console.log("restartAppsIfRunning. NOT going to stop app:");
-                        console.log(app.number);
+                        console.log(app.appId);
                     }
 
                 });
@@ -409,8 +407,6 @@ angular.module('rifidiApp')
             });
 
     };
-
-
 
 
       function showErrorDialog(errorMsg) {
