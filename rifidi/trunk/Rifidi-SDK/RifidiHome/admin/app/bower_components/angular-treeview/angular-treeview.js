@@ -59,6 +59,7 @@
 
 				//sensor menu
 				var menuSensor = '<ul id="contextMenuSensor" class="dropdown-menu">'+
+					'<li><a href="#/currentTags"><i class="currenttags">&nbsp;&nbsp;&nbsp;&nbsp;Current tags</i></a></li>'+
 					'<li><a ng-click="openDeleteSensorDialog()"><i class="readerdelete">&nbsp;&nbsp;&nbsp;&nbsp;Delete Sensor</i></a></li>'+
 					'<li ng-class="{disabledLink: !elementSelected.allowCreateSession}"><a ng-click="elementSelected.allowCreateSession && createSession()"><i ng-class="{disabledLink: !elementSelected.allowCreateSession, linkadd: elementSelected.allowCreateSession}">&nbsp;&nbsp;&nbsp;&nbsp;Create Session</i></a></li>'+
 					'</ul>';
