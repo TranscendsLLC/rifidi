@@ -52,6 +52,10 @@ var app = angular
         templateUrl: 'views/createReadzoneWizard.html',
         controller: 'CreateReadzoneWizardCtrl'
       })
+      .when('/currentTags', {
+        templateUrl: 'views/tag/currentTags.html',
+        controller: 'TagCtrl'
+      })
     .otherwise({
         redirectTo: '/'
       });

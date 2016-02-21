@@ -185,6 +185,12 @@ div[data-tree-model] li .readerdelete {
     background-repeat: no-repeat;
 }
 
+div[data-tree-model] li .currenttags {
+    padding: 1px 10px;
+    background-image: url("/dashboard/images/currenttags.png");
+    background-repeat: no-repeat;
+}
+
 div[data-tree-model] li .linkadd {
     padding: 1px 10px;
     background-image: url("/dashboard/images/link_add.png");
