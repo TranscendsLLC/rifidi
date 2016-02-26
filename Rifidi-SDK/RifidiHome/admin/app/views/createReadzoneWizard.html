@@ -118,7 +118,7 @@
 
                     <span id="help{{property.key}}" class="help-block">{{property.helpText}}</span>
                     
-                    <span ng-show="elementSelected.groupName == 'Ale'" id="helpAle" class="help-block">As this is Ale specific App, it is not allowed to define a regex for readzone. If you want to use more than one reader please use a composite reader by using Ale services.</span>
+                    <span ng-show="elementSelected.groupName == 'Ale' && property.key == 'readerID'" id="helpAle" class="help-block">As this is Ale specific App, it is not allowed to define a regex for readzone. If you want to use more than one reader please use a composite reader by using Ale services.</span>
 
                 </div>
 

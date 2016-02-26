@@ -628,15 +628,18 @@
 
                                                    <option>--</option>
                                                </select>
-
-                                               <div class="radio">
-                                                   <label>By regular expression</label>
-                                                   <input aria-describedby="help{{property.key}}"
-                                                          name="{{property.key}}" type="text" ng-value="property.value" ng-model="property.value"
-                                                          class="form-control"
-                                                           />
-
-                                               </div>
+                                               
+											   <div ng-show = "{{elementSelected.groupName != 'Ale'}}">
+	                                              
+	                                               <div class="radio">
+	                                                   <label>By regular expression</label>
+	                                                   <input aria-describedby="help{{property.key}}"
+	                                                          name="{{property.key}}" type="text" ng-value="property.value" ng-model="property.value"
+	                                                          class="form-control"
+	                                                           />
+	
+	                                               </div>
+	                                           </div>    
 
                                                <span ng-show="sensors[0]" id="help{{property.key}}" class="help-block">A regex is for example: {{sensors[0].id}}.* and means all sensors whose readerid begins with {{sensors[0].id}}</span>
                                                <span ng-show="!sensors[0]" id="help{{property.key}}" class="help-block">A regex is for example: Alien_1.* and means all sensors whose readerid begins with Alien_1</span>
@@ -669,6 +672,8 @@
 
                                            <span id="help{{property.key}}" class="help-block">{{property.helpText}}</span>
 
+										   <span ng-show="elementSelected.groupName == 'Ale' && property.key == 'readerID'" id="helpAle" class="help-block">As this is Ale specific App, it is not allowed to define a regex for readzone. If you want to use more than one reader please use a composite reader by using Ale services.</span>
+										   
                                        </div>
 
                                        <br>
