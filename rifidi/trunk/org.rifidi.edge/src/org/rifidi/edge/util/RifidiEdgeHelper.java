@@ -33,7 +33,7 @@ public class RifidiEdgeHelper implements Serializable {
 	private static final String READZONES_FOLDER_NAME = "readzones";
 
 	private static final String READZONE_FILE_NAME_PREFIX = "readzone";
-	
+
 	private static final String DEFAULT_INI_FILE_NAME = "applications/default.ini";
 
 	/** The logger for this class */
@@ -51,8 +51,7 @@ public class RifidiEdgeHelper implements Serializable {
 	 *            The name of group
 	 * @return
 	 */
-	public static final HashMap<String, byte[]> getReadzoneDataFiles(
-			final String fileNamePrefix, String group) {
+	public static final HashMap<String, byte[]> getReadzoneDataFiles(final String fileNamePrefix, String group) {
 		return getReadzoneFiles(fileNamePrefix, "data", group);
 	}
 
@@ -72,11 +71,10 @@ public class RifidiEdgeHelper implements Serializable {
 	 * @param group
 	 *            The group of app
 	 */
-	private static final void writeData(String filePrefix, String fileID,
-			String fileSuffix, byte[] data, String group) {
+	private static final void writeData(String filePrefix, String fileID, String fileSuffix, byte[] data,
+			String group) {
 		String dataDir = getDataDirPath(group, "data");
-		String fileName = dataDir + File.separator + filePrefix + "-" + fileID
-				+ "." + fileSuffix;
+		String fileName = dataDir + File.separator + filePrefix + "-" + fileID + "." + fileSuffix;
 		DataOutputStream os = null;
 		try {
 			os = new DataOutputStream(new FileOutputStream(fileName));
@@ -100,7 +98,7 @@ public class RifidiEdgeHelper implements Serializable {
 	private static final void writeProperties(String fileName, byte[] data) {
 		DataOutputStream os = null;
 		try {
-			//Thread.sleep(3000);
+			// Thread.sleep(3000);
 			os = new DataOutputStream(new FileOutputStream(fileName));
 			os.write(data);
 			os.flush();
@@ -108,9 +106,9 @@ public class RifidiEdgeHelper implements Serializable {
 			e.printStackTrace();
 		} catch (IOException e) {
 			e.printStackTrace();
-		} /*catch (InterruptedException iEx) {
-			iEx.printStackTrace();
-		}*/ finally {
+		} /*
+			 * catch (InterruptedException iEx) { iEx.printStackTrace(); }
+			 */ finally {
 			try {
 				if (os != null)
 					os.close();
@@ -121,11 +119,9 @@ public class RifidiEdgeHelper implements Serializable {
 		}
 	}
 
-	private static final void writeReadZoneData(String group,
-			String readZoneName, byte[] data) {
+	private static final void writeReadZoneData(String group, String readZoneName, byte[] data) {
 		String dataDir = getDataDirPath(group, READZONES_FOLDER_NAME);
-		String fileName = dataDir + File.separator + READZONE_FILE_NAME_PREFIX
-				+ "-" + readZoneName + ".properties";
+		String fileName = dataDir + File.separator + READZONE_FILE_NAME_PREFIX + "-" + readZoneName + ".properties";
 		DataOutputStream os = null;
 		try {
 			os = new DataOutputStream(new FileOutputStream(fileName));
@@ -150,16 +146,14 @@ public class RifidiEdgeHelper implements Serializable {
 	 * This is a helper method that does the work of loading the read zones
 	 */
 	public static HashMap<String, ReadZone> getReadZones(String group) {
-		HashMap<String, byte[]> fileMap = getReadzoneFiles(
-				READZONE_FILE_NAME_PREFIX, READZONES_FOLDER_NAME, group);
+		HashMap<String, byte[]> fileMap = getReadzoneFiles(READZONE_FILE_NAME_PREFIX, READZONES_FOLDER_NAME, group);
 		HashMap<String, ReadZone> readZones = new HashMap<String, ReadZone>();
 		for (String readZoneName : fileMap.keySet()) {
 			byte[] file = fileMap.get(readZoneName);
 			Properties properties = new Properties();
 			try {
 				properties.load(new ByteArrayInputStream(file));
-				readZones
-						.put(readZoneName, ReadZone.createReadZone(properties));
+				readZones.put(readZoneName, ReadZone.createReadZone(properties));
 			} catch (IOException e) {
 			}
 		}
@@ -181,12 +175,10 @@ public class RifidiEdgeHelper implements Serializable {
 	 * @throws IOException
 	 *             if cannot load the properties from file
 	 */
-	public static Properties getReadZoneProperties(String groupName,
-			String appName, String readZoneName)
+	public static Properties getReadZoneProperties(String groupName, String appName, String readZoneName)
 			throws PropertiesFileNotFoundException, IOException {
 
-		byte[] appPropBytes = getReadZonePropertiesFile(groupName, appName,
-				readZoneName);
+		byte[] appPropBytes = getReadZonePropertiesFile(groupName, appName, readZoneName);
 
 		Properties properties = new Properties();
 		properties.load(new ByteArrayInputStream(appPropBytes));
@@ -203,12 +195,10 @@ public class RifidiEdgeHelper implements Serializable {
 	 * @throws Exception
 	 *             if readzone does not exist
 	 */
-	public static void deleteReadZone(String groupName, String readZone)
-			throws Exception {
+	public static void deleteReadZone(String groupName, String readZone) throws Exception {
 
 		String dataPath = getDataDirPath(groupName, READZONES_FOLDER_NAME);
-		String fileName = dataPath + File.separator + READZONE_FILE_NAME_PREFIX
-				+ "-" + readZone + ".properties";
+		String fileName = dataPath + File.separator + READZONE_FILE_NAME_PREFIX + "-" + readZone + ".properties";
 
 		// check if file exists
 		File file = new File(fileName);
@@ -236,8 +226,8 @@ public class RifidiEdgeHelper implements Serializable {
 	 * @throws IOException
 	 *             if cannot load the properties from file
 	 */
-	public static Properties getApplicationProperties(String groupName,
-			String appName) throws PropertiesFileNotFoundException, IOException {
+	public static Properties getApplicationProperties(String groupName, String appName)
+			throws PropertiesFileNotFoundException, IOException {
 
 		byte[] appPropBytes = getApplicationPropertiesFile(groupName, appName);
 
@@ -258,8 +248,8 @@ public class RifidiEdgeHelper implements Serializable {
 	 * @throws IOException
 	 *             if there is an error setting the properties
 	 */
-	public static void setApplicationProperties(String groupName,
-			String appName, AttributeList attributes) throws IOException {
+	public static void setApplicationProperties(String groupName, String appName, AttributeList attributes)
+			throws IOException {
 
 		String dataPath = getDataDirPath(groupName, null);
 		String fileName = dataPath + File.separator + appName + ".properties";
@@ -281,12 +271,11 @@ public class RifidiEdgeHelper implements Serializable {
 	 * @throws Exception
 	 *             if readzone already exists
 	 */
-	public static void addReadZone(String groupName, String readZone,
-			AttributeList attributes) throws IOException, Exception {
+	public static void addReadZone(String groupName, String readZone, AttributeList attributes)
+			throws IOException, Exception {
 
 		String dataPath = getDataDirPath(groupName, READZONES_FOLDER_NAME);
-		String fileName = dataPath + File.separator + READZONE_FILE_NAME_PREFIX
-				+ "-" + readZone + ".properties";
+		String fileName = dataPath + File.separator + READZONE_FILE_NAME_PREFIX + "-" + readZone + ".properties";
 
 		// check if file exists
 		File file = new File(fileName);
@@ -297,9 +286,9 @@ public class RifidiEdgeHelper implements Serializable {
 		setProperties(fileName, attributes);
 
 	}
-	
+
 	/**
-	 * Add a group to the default application file.  
+	 * Add a group to the default application file.
 	 * 
 	 * @param groupName
 	 * @param attributes
@@ -307,7 +296,7 @@ public class RifidiEdgeHelper implements Serializable {
 	 * @throws Exception
 	 */
 	public static void addDefaultApp(String groupName) throws IOException, Exception {
-		
+
 		String dataPath = getApplicationDirPath();
 		String fileName = dataPath + File.separator + "default.ini";
 
@@ -316,14 +305,14 @@ public class RifidiEdgeHelper implements Serializable {
 		if (!file.exists()) {
 			file.createNewFile();
 		}
-		
+
 		PrintWriter out = null;
 		try {
 			out = new PrintWriter(new BufferedWriter(new FileWriter(file, true)));
 			out.println(groupName);
 			out.close();
 		} finally {
-			if(out!=null) {
+			if (out != null) {
 				out.close();
 			}
 		}
@@ -343,12 +332,11 @@ public class RifidiEdgeHelper implements Serializable {
 	 * @throws Exception
 	 *             if readzone does not exist
 	 */
-	public static void setReadZoneProperties(String groupName, String readZone,
-			AttributeList attributes) throws IOException, Exception {
+	public static void setReadZoneProperties(String groupName, String readZone, AttributeList attributes)
+			throws IOException, Exception {
 
 		String dataPath = getDataDirPath(groupName, READZONES_FOLDER_NAME);
-		String fileName = dataPath + File.separator + READZONE_FILE_NAME_PREFIX
-				+ "-" + readZone + ".properties";
+		String fileName = dataPath + File.separator + READZONE_FILE_NAME_PREFIX + "-" + readZone + ".properties";
 
 		// check if file exists
 		File file = new File(fileName);
@@ -370,8 +358,7 @@ public class RifidiEdgeHelper implements Serializable {
 	 * @throws IOException
 	 *             if there is an error setting the properties
 	 */
-	public static void setGroupProperties(String groupName,
-			AttributeList attributes) throws IOException {
+	public static void setGroupProperties(String groupName, AttributeList attributes) throws IOException {
 
 		String dataPath = getDataDirPath(groupName, null);
 		String fileName = dataPath + File.separator + groupName + ".properties";
@@ -389,22 +376,27 @@ public class RifidiEdgeHelper implements Serializable {
 	 * @throws IOException
 	 *             if there is an error reading the file
 	 */
-	private static void setProperties(String fileName, AttributeList attributes)
-			throws IOException {
+	private static void setProperties(String fileName, AttributeList attributes) throws IOException {
 
 		File file = null;
 		InputStream ips = null;
 		InputStreamReader ipsr = null;
 		BufferedReader br = null;
-		
+
 		String dataToWrite = null;
-		
+
 		try {
 
 			// check if file exists
 			file = new File(fileName);
 			if (!file.exists()) {
 				// If not exists, create it
+				// Create parent folder
+				File dir = file.getParentFile();
+				if (!dir.exists()) {
+					dir.mkdirs();
+				}
+				// Create file
 				file.createNewFile();
 			}
 
@@ -434,8 +426,7 @@ public class RifidiEdgeHelper implements Serializable {
 							if (filePropName.trim().equals(propName.trim())) {
 								attributeFound = true;
 								int index = fileLines.indexOf(fileLine);
-								fileLines.set(index, filePropName + "="
-										+ attribute.getValue());
+								fileLines.set(index, filePropName + "=" + attribute.getValue());
 							}
 						}
 					}
@@ -443,8 +434,7 @@ public class RifidiEdgeHelper implements Serializable {
 
 				if (!attributeFound) {
 					// add new attribute
-					fileLines.add(attribute.getName() + "="
-							+ attribute.getValue());
+					fileLines.add(attribute.getName() + "=" + attribute.getValue());
 				}
 
 			}
@@ -454,27 +444,27 @@ public class RifidiEdgeHelper implements Serializable {
 			for (String data : fileLines) {
 				dataToWrite += data + "\n";
 			}
-			
+
 		} finally {
 
-			//close file resources
-			
-			if (br != null){
+			// close file resources
+
+			if (br != null) {
 				br.close();
 			}
-			
-			if (ipsr != null){
+
+			if (ipsr != null) {
 				ipsr.close();
 			}
-			
-			if (ips != null){
+
+			if (ips != null) {
 				ips.close();
 			}
-			
+
 		}
 
 		// Write to app properties file
-		if (dataToWrite != null){
+		if (dataToWrite != null) {
 			writeProperties(fileName, dataToWrite.getBytes());
 		}
 
@@ -491,8 +481,7 @@ public class RifidiEdgeHelper implements Serializable {
 	 * @throws IOException
 	 *             if cannot load the properties from file
 	 */
-	public static Properties getGroupProperties(String groupName)
-			throws PropertiesFileNotFoundException, IOException {
+	public static Properties getGroupProperties(String groupName) throws PropertiesFileNotFoundException, IOException {
 
 		byte[] groupPropBytes = getGroupPropertiesFile(groupName);
 
@@ -509,8 +498,7 @@ public class RifidiEdgeHelper implements Serializable {
 	 * @param group
 	 * @return
 	 */
-	private static HashMap<String, byte[]> getReadzoneFiles(
-			final String fileNamePrefix, String dir, String group) {
+	private static HashMap<String, byte[]> getReadzoneFiles(final String fileNamePrefix, String dir, String group) {
 		HashMap<String, byte[]> fileMap = new HashMap<String, byte[]>();
 
 		// the path of the directory to read files from
@@ -536,14 +524,13 @@ public class RifidiEdgeHelper implements Serializable {
 		}
 
 		for (File f : dataFiles) {
-						
+
 			byte[] bytes = readContentIntoByteArray(f);
-			
+
 			// the file id is in between the '-' and the '.'
-			String id = f.getName().substring(f.getName().indexOf('-') + 1,
-					f.getName().indexOf('.'));
+			String id = f.getName().substring(f.getName().indexOf('-') + 1, f.getName().indexOf('.'));
 			fileMap.put(id, bytes);
-		
+
 		}
 		return fileMap;
 
@@ -560,8 +547,8 @@ public class RifidiEdgeHelper implements Serializable {
 	 * @throws PropertiesFileNotFoundException
 	 *             if properties file for application does not exist
 	 */
-	private static byte[] getApplicationPropertiesFile(String groupName,
-			final String appName) throws PropertiesFileNotFoundException {
+	private static byte[] getApplicationPropertiesFile(String groupName, final String appName)
+			throws PropertiesFileNotFoundException {
 
 		// the path of the directory to read files from
 		String dataPath = getDataDirPath(groupName, null);
@@ -589,53 +576,47 @@ public class RifidiEdgeHelper implements Serializable {
 		File f = dataFiles[0];
 		return readContentIntoByteArray(f);
 	}
-	
+
 	public static byte[] getServersFile() throws Exception {
 
 		// the path of the directory to read files from
 		String dataPath = getConfigDirPath() + File.separator + "servers.json";
-		
+
 		File file = new File(dataPath);
-	       
+
 		byte[] bytes = readContentIntoByteArray(file);
 		return bytes;
-		
+
 	}
-	
+
 	public static byte[] getUIPropertiesFile() throws Exception {
 
 		// the path of the directory to read file from
 		String dataPath = getConfigDirPath() + File.separator + "uiproperties.json";
-		
+
 		File file = new File(dataPath);
-	       
+
 		byte[] bytes = readContentIntoByteArray(file);
 		return bytes;
-		
-	}
-	
-	private static byte[] readContentIntoByteArray(File file)
-	   {
-	      FileInputStream fileInputStream = null;
-	      byte[] bFile = new byte[(int) file.length()];
-	      try
-	      {
-	         //convert file into array of bytes
-	         fileInputStream = new FileInputStream(file);
-	         fileInputStream.read(bFile);
-	         fileInputStream.close();
-	         for (int i = 0; i < bFile.length; i++)
-	         {
-	            System.out.print((char) bFile[i]);
-	         }
-	      }
-	      catch (Exception e)
-	      {
-	         e.printStackTrace();
-	      }
-	      return bFile;
-	   }
 
+	}
+
+	private static byte[] readContentIntoByteArray(File file) {
+		FileInputStream fileInputStream = null;
+		byte[] bFile = new byte[(int) file.length()];
+		try {
+			// convert file into array of bytes
+			fileInputStream = new FileInputStream(file);
+			fileInputStream.read(bFile);
+			fileInputStream.close();
+			for (int i = 0; i < bFile.length; i++) {
+				System.out.print((char) bFile[i]);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return bFile;
+	}
 
 	/**
 	 * Get application group properties file
@@ -646,8 +627,7 @@ public class RifidiEdgeHelper implements Serializable {
 	 * @throws PropertiesFileNotFoundException
 	 *             if properties file for application group does not exist
 	 */
-	private static byte[] getGroupPropertiesFile(final String groupName)
-			throws PropertiesFileNotFoundException {
+	private static byte[] getGroupPropertiesFile(final String groupName) throws PropertiesFileNotFoundException {
 
 		// the path of the directory to read files from
 		String dataPath = getDataDirPath(groupName, null);
@@ -690,8 +670,7 @@ public class RifidiEdgeHelper implements Serializable {
 	 * @throws PropertiesFileNotFoundException
 	 *             if properties file for readzone does not exist
 	 */
-	private static byte[] getReadZonePropertiesFile(String groupName,
-			String appName, final String readZoneName)
+	private static byte[] getReadZonePropertiesFile(String groupName, String appName, final String readZoneName)
 			throws PropertiesFileNotFoundException {
 
 		// the path of the directory to read files from
@@ -707,15 +686,13 @@ public class RifidiEdgeHelper implements Serializable {
 				if (arg1.endsWith("~")) {
 					return false;
 				}
-				return arg1.startsWith(READZONE_FILE_NAME_PREFIX + "-"
-						+ readZoneName);
+				return arg1.startsWith(READZONE_FILE_NAME_PREFIX + "-" + readZoneName);
 			}
 		});
 
 		// if we did not read in any files
 		if (dataFiles == null || dataFiles.length < 1) {
-			throw new PropertiesFileNotFoundException(groupName, appName,
-					readZoneName);
+			throw new PropertiesFileNotFoundException(groupName, appName, readZoneName);
 		}
 
 		// Assume there is only one readzone property file
@@ -734,24 +711,24 @@ public class RifidiEdgeHelper implements Serializable {
 	 */
 	private static String getDataDirPath(String groupName, String dir) {
 		return System.getProperty("org.rifidi.home") + File.separator
-				+ System.getProperty("org.rifidi.edge.applications")
-				+ File.separator + groupName + File.separator
+				+ System.getProperty("org.rifidi.edge.applications") + File.separator + groupName + File.separator
 				+ (dir != null ? dir : "");
 	}
-	
+
 	private static String getApplicationDirPath() {
-		return System.getProperty("org.rifidi.home") + File.separator + System.getProperty("org.rifidi.edge.applications");
+		return System.getProperty("org.rifidi.home") + File.separator
+				+ System.getProperty("org.rifidi.edge.applications");
 	}
-	
+
 	private static String getConfigDirPath() {
-		return  System.getProperty("org.rifidi.home") + File.separator
-				+ "admin" + File.separator + "config";
+		return System.getProperty("org.rifidi.home") + File.separator + "admin" + File.separator + "config";
 	}
-	
 
 	/**
 	 * Sets the content of servers.json
-	 * @param content the content to be set in servers.json file
+	 * 
+	 * @param content
+	 *            the content to be set in servers.json file
 	 * @throws IOException
 	 */
 	public static void updateServersFile(String content) throws Exception {
@@ -760,10 +737,12 @@ public class RifidiEdgeHelper implements Serializable {
 		writeToServersFile(fileName, content.getBytes());
 
 	}
-	
+
 	/**
 	 * Sets the content of uiproperties.json
-	 * @param content the content to be set in uiproperties.json file
+	 * 
+	 * @param content
+	 *            the content to be set in uiproperties.json file
 	 * @throws IOException
 	 */
 	public static void updateUIPropertiesFile(String content) throws Exception {
@@ -772,17 +751,15 @@ public class RifidiEdgeHelper implements Serializable {
 		writeToServersFile(fileName, content.getBytes());
 
 	}
-	
-	
-	private static final void writeToServersFile(String fileName, byte[] data) 
-			throws Exception {
+
+	private static final void writeToServersFile(String fileName, byte[] data) throws Exception {
 		DataOutputStream os = null;
 		try {
-			//Thread.sleep(6000);
+			// Thread.sleep(6000);
 			os = new DataOutputStream(new FileOutputStream(fileName));
 			os.write(data);
 			os.flush();
-		}  finally {
+		} finally {
 			try {
 				if (os != null)
 					os.close();
@@ -792,6 +769,5 @@ public class RifidiEdgeHelper implements Serializable {
 			}
 		}
 	}
-	
 
 }
