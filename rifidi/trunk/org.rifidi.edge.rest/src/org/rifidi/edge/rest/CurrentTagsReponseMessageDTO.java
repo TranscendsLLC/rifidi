@@ -27,6 +27,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlRootElement(name = "response")
 public class CurrentTagsReponseMessageDTO implements Serializable {
+	
 	/**
 	 * 
 	 */
@@ -34,13 +35,13 @@ public class CurrentTagsReponseMessageDTO implements Serializable {
 	
 	@XmlElementWrapper(required = true, name="currenttags")
 	@XmlElement(name = "tag")
-	private List<String> tags;
+	private List<CurrentTagDTO> tags;
 
-	public List<String> getTags() {
+	public List<CurrentTagDTO> getTags() {
 		return tags;
 	}
 
-	public void setTags(List<String> tags) {
+	public void setTags(List<CurrentTagDTO> tags) {
 		this.tags = tags;
 	}
 }
