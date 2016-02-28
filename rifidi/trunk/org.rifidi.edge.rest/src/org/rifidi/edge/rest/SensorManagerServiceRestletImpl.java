@@ -1365,7 +1365,7 @@ public class SensorManagerServiceRestletImpl extends Application {
 				logger.info("currenttags requested");
 				try {
 					setResponseHeaders(request, response);
-					Set<TagReadEvent> currenttags = new HashSet<TagReadEvent>();
+					Set<CurrentTagDTO> currenttags = new HashSet<CurrentTagDTO>();
 					CurrentTagsSubscriber sub = new CurrentTagsSubscriber(currenttags);
 					String attribute = (String) request.getAttributes().get("readerID");
 					ReadZone zone = new ReadZone((String) request.getAttributes().get("readerID"));
@@ -1375,13 +1375,7 @@ public class SensorManagerServiceRestletImpl extends Application {
 
 					CurrentTagsReponseMessageDTO tagresponse = new CurrentTagsReponseMessageDTO();
 					List<CurrentTagDTO> tempList = new ArrayList<CurrentTagDTO>();
-					for(TagReadEvent t:currenttags) {
-						CurrentTagDTO tag = new CurrentTagDTO();
-						tag.setId(t.getTag().getFormattedID());
-						tag.setAntenna(t.getAntennaID());
-						tempList.add(tag);
-						
-					}
+					tempList.addAll(currenttags);
 					tagresponse.setTags(tempList);
 					response.setEntity(self.generateReturnString(tagresponse), MediaType.TEXT_XML);
 
@@ -3003,9 +2997,9 @@ public class SensorManagerServiceRestletImpl extends Application {
 
 	private class CurrentTagsSubscriber implements RawTagSubscriber {
 
-		public Set<TagReadEvent> currenttags;
+		public Set<CurrentTagDTO> currenttags;
 
-		public CurrentTagsSubscriber(Set<TagReadEvent> currenttags) {
+		public CurrentTagsSubscriber(Set<CurrentTagDTO> currenttags) {
 			this.currenttags = currenttags;
 		}
 
@@ -3018,7 +3012,10 @@ public class SensorManagerServiceRestletImpl extends Application {
 		 */
 		@Override
 		public void tagArrived(TagReadEvent tag) {
-			this.currenttags.add(tag);
+			CurrentTagDTO dto = new CurrentTagDTO();
+			dto.setId(tag.getTag().getFormattedID());
+			dto.setAntenna(tag.getAntennaID());
+			this.currenttags.add(dto);
 		}
 
 	}
