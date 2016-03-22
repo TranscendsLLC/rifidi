@@ -87,13 +87,13 @@ public class Thinkify50Sensor extends AbstractSensor<Thinkify50SensorSession> {
 		this.commands = commands;
 		this.readerProperties = new ConcurrentHashMap<String, String>();
 
-		System.setProperty("gnu.io.rxtx.SerialPorts", "/dev/ttyACM0");
+		System.setProperty("gnu.io.rxtx.SerialPorts", this.getPort());
 
 		HashSet<CommPortIdentifier> set = SerialManager
 				.getAvailableSerialPorts();
 
 		for (CommPortIdentifier com : set) {
-			System.out.println("Port: " + com.getName());
+			logger.info("Port: " + com.getName());
 		}
 	}
 
