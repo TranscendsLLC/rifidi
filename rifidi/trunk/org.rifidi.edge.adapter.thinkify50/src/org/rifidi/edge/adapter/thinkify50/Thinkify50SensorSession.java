@@ -82,6 +82,11 @@ public class Thinkify50SensorSession extends AbstractSensorSession {
 	@Override
 	protected void _connect() throws IOException {
 		// TODO Auto-generated method stub
+
+
+		System.out.println("Setting the port: " + this.port);
+		System.setProperty("gnu.io.rxtx.SerialPorts", this.port);
+		
 		boolean connected = false;
 		this.setStatus(SessionStatus.CONNECTING);
 		this.connectingLoop.set(true);
@@ -99,7 +104,7 @@ public class Thinkify50SensorSession extends AbstractSensorSession {
 				} catch (Exception e) {
 					logger.info("Exception while trying to connect to reader "
 							+ this.readerID + " at port " + this.port + ": "
-							+ e.getLocalizedMessage());
+							+ e.getMessage());
 				}
 
 				try {
