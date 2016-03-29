@@ -39,8 +39,7 @@ import com.thinkify.rfid.ThinkifyTag;
  */
 public class Thinkify50SensorSession extends AbstractSensorSession {
 
-	private static final Log logger = LogFactory
-			.getLog(Thinkify50SensorSession.class);
+	private static final Log logger = LogFactory.getLog(Thinkify50SensorSession.class);
 
 	int maxConAttempts = -1;
 	int reconnectionInterval = 2500;
@@ -53,6 +52,7 @@ public class Thinkify50SensorSession extends AbstractSensorSession {
 	private String ma;
 
 	ReadThread readthread = null;
+	ConnectedCheckerThread connectthread = null;
 
 	private ThinkifyReader reader;
 
@@ -151,6 +151,9 @@ public class Thinkify50SensorSession extends AbstractSensorSession {
 				this.readerID), this, interval);
 		Thread thread = new Thread(readthread);
 		thread.start();
+		connectthread = new ConnectedCheckerThread(reader);
+		Thread cThread = new Thread(connectthread);
+		cThread.start();
 	}
 
 	/**
@@ -158,6 +161,7 @@ public class Thinkify50SensorSession extends AbstractSensorSession {
 	 */
 	public void stopReading() {
 		readthread.stop = true;
+		connectthread.stop = true;
 	}
 
 	/**
@@ -195,7 +199,7 @@ public class Thinkify50SensorSession extends AbstractSensorSession {
 		return "Thinkify50Session: " + port + " (" + getStatus() + ")";
 	}
 
-	public class ReadThread extends Thread {
+	public class ReadThread implements Runnable {
 
 		public volatile boolean stop = false;
 
@@ -251,6 +255,47 @@ public class Thinkify50SensorSession extends AbstractSensorSession {
 			} catch (IOException e) {
 				e.printStackTrace();
 			} catch (TimeoutException e) {
+				e.printStackTrace();
+			}
+		}
+
+		public void stopReading() {
+			this.stop = true;
+		}
+	}
+	
+	public class ConnectedCheckerThread implements Runnable {
+
+		public volatile boolean stop = false;
+		
+		private ThinkifyReader reader;
+
+		public ConnectedCheckerThread(ThinkifyReader reader) {
+			this.reader = reader;
+		}
+
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see java.lang.Thread#start()
+		 */
+		@Override
+		public void run() {
+			try {
+				stop = false;
+				while (!stop) {
+					try {
+						if (!this.reader.isOpen()) {
+							disconnect();
+							stop = true;
+							Thread.sleep(interval);
+							connect();
+						}
+						Thread.sleep(interval);
+					} catch (InterruptedException e) {
+					}
+				}
+			} catch (IOException e) {
 				e.printStackTrace();
 			}
 		}
