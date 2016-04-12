@@ -8,12 +8,14 @@
     	<table class="table table-hover">
 		    <thead>
 		      <tr>
+		        <th>Antenna</th>
 		        <th>Tag</th>
 		      </tr>
 		    </thead>
 		    <tbody>
-		      <tr ng-repeat="tag in tags">
-		        <td>{{tag.tag}}</td>
+		      <tr ng-repeat="tag in tags | orderBy: 'antenna'">
+			    <td>{{tag.antenna}}</td>
+		        <td>{{tag.id}}</td>
 		      </tr>
 		    </tbody>
 		</table>

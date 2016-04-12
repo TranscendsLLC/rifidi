@@ -25,11 +25,13 @@ app.service('TagService', function($http, CommonService){
 
         for (var index = 0; index < xmlVector.length; index++) {
 
-            var tagId = xmlVector[index].childNodes[0].nodeValue;
+            var tagId = xmlVector[index].getElementsByTagName("id")[0].childNodes[0].nodeValue;
+            var antennaId = xmlVector[index].getElementsByTagName("antenna")[0].childNodes[0].nodeValue;
 
             //Add the tag to tag list
             var tagElement = {
-                "tag": tagId
+                "id": tagId,
+                "antenna": antennaId
             };
 
             tagsToReturn.push(tagElement);
