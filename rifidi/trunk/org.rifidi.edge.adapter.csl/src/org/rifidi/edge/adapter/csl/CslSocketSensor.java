@@ -306,7 +306,7 @@ public class CslSocketSensor extends AbstractSensor<CslSocketSensorSession> {
 		return this.notifyAddrPort;
 	}	
 	
-	@Property(displayName = "DisableAutoStart", description = "Set to false to disable autostart", writable = true, type = PropertyType.PT_BOOLEAN, 
+	@Property(displayName = "DisableAutoStart", description = "Set to true to disable autostart", writable = true, type = PropertyType.PT_BOOLEAN, 
 			category = "connection", orderValue = 8, defaultValue = "false")
 	public Boolean getAutoStart() {
 		return disableAutoStart;
