@@ -61,8 +61,11 @@ public class LLRPReader extends AbstractSensor<LLRPReaderSession> {
 	private final Integer sessionIDcounter = new Integer(1);
 	/** Provided by spring. */
 	private final Set<AbstractCommandConfiguration<?>> commands;
+	/** Set to false to disable autostart */
+	private Boolean disableAutoStart = false;
 	/** Flag to check if this reader is destroyed. */
 	private AtomicBoolean destroied = new AtomicBoolean(false);
+	
 	/** Mbeaninfo for this class. */
 	public static final MBeanInfo mbeaninfo;
 	private String displayName="LLRP";
@@ -283,6 +286,15 @@ public class LLRPReader extends AbstractSensor<LLRPReaderSession> {
 	 */
 	public void setPort(Integer port) {
 		this.port = port;
+	}
+	
+	@Property(displayName = "DisableAutoStart", description = "Set to false to disable autostart", writable = true, type = PropertyType.PT_BOOLEAN, 
+			category = "connection", orderValue = 8, defaultValue = "false")
+	public Boolean getAutoStart() {
+		return disableAutoStart;
+	}
+	public void setAutoStart(Boolean autoStart) {
+		this.disableAutoStart = autoStart;
 	}
 
 	/**

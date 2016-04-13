@@ -49,6 +49,8 @@ import org.rifidi.edge.sensors.SensorSession;
 @JMXMBean
 public class CslSocketSensor extends AbstractSensor<CslSocketSensorSession> {
 
+	
+	private Boolean disableAutoStart=false;
 	/**
 	 * 
 	 */
@@ -302,6 +304,15 @@ public class CslSocketSensor extends AbstractSensor<CslSocketSensorSession> {
 			defaultValue = "3000", orderValue = 2)
 	public String getNotifyAddrPort() {
 		return this.notifyAddrPort;
+	}	
+	
+	@Property(displayName = "DisableAutoStart", description = "Set to false to disable autostart", writable = true, type = PropertyType.PT_BOOLEAN, 
+			category = "connection", orderValue = 8, defaultValue = "false")
+	public Boolean getAutoStart() {
+		return disableAutoStart;
+	}
+	public void setAutoStart(Boolean autoStart) {
+		this.disableAutoStart = autoStart;
 	}
 	
 	

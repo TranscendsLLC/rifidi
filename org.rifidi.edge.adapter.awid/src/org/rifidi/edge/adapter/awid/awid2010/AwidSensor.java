@@ -47,6 +47,8 @@ public class AwidSensor extends AbstractSensor<AwidSession> {
 	private final static Log logger = LogFactory.getLog(AwidSensor.class);
 	/** The IP address of the Awid */
 	private volatile String host = AwidDefaultValues.HOST;
+	/** */
+	private Boolean disableAutoStart=false;
 	/** The port of the Awid */
 	private volatile Integer port = Integer.parseInt(AwidDefaultValues.PORT);
 	/** The maximum number of reconnection attempts before giving up */
@@ -283,6 +285,15 @@ public class AwidSensor extends AbstractSensor<AwidSession> {
 
 	public void setPort(Integer port) {
 		this.port = port;
+	}
+	
+	@Property(displayName = "DisableAutoStart", description = "Set to false to disable autostart", writable = true, type = PropertyType.PT_BOOLEAN, 
+			category = "connection", orderValue = 8, defaultValue = "false")
+	public Boolean getAutoStart() {
+		return disableAutoStart;
+	}
+	public void setAutoStart(Boolean autoStart) {
+		this.disableAutoStart = autoStart;
 	}
 
 	/**

@@ -84,6 +84,8 @@ public class Alien9800Reader extends AbstractSensor<Alien9800ReaderSession> {
 	/** The ID of the session */
 	private AtomicInteger sessionID = new AtomicInteger(0);
 	private String displayName = "Alien";
+	private Boolean disableAutoStart = false;
+	
 	/**
 	 * READER PROPERTIES - SETTABE, SET ON CONNECTION
 	 */
@@ -384,6 +386,15 @@ public class Alien9800Reader extends AbstractSensor<Alien9800ReaderSession> {
 	 */
 	public void setPort(Integer port) {
 		this.port = port;
+	}
+	
+	@Property(displayName = "DisableAutoStart", description = "Set to false to disable autostart", writable = true, type = PropertyType.PT_BOOLEAN, 
+			category = "connection", orderValue = 8, defaultValue = "false")
+	public Boolean getAutoStart() {
+		return disableAutoStart;
+	}
+	public void setAutoStart(Boolean autoStart) {
+		this.disableAutoStart = autoStart;
 	}
 
 	/**

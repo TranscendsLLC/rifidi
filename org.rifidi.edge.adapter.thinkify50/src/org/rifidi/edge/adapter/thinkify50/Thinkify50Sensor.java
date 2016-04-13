@@ -74,6 +74,8 @@ public class Thinkify50Sensor extends AbstractSensor<Thinkify50SensorSession> {
 	private final Set<AbstractCommandConfiguration<?>> commands;
 	/** The ID of the session */
 	private AtomicInteger sessionIDcounter = new AtomicInteger(0);
+	
+	private Boolean disableAutoStart=false;
 
 	public static final MBeanInfo mbeaninfo;
 	private String displayName;
@@ -173,6 +175,15 @@ public class Thinkify50Sensor extends AbstractSensor<Thinkify50SensorSession> {
 
 	public void setPort(String port) {
 		this.port = port;
+	}
+	
+	@Property(displayName = "DisableAutoStart", description = "Set to false to disable autostart", writable = true, type = PropertyType.PT_BOOLEAN, 
+			category = "connection", orderValue = 8, defaultValue = "false")
+	public Boolean getAutoStart() {
+		return disableAutoStart;
+	}
+	public void setAutoStart(Boolean autoStart) {
+		this.disableAutoStart = autoStart;
 	}
 
 	@Property(displayName = "ReadRate", description = "The rate that the reader will read at in milliseconds", writable = true, type = PropertyType.PT_INTEGER, category = "reading"
