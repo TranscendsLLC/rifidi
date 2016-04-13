@@ -70,6 +70,8 @@ public class ThingmagicReader extends AbstractSensor<ThingmagicReaderSession> {
 	/** A queue for putting commands to be executed next */
 	private final LinkedBlockingQueue<ThingmagicCommandObjectWrapper> propCommandsToBeExecuted;
 	private String displayName = "ThingMagic";
+	
+	private Boolean disableAutoStart=true;
 
 	/** Mbeaninfo for this class. */
 	public static final MBeanInfo mbeaninfo;
@@ -241,6 +243,15 @@ public class ThingmagicReader extends AbstractSensor<ThingmagicReaderSession> {
 	 */
 	public void setPort(Integer port) {
 		this.port = port;
+	}
+	
+	@Property(displayName = "DisableAutoStart", description = "Set to false to disable autostart", writable = true, type = PropertyType.PT_BOOLEAN, 
+			category = "connection", orderValue = 8, defaultValue = "false")
+	public Boolean getAutoStart() {
+		return disableAutoStart;
+	}
+	public void setAutoStart(Boolean autoStart) {
+		this.disableAutoStart = autoStart;
 	}
 
 	/**

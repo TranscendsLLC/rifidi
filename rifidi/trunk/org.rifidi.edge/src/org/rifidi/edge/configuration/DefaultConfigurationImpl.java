@@ -38,7 +38,6 @@ import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceEvent;
 import org.osgi.framework.ServiceListener;
 import org.rifidi.edge.api.SessionDTO;
-import org.rifidi.edge.api.SessionStatus;
 import org.rifidi.edge.exceptions.CannotCreateSessionException;
 import org.rifidi.edge.notification.NotifierService;
 import org.rifidi.edge.sensors.AbstractSensor;
@@ -84,6 +83,8 @@ public class DefaultConfigurationImpl implements Configuration, ServiceListener 
 	private volatile JMXService jmxService;
 	/** DTOs that describe the sessions if this config describes a reader. */
 	private final Map<SessionDTO, String> sessionDTOs;
+	/** Should reader autostart? */
+	private boolean disableAutoStart;
 
 	/**
 	 * Constructor.
@@ -104,6 +105,19 @@ public class DefaultConfigurationImpl implements Configuration, ServiceListener 
 		this.factoryID = factoryID;
 		this.serviceID = serviceID;
 		this.attributes = (AttributeList) attributes.clone();
+		disableAutoStart = false;
+		for (Object o : this.attributes) {
+			Attribute att = (Attribute) o;
+			String name = att.getName();
+			if (name.equals("DisableAutoStart")) {
+				// This is the 'override' autostart, so we will default to true
+				// unless it is explicitly set to false
+				if (att.getValue() != null && ((String) att.getValue()).equalsIgnoreCase("true")) {
+					disableAutoStart = true;
+				}
+				break;
+			}
+		}
 		this.listeners = new CopyOnWriteArraySet<AttributesChangedListener>();
 		this.target = new AtomicReference<RifidiService>(null);
 		this.jmxService = jmxService;
@@ -153,14 +167,12 @@ public class DefaultConfigurationImpl implements Configuration, ServiceListener 
 				if (target instanceof AbstractSensor<?>) {
 					for (SessionDTO sessionDTO : sessionDTOs.keySet()) {
 						try {
-							((AbstractSensor<?>) target)
-									.createSensorSession(sessionDTO);
+							((AbstractSensor<?>) target).createSensorSession(sessionDTO);
 							// test to see if the session should be
 							// restarted
 							if (shouldStartSession(sessionDTO)) {
 								// if it should, restart it
-								restartSession((AbstractSensor<?>) target,
-										sessionDTO);
+								restartSession((AbstractSensor<?>) target, sessionDTO);
 							}
 						} catch (CannotCreateSessionException e) {
 							logger.error("Cannot Create Session ", e);
@@ -191,16 +203,13 @@ public class DefaultConfigurationImpl implements Configuration, ServiceListener 
 	 * @return
 	 */
 	private boolean shouldStartSession(SessionDTO dto) {
+		if (this.disableAutoStart) {
+			return false;
+		}
 		// test to see if the autostart system property is true
-		if (System.getProperties().getProperty("org.rifidi.edge.autostart")
-				.equalsIgnoreCase("true")) {
-			SessionStatus stat = dto.getStatus();
+		if (System.getProperties().getProperty("org.rifidi.edge.autostart").equalsIgnoreCase("true")) {
 			// check to see if the session was saved in a connecting state
-			if (stat == SessionStatus.CONNECTING
-					|| stat == SessionStatus.LOGGINGIN
-					|| stat == SessionStatus.PROCESSING) {
-				return true;
-			}
+			return true;
 		}
 		return false;
 	}
@@ -224,8 +233,7 @@ public class DefaultConfigurationImpl implements Configuration, ServiceListener 
 		final SensorSession session = sensor.getSensorSessions().get(
 				sessionDTO.getID());
 		if (session == null) {
-			logger.warn("Session not available: " + sensor.getID() + ":"
-					+ sessionDTO.getID());
+			logger.warn("Session not available: " + sensor.getID() + ":" + sessionDTO.getID());
 		}
 		logger.info("Restarting session: " + session);
 		Thread t = new Thread(new Runnable() {
@@ -235,8 +243,7 @@ public class DefaultConfigurationImpl implements Configuration, ServiceListener 
 					session.connect();
 					sensor.applyPropertyChanges();
 				} catch (IOException e) {
-					logger.warn("Cannot start session: " + sensor.getID() + ":"
-							+ session.getID());
+					logger.warn("Cannot start session: " + sensor.getID() + ":"	+ session.getID());
 					session.disconnect();
 				}
 			}

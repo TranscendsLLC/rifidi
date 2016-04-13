@@ -66,6 +66,8 @@ public class Thingmagic6Sensor extends AbstractSensor<Thingmagic6SensorSession> 
 	private final Set<AbstractCommandConfiguration<?>> commands;
 	/** The ID of the session */
 	private AtomicInteger sessionIDcounter = new AtomicInteger(0);
+	
+	private Boolean disableAutoStart=false;
 
 	private String antennaSequence;
 
@@ -98,6 +100,15 @@ public class Thingmagic6Sensor extends AbstractSensor<Thingmagic6SensorSession> 
 
 	public void setPort(String port) {
 		this.port = port;
+	}
+	
+	@Property(displayName = "DisableAutoStart", description = "Set to false to disable autostart", writable = true, type = PropertyType.PT_BOOLEAN, 
+			category = "connection", orderValue = 8, defaultValue = "false")
+	public Boolean getAutoStart() {
+		return disableAutoStart;
+	}
+	public void setAutoStart(Boolean autoStart) {
+		this.disableAutoStart = autoStart;
 	}
 
 	/**

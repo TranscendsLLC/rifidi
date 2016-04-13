@@ -59,6 +59,8 @@ public class GenericSensor extends AbstractSensor<GenericSensorSession> {
 	private AtomicBoolean destroyed = new AtomicBoolean(false);
 	/** The only session an generic reader allows. */
 	private AtomicReference<GenericSensorSession> session = new AtomicReference<GenericSensorSession>();
+	
+	private Boolean disableAutoStart=false;
 
 	/** MBeanInfo for this class. */
 	public static final MBeanInfo mbeaninfo;
@@ -212,6 +214,15 @@ public class GenericSensor extends AbstractSensor<GenericSensorSession> {
 	 */
 	public void setPort(Integer port) {
 		this.port = port;
+	}
+	
+	@Property(displayName = "DisableAutoStart", description = "Set to false to disable autostart", writable = true, type = PropertyType.PT_BOOLEAN, 
+			category = "connection", orderValue = 8, defaultValue = "false")
+	public Boolean getAutoStart() {
+		return disableAutoStart;
+	}
+	public void setAutoStart(Boolean autoStart) {
+		this.disableAutoStart = autoStart;
 	}
 
 }
