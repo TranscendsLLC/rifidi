@@ -61,7 +61,7 @@ public class LLRPReader extends AbstractSensor<LLRPReaderSession> {
 	private final Integer sessionIDcounter = new Integer(1);
 	/** Provided by spring. */
 	private final Set<AbstractCommandConfiguration<?>> commands;
-	/** Set to false to disable autostart */
+	/** Set to true to disable autostart */
 	private Boolean disableAutoStart = false;
 	/** Flag to check if this reader is destroyed. */
 	private AtomicBoolean destroied = new AtomicBoolean(false);
@@ -288,7 +288,7 @@ public class LLRPReader extends AbstractSensor<LLRPReaderSession> {
 		this.port = port;
 	}
 	
-	@Property(displayName = "DisableAutoStart", description = "Set to false to disable autostart", writable = true, type = PropertyType.PT_BOOLEAN, 
+	@Property(displayName = "DisableAutoStart", description = "Set to true to disable autostart", writable = true, type = PropertyType.PT_BOOLEAN, 
 			category = "connection", orderValue = 8, defaultValue = "false")
 	public Boolean getAutoStart() {
 		return disableAutoStart;
