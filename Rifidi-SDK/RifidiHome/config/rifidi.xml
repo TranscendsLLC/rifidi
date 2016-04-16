@@ -3,16 +3,6 @@
     <services>
         <attributes>
             <entry>
-                <key>ROSpecID</key>
-                <value>1</value>
-            </entry>
-        </attributes>
-        <factoryID>LLRP-Configure</factoryID>
-        <serviceID>LLRP_Configure_1</serviceID>
-    </services>
-    <services>
-        <attributes>
-            <entry>
                 <key>ReconnectionInterval</key>
                 <value>500</value>
             </entry>
@@ -21,12 +11,16 @@
                 <value>5084</value>
             </entry>
             <entry>
+                <key>DisableAutoStart</key>
+                <value>false</value>
+            </entry>
+            <entry>
                 <key>IpAddress</key>
-                <value>127.0.0.1</value>
+                <value>192.168.1.21</value>
             </entry>
             <entry>
                 <key>MaxNumConnectionAttempts</key>
-                <value>10</value>
+                <value>-1</value>
             </entry>
             <entry>
                 <key>DisplayName</key>
@@ -52,87 +46,11 @@
     <services>
         <attributes>
             <entry>
-                <key>PersistTime</key>
-                <value>-1</value>
-            </entry>
-            <entry>
-                <key>Password</key>
-                <value>password</value>
-            </entry>
-            <entry>
-                <key>IpAddress</key>
-                <value>127.0.0.1</value>
-            </entry>
-            <entry>
-                <key>ExternalOutput</key>
-                <value>0</value>
-            </entry>
-            <entry>
-                <key>ReaderNumber</key>
-                <value>0</value>
-            </entry>
-            <entry>
-                <key>MaxNumConnectionAttempts</key>
-                <value>-1</value>
-            </entry>
-            <entry>
-                <key>DisplayName</key>
-                <value>Alien</value>
-            </entry>
-            <entry>
-                <key>IOStreamPort</key>
-                <value>0</value>
-            </entry>
-            <entry>
-                <key>ReconnectionInterval</key>
-                <value>500</value>
-            </entry>
-            <entry>
-                <key>Port</key>
-                <value>20000</value>
-            </entry>
-            <entry>
-                <key>NotifyPort</key>
-                <value>0</value>
-            </entry>
-            <entry>
-                <key>InvertExternalOutput</key>
-                <value>OFF</value>
-            </entry>
-            <entry>
-                <key>Username</key>
-                <value>alien</value>
-            </entry>
-            <entry>
-                <key>InvertExternalInput</key>
-                <value>OFF</value>
-            </entry>
-            <entry>
-                <key>RFAttenuation</key>
-                <value>0</value>
+                <key>ROSpecID</key>
+                <value>1</value>
             </entry>
         </attributes>
-        <factoryID>Alien</factoryID>
-        <serviceID>Alien_1</serviceID>
-        <sessionDTOs>
-            <commands>
-                <commandID>Alien_Poll_1</commandID>
-                <interval>1000</interval>
-                <processID>0</processID>
-                <timeUnit>MILLISECONDS</timeUnit>
-            </commands>
-            <ID>1</ID>
-            <status>CONNECTING</status>
-        </sessionDTOs>
-    </services>
-    <services>
-        <attributes>
-            <entry>
-                <key>TagType</key>
-                <value>2</value>
-            </entry>
-        </attributes>
-        <factoryID>Alien-Poll</factoryID>
-        <serviceID>Alien_Poll_1</serviceID>
+        <factoryID>LLRP-Configure</factoryID>
+        <serviceID>LLRP_Configure_1</serviceID>
     </services>
 </configurationStore>
