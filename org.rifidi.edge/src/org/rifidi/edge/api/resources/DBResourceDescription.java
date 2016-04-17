@@ -14,7 +14,7 @@ package org.rifidi.edge.api.resources;
 
 import javax.sql.DataSource;
 
-import org.apache.commons.dbcp.BasicDataSourceFactory;
+import org.apache.commons.dbcp2.BasicDataSourceFactory;
 
 /**
  * The DBResourceDescription describes a database to connect to
