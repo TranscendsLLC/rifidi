@@ -66,10 +66,11 @@ org.apache.activemq.activemq-core,5.5.0,plugins/org.apache.activemq.activemq-cor
 org.apache.activemq.activemq-pool,5.5.0,plugins/org.apache.activemq.activemq-pool_5.5.0.jar,4,true
 org.apache.activemq.kahadb,5.5.0,plugins/org.apache.activemq.kahadb_5.5.0.jar,4,true
 org.apache.commons.collections4,4.0.0,plugins/commons-collections4-4.0.jar,4,true
-org.apache.commons.dbcp,1.4.0,plugins/commons-dbcp-1.4.jar,4,true
+org.apache.commons.dbcp2,2.1.1,plugins/commons-dbcp2-2.1.1.jar,4,true
 org.apache.commons.lang3,3.4.0,plugins/commons-lang3-3.4.jar,4,true
 org.apache.commons.logging,1.2.0,plugins/commons-logging-1.2.jar,4,true
 org.apache.commons.pool,1.6.0,plugins/commons-pool-1.6.jar,4,true
+org.apache.commons.pool2,2.4.2,plugins/commons-pool2-2.4.2.jar,4,true
 org.apache.commons.codec,1.10.0,plugins/commons-codec-1.10.jar,4,true
 org.apache.derby,10.5.1.1_201005192117,plugins/org.apache.derby_10.5.1.1_201005192117.jar,4,true
 org.apache.felix.bundlerepository,1.5.0.SNAPSHOT,plugins/org.apache.felix.bundlerepository_1.5.0.SNAPSHOT.jar,4,true
@@ -90,7 +91,7 @@ org.eclipse.osgi.services,3.5.0.v20150519-2006,plugins/org.eclipse.osgi.services
 org.fosstrak.tdt.tdt,0.9.0,plugins/org.fosstrak.tdt.tdt_0.9.0.jar,4,true
 org.jdom,1.0.0.v200806100616,plugins/org.jdom_1.0.0.v200806100616.jar,4,true
 org.postgresql,9.4.1201,plugins/org.postgresql_9.4.1201.jar,4,true
-org.rifidi.edge,5.9.2,plugins/org.rifidi.edge_5.9.2.jar,4,true
+org.rifidi.edge,5.9.3,plugins/org.rifidi.edge_5.9.3.jar,4,true
 org.rifidi.edge.api,1.3.0,plugins/org.rifidi.edge.api_1.3.0.jar,4,true
 org.rifidi.edge.catalina.config,1.0.0,plugins/org.rifidi.edge.catalina.config_1.0.0.jar,4,false
 org.rifidi.edge.init,1.1.0,plugins/org.rifidi.edge.init_1.1.0.jar,2,true
