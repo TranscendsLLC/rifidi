@@ -101,7 +101,7 @@ org.rifidi.edge.adapter.csl,1.1.0,plugins/org.rifidi.edge.adapter.csl_1.1.0.jar,
 org.rifidi.edge.adapter.generic,1.0.3,plugins/org.rifidi.edge.adapter.generic_1.0.3.jar,4,true
 org.rifidi.edge.adapter.llrp,2.3.3,plugins/org.rifidi.edge.adapter.llrp_2.3.3.jar,4,true
 org.rifidi.edge.adapter.opticon,1.0.1,plugins/org.rifidi.edge.adapter.opticon_1.0.1.jar,4,true
-org.rifidi.edge.adapter.thinkify50,1.1.0,plugins/org.rifidi.edge.adapter.thinkify50_1.1.0.jar,4,true
+org.rifidi.edge.adapter.thinkify50,1.1.1,plugins/org.rifidi.edge.adapter.thinkify50_1.1.1.jar,4,true
 #org.rifidi.edge.adapter.thingmagic6,1.1.0,plugins/org.rifidi.edge.adapter.thingmagic6_1.1.0.jar,4,true
 org.rifidi.edge.adapter.thingmagic,1.1.0,plugins/org.rifidi.edge.adapter.thingmagic_1.1.0.jar,4,true
 org.rifidi.edge.rest,1.5.3,plugins/org.rifidi.edge.rest_1.5.3.jar,4,true
