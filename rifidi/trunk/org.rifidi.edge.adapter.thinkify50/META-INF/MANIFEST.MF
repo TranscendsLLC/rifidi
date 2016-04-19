@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Thinkify50
 Bundle-SymbolicName: org.rifidi.edge.adapter.thinkify50
-Bundle-Version: 1.1.0
+Bundle-Version: 1.1.1
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Export-Package: org.rifidi.edge.adapter.thinkify50
 Require-Bundle: org.rifidi.edge.api;bundle-version="1.3.0",
