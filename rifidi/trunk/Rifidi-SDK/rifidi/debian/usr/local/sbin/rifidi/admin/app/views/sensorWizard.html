@@ -1,0 +1,518 @@
+<div class="panel panel-default">
+
+    <div class="panel-heading" data-toggle="collapse" data-target="#idCollapsibleWindow">
+        
+        <span class="glyphicon glyphicon-dashboard" aria-hidden="true"></span> Sensor creation wizard
+        
+    </div>
+
+
+    <div id="idCollapsibleWindow" class="panel-body panel-collapse collapse in">
+
+        <wizard on-finish="finishSensorWizard(selectedReaderType)" edit-mode="false">
+        <!--<wizard on-finish="openSensorWizardSummaryDialog()" edit-mode="false" ng-controller="SensorWizardCtrl">-->
+
+            <wz-step title="Reader Type Selection">
+
+                <form class="form-horizontal" role="form" name="form1" novalidate >
+
+                    <h4>Reader adapter configuration wizard</h4>
+
+                    <div class="form-group" >
+
+                        <h4>1. You must choose a reader type</h4>
+
+                        <div class="col-sm-3">
+                            <label class="control-label" for="readerType">Reader Type</label>
+                        </div>
+                        <div class="col-sm-6">
+                            <select id="readerType"
+                                    name="readerType"
+                                    ng-change="readerTypeSelectAction(selectedReaderType)"
+                                    ng-model="selectedReaderType"
+                                    ng-required="true"
+                                    class="form-control"
+                                    aria-describedby="helpReaderType"
+                                    ng-options="value as value.factoryID for value in readerTypes | orderBy:'factoryID'">
+                                <option>--</option>
+                            </select>
+
+                            <div ng-show="form1.$submitted || form1.readerType.$touched" >
+
+                                <div ng-show="form1.readerType.$error.required">
+
+                                    Reader type is required.
+
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-sm-12">
+
+                            <span id="helpReaderType" class="help-block">{{selectedReaderType.description}}</span>
+
+                        </div>
+
+                    </div>
+
+                    <div class="form-group" >
+
+                        <h4>2. Optionally provide a reader id</h4>
+
+                        <div class="col-sm-3">
+                            <label class="control-label" for="readerId">Reader ID</label>
+                        </div>
+                        <div class="col-sm-6">
+                            <input name="readerId"
+                                   id="readerId"
+                                   type="text"
+                                   ng-change="readerIdChangeAction(customReaderId)"
+                                   class="form-control"
+                                   aria-describedby="helpReaderId"
+                                   ng-model="customReaderId">
+                            </input>
+
+                        </div>
+
+
+                        <div class="col-sm-12">
+
+                            <span id="helpReaderId" class="help-block">The reader id is important for applications' read zones to appropriate operate, and this id is used to link read zones with sensors. This command enables one to set the readerId versus the system generating one (default behavior).</span>
+
+                        </div>
+
+                    </div>
+
+                    <input type="submit" class="btn btn-primary" ng-disabled="form.$invalid" wz-next value="Next" />
+
+                </form>
+
+            </wz-step>
+
+            <wz-step title="Create session">
+
+
+                <form class="form-horizontal" role="form" name="form2" novalidate >
+
+                    <h4>Create session for reader type: {{selectedReaderType.factoryID}}</h4>
+
+                    <div class="form-group" >
+
+                        <div ng-repeat="property in selectedReaderConnectionProperties.properties | orderBy:['ordervalue', 'displayname']">
+
+                            <div class="col-sm-6">
+                                <label class="control-label">{{property.displayname}}</label>
+                            </div>
+
+
+                            <div class="col-sm-6">
+                                <input class="form-control" ng-show="property.type == 'java.lang.Integer'" type="number" ng-model="property.value" min="property.minvalue" max="property.maxvalue"/>
+                                <input class="form-control" ng-show="property.type != 'java.lang.Integer'" type="text" ng-model="property.value" />
+
+                            </div>
+
+                        </div>
+
+                        <div class="col-lg-6">
+                            <label class="control-label">Automatically start session?</label>
+                        </div>
+
+                        <div class="col-lg-3">
+                            <input type="checkbox" ng-model="selectedReaderConnectionProperties.startSessionAut">
+                        </div>
+
+
+                    </div>
+
+                    <input type="submit" class="btn btn-warning" wz-previous value="Previous" />
+                    <input type="submit" class="btn btn-primary" wz-next value="Next" />
+
+                </form>
+
+
+            </wz-step>
+
+            <wz-step title="Create command">
+
+                <form class="form-horizontal" role="form" name="form3" novalidate>
+
+                    <h4>Create command</h4>
+
+                    <div class="form-group" >
+
+                        <h4>1. You must choose a command type</h4>
+
+                        <div class="col-sm-3">
+                            <label class="control-label" for="commandType">Command Type</label>
+                        </div>
+
+                        <div class="col-sm-6">
+                            <select id="commandType"
+                                    name="commandType"
+                                    ng-change="commandTypeSelectAction(selectedCommandType)"
+                                    ng-model="selectedCommandType"
+                                    ng-required="true"
+                                    ng-options="value as value.factoryID for value in commandTypes | orderBy:'factoryID'"
+                                    aria-describedby="helpCommandType"
+                                    class="form-control"
+                                    >
+                                <option>--</option>
+                            </select>
+
+                            <div ng-show="form3.$submitted || form3.commandType.$touched" >
+
+                                <div ng-show="form3.commandType.$error.required">
+
+                                    Command type is required.
+
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-sm-12">
+
+                            <span id="helpCommandType" class="help-block">{{selectedCommandType.description}}</span>
+
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+
+                        <h4>2. Then you must either create a command instance or choose an already created one</h4>
+
+                        <div class="col-lg-3">
+                            <label class="control-label" for="commandInstance">Command Instance</label>
+                        </div>
+                        <div class="col-lg-3">
+                            <select id="commandInstance"
+                                    name="commandInstance"
+                                    ng-change="commandInstanceSelectAction(selectedCommandInstance)"
+                                    ng-model="selectedCommandInstance"
+                                    ng-required="true"
+                                    class="form-control"
+                                    aria-describedby="helpCommandInstance"
+                                    ng-options="value as value.commandID for value in commandInstances | orderBy:'commandID'">
+
+                            </select>
+
+                            <div ng-show="form.$submitted || form.commandInstance.$touched" >
+
+                                <div ng-show="form.commandInstance.$error.required">
+
+                                    Command instance is required.
+
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+
+                        <h4>3. Then set the properties for command instance</h4>
+
+                        <tabset>
+                            <tab heading="{{propertyCategory.category}}" ng-repeat="propertyCategory in commandProperties.propertyCategoryList | orderBy:'category'">
+                                <br/>
+
+                                <div class="form-group" ng-repeat="property in propertyCategory.properties | orderBy:['ordervalue', 'displayname']">
+
+                                    <div class="col-sm-6">
+                                        <label class="control-label" for="{{property.name}}">{{property.displayname}}</label>
+                                    </div>
+
+
+                                    <div class="col-sm-6" >
+
+                                        <input aria-describedby="help{{property.name}}" id="{{property.name}}"
+                                               name="{{property.name}}" ng-disabled="!property.writable" ng-readonly="!property.writable"
+                                               type="{{property.htmlType}}" ng-value="property.value" ng-model="property.value" min="property.minvalue" max="property.maxvalue"
+                                               class="form-control"
+                                                />
+
+                                        <div ng-show="form.$submitted || form.property.name.$touched" >
+
+                                            <div ng-show="form.property.name.$error.required">
+
+                                                {{property.name}} is required.
+
+                                            </div>
+                                        </div>
+
+                                        <span id="help{{property.name}}" class="help-block">{{property.description}}</span>
+
+                                    </div>
+
+                                    <br>
+                                    <p>
+
+                                </div>
+
+                            </tab>
+                        </tabset>
+
+                        <!--
+                        <tabset>
+                            <tab heading="{{propertyCategory.category}}" ng-repeat="propertyCategory in commandProperties.propertyCategoryList">
+                                <br/>
+
+                                    <div class="form-group" ng-repeat="property in propertyCategory.properties | orderBy:['ordervalue', 'displayname']">
+
+                                        <div class="col-sm-6">
+                                            <label class="control-label">{{property.displayname}}</label>
+                                        </div>
+
+                                        <div class="col-sm-6">
+                                            <input class="form-control" ng-show="property.type == 'java.lang.Integer'" type="number" ng-model="property.value" min="property.minvalue" max="property.maxvalue"/>
+                                            <input class="form-control" ng-show="property.type != 'java.lang.Integer'" type="text" ng-model="property.value" />
+
+                                        </div>
+
+                                        <br>
+                                        <p>
+
+                                    </div>
+
+                            </tab>
+                        </tabset>
+                        -->
+
+                    </div>
+
+                    <div class="form-group">
+
+                        <h4>4. Finally set the scheduling options</h4>
+
+                        <div class="col-sm-12">
+                            <label class="control-label" for="commandInstance"><input type="radio" name="schedulingOption"
+                                value="oneTime" ng-model="schedulingOption" ng-change="schedulingOptionSelectAction(schedulingOption)">
+                                One Time Execution</label>
+                        </div>
+
+                        <div class="col-sm-12">
+                            <label class="control-label" for="commandInstance"><input type="radio" name="schedulingOption"
+                                value="recurring" ng-model="schedulingOption" ng-change="schedulingOptionSelectAction(schedulingOption)">
+                                Recurring Execution (milliseconds)</label>
+                        </div>
+
+                        <div class="col-sm-6">
+
+                            <input aria-describedby="intervalHelp" id="interval"
+                                   name="interval" ng-disabled="schedulingOption == 'oneTime'"
+                                   type="number" ng-model="schedulingInterval" ng-change="schedulingIntervalSelectAction(schedulingInterval)"
+                                   class="form-control"
+                                    />
+
+                        </div>
+
+                    </div>
+
+                    <input type="submit" class="btn btn-warning" wz-previous value="Previous" />
+                    <input type="submit" class="btn btn-primary" wz-next value="Next" />
+
+                </form>
+
+            </wz-step>
+
+            <wz-step title="Summary">
+
+                <form class="form-horizontal" role="form" name="form4" novalidate>
+
+                    <input type="submit" class="btn btn-warning" wz-previous value="Previous" />
+                    <input type="submit" class="btn btn-primary"  wz-finish value="Confirm and execute" />
+
+                    <h4>Summary: System is going to execute next steps:</h4>
+
+
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <span class="glyphicon glyphicon-dashboard" aria-hidden="true"></span> Create reader
+                        </div>
+
+                        <div class="panel-body">
+
+                            <div class="form-group"  >
+
+                                <div class="col-sm-6">
+                                    <label class="control-label" >Reader type</label>
+                                </div>
+                                <div class="col-sm-6">
+                                    {{selectedReaderType.factoryID}}
+                                </div>
+
+                            </div>
+
+                            <div class="form-group" ng-show="customReaderId" >
+
+                                <div class="col-sm-6">
+                                    <label class="control-label" >Reader id</label>
+                                </div>
+                                <div class="col-sm-6">
+                                    {{customReaderId}}
+                                </div>
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <span class="glyphicon glyphicon-dashboard" aria-hidden="true"></span> Set reader properties
+                        </div>
+
+                        <div class="panel-body">
+
+                            <div class="form-group" >
+
+                                <div ng-repeat="property in selectedReaderConnectionProperties.properties | orderBy:['ordervalue', 'displayname']">
+
+                                    <div class="col-lg-6">
+                                        <label class="control-label">{{property.displayname}}</label>
+                                    </div>
+
+                                    <div class="col-lg-3">
+                                        {{property.value}}
+                                    </div>
+
+                                    <br>
+                                    <p>
+
+                                </div>
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <span class="glyphicon glyphicon-dashboard" aria-hidden="true"></span> Create session
+                        </div>
+
+                        <div class="panel-body">
+                        </div>
+
+                    </div>
+
+                    <div class="panel panel-default" ng-show="selectedCommandInstance.commandID == '<New>'">
+                        <div class="panel-heading">
+                            <span class="glyphicon glyphicon-dashboard" aria-hidden="true"></span> Create command of type {{selectedCommandType.factoryID}}
+                        </div>
+
+                        <div class="panel-body">
+
+                        </div>
+
+                    </div>
+
+                    <!--
+                    <div class="panel panel-default" ng-show="selectedCommandInstance.commandID != '<New>'">
+                        <div class="panel-heading">
+                            <span class="glyphicon glyphicon-dashboard" aria-hidden="true"></span> Do not create command of type {{selectedCommandType.factoryID}}
+                        </div>
+
+                        <div class="panel-body">
+
+                        </div>
+
+                    </div>
+                    -->
+
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <span class="glyphicon glyphicon-dashboard" aria-hidden="true"></span> Set command properties
+                        </div>
+
+                        <div class="panel-body">
+
+                            <div class="form-group" >
+
+                                <tabset>
+                                    <tab heading="{{propertyCategory.category}}" ng-repeat="propertyCategory in commandProperties.propertyCategoryList">
+                                        <br/>
+
+                                        <div ng-repeat="property in propertyCategory.properties | orderBy:['ordervalue', 'displayname']">
+
+                                            <div class="col-lg-6">
+                                                {{property.displayname}}
+                                            </div>
+
+
+                                            <div class="col-lg-3">
+                                                {{property.value}}
+
+                                            </div>
+
+
+                                            <br>
+                                            <p>
+
+                                        </div>
+
+
+                                    </tab>
+                                </tabset>
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <span class="glyphicon glyphicon-dashboard" aria-hidden="true"></span> Execute command
+                        </div>
+
+                        <div class="panel-body">
+
+                            <div class="form-group"  >
+
+                                <div class="col-sm-6">
+                                    <label class="control-label" >Schedulling option</label>
+                                </div>
+                                <div class="col-sm-6">
+                                    {{schedulingOption}}
+                                </div>
+
+                            </div>
+
+                            <div class="form-group" ng-show="schedulingOption == 'recurring'" >
+
+                                <div class="col-sm-6">
+                                    <label class="control-label" >Interval (miliseconds)</label>
+                                </div>
+                                <div class="col-sm-6">
+                                    {{schedulingInterval}}
+                                </div>
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    <div class="panel panel-default" ng-show="selectedReaderConnectionProperties.startSessionAut">
+                        <div class="panel-heading">
+                            <span class="glyphicon glyphicon-dashboard" aria-hidden="true"></span> Start session
+                        </div>
+
+                        <div class="panel-body">
+                        </div>
+
+                    </div>
+
+
+                    <input type="submit" class="btn btn-warning" wz-previous value="Previous" />
+                    <input type="submit" class="btn btn-primary"  wz-finish value="Confirm and execute" />
+
+                </form>
+
+            </wz-step>
+
+        </wizard>
+
+    </div>
+</div>
+
+
+
