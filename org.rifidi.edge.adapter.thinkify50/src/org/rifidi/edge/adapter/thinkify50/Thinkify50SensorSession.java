@@ -84,7 +84,7 @@ public class Thinkify50SensorSession extends AbstractSensorSession {
 		// TODO Auto-generated method stub
 
 
-		System.out.println("Setting the port: " + this.port);
+		logger.info("Setting the port: " + this.port);
 		System.setProperty("gnu.io.rxtx.SerialPorts", this.port);
 		
 		boolean connected = false;
@@ -95,9 +95,10 @@ public class Thinkify50SensorSession extends AbstractSensorSession {
 					|| maxConAttempts == -1; connCount++) {
 
 				try {
-					reader = new ThinkifyReader(port);
+					reader = new ThinkifyReader(this.port);
 					reader.debugLevel = 0;
 					reader.open();
+					logger.info("Thinkify firmware version: " + reader.getVersion()); // some commands may have methods provided for you, like getVersion()
 					connected = true;
 					logger.info("Connected to reader " + this.readerID
 							+ " at port " + this.port);
@@ -138,7 +139,7 @@ public class Thinkify50SensorSession extends AbstractSensorSession {
 	 */
 	public void startReading() {
 		try {
-			System.out.println(this.reader.send_receive("ra" + ra));
+			logger.info(this.reader.send_receive("ra" + ra));
 			if (this.ma != "") {
 				this.reader.send_receive("ma" + ma);
 			}
@@ -151,9 +152,9 @@ public class Thinkify50SensorSession extends AbstractSensorSession {
 				this.readerID), this, interval);
 		Thread thread = new Thread(readthread);
 		thread.start();
-		connectthread = new ConnectedCheckerThread(reader);
-		Thread cThread = new Thread(connectthread);
-		cThread.start();
+//		connectthread = new ConnectedCheckerThread(reader);
+//		Thread cThread = new Thread(connectthread);
+//		cThread.start();
 	}
 
 	/**
@@ -180,8 +181,14 @@ public class Thinkify50SensorSession extends AbstractSensorSession {
 	 */
 	@Override
 	public void disconnect() {
+		logger.info("Disconnecting from the reader: " + this.readerID);
 		stopReading();
+		try {
+			Thread.sleep(1000);
+		} catch (InterruptedException e) {
+		}
 		reader.close();
+		logger.info("Finished disconnecting from the reader");
 		setStatus(SessionStatus.CLOSED);
 	}
 
@@ -227,14 +234,15 @@ public class Thinkify50SensorSession extends AbstractSensorSession {
 		@Override
 		public void run() {
 			try {
+				this.reader.acquire();
 				this.reader.setAutoMode(true);
-
+				
 				stop = false;
 				while (!stop) {
 					try {
 						try {
 						Set<TagReadEvent> taglist = new HashSet<TagReadEvent>();
-						for (ThinkifyTag aTag : reader.taglist) {
+						for (ThinkifyTag aTag : reader.acquire()) {
 							taglist.add(handler.tagArrived(aTag.getEpc(),
 									aTag.getLastSeenTime(), aTag.getRSSI(),
 									aTag.getReadCount()));
@@ -281,22 +289,28 @@ public class Thinkify50SensorSession extends AbstractSensorSession {
 		 */
 		@Override
 		public void run() {
-			try {
-				stop = false;
-				while (!stop) {
+			stop = false;
+			while (!stop) {
+				try {
+					this.reader.getVersion();
+				} catch (Exception e) {
+					e.printStackTrace();
+					logger.info("Reader port is closed");
+					disconnect();
+					logger.info("Reader is disconnected " + readerID);
+					stop = true;
 					try {
-						if (!this.reader.isOpen()) {
-							disconnect();
-							stop = true;
-							Thread.sleep(interval);
-							connect();
-						}
-						Thread.sleep(interval);
-					} catch (InterruptedException e) {
+						Thread.sleep(2000);
+						connect();
+					} catch (InterruptedException e1) {
+					} catch (IOException e1) {
+						e1.printStackTrace();
 					}
 				}
-			} catch (IOException e) {
-				e.printStackTrace();
+				try {
+					Thread.sleep(5000);
+				} catch (InterruptedException e) {
+				}
 			}
 		}
 
