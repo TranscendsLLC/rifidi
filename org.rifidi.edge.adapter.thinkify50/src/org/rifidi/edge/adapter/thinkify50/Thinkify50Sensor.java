@@ -178,11 +178,11 @@ public class Thinkify50Sensor extends AbstractSensor<Thinkify50SensorSession> {
 	
 	@Property(displayName = "DisableAutoStart", description = "Set to true to disable autostart", writable = true, type = PropertyType.PT_BOOLEAN, 
 			category = "connection", orderValue = 8, defaultValue = "false")
-	public Boolean getAutoStart() {
+	public Boolean getDisableAutoStart() {
 		return disableAutoStart;
 	}
-	public void setAutoStart(Boolean autoStart) {
-		this.disableAutoStart = autoStart;
+	public void setDisableAutoStart(Boolean disableAutoStart) {
+		this.disableAutoStart = disableAutoStart;
 	}
 
 	@Property(displayName = "ReadRate", description = "The rate that the reader will read at in milliseconds", writable = true, type = PropertyType.PT_INTEGER, category = "reading"

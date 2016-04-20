@@ -104,11 +104,11 @@ public class Thingmagic6Sensor extends AbstractSensor<Thingmagic6SensorSession> 
 	
 	@Property(displayName = "DisableAutoStart", description = "Set to true to disable autostart", writable = true, type = PropertyType.PT_BOOLEAN, 
 			category = "connection", orderValue = 8, defaultValue = "false")
-	public Boolean getAutoStart() {
+	public Boolean getDisableAutoStart() {
 		return disableAutoStart;
 	}
-	public void setAutoStart(Boolean autoStart) {
-		this.disableAutoStart = autoStart;
+	public void setDisableAutoStart(Boolean disableAutoStart) {
+		this.disableAutoStart = disableAutoStart;
 	}
 
 	/**

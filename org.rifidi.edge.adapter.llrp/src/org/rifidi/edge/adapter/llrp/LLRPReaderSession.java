@@ -911,11 +911,11 @@ public class LLRPReaderSession extends AbstractSensorSession implements
 	public void errorOccured(String arg0) {
 		logger.error("LLRP Error Occurred: " + arg0);
 		// TODO: should we disconnect?
-		try {
-			this.disconnect();
-		} catch (Exception e) {
-			logger.error("Exception occurred trying to disconnect from reader " + this.readerID);
-		}
+//		try {
+//			this.disconnect();
+//		} catch (Exception e) {
+//			logger.error("Exception occurred trying to disconnect from reader " + this.readerID);
+//		}
 //		final LLRPReaderSession self = this;
 //		final String finalReaderID = this.readerID;
 //		Timer connectTimer = new Timer();
