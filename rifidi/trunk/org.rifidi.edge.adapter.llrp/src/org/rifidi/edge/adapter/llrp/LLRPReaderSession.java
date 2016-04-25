@@ -17,8 +17,10 @@ import java.io.IOException;
 import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.Timer;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
@@ -86,6 +88,7 @@ import org.rifidi.edge.adapter.llrp.commands.internal.LLRPReset;
 import org.rifidi.edge.api.SessionStatus;
 import org.rifidi.edge.notification.NotifierService;
 import org.rifidi.edge.notification.ReadCycle;
+import org.rifidi.edge.notification.TagReadEvent;
 import org.rifidi.edge.sensors.AbstractCommandConfiguration;
 import org.rifidi.edge.sensors.AbstractSensor;
 import org.rifidi.edge.sensors.Command;
@@ -333,6 +336,30 @@ public class LLRPReaderSession extends AbstractSensorSession implements
 	
 	/** data to be set in user memory **/
 	private String userMemoryData;
+	
+	private Map<Integer, Integer> rssiFilterMap = null;
+	private void setRSSIFilterMap(String rssiFilter) {
+		try {
+			rssiFilterMap = new HashMap<Integer, Integer>();
+			String[] pairs = rssiFilter.split("\\|");
+			for (String pair : pairs) {
+				String[] s = pair.split(":");
+				Integer ant = Integer.parseInt(s[0]);
+				Integer rssi = Integer.parseInt(s[1]);
+				rssiFilterMap.put(ant, rssi);
+			}
+			if (rssiFilterMap.size() == 0) {
+				rssiFilterMap = null;
+			} else if (rssiFilterMap.size() == 1) {
+				if(rssiFilterMap.containsKey(0) && rssiFilterMap.get(0).equals(0.0f)) {
+					rssiFilterMap = null;
+				}
+			}
+		} catch (Exception e) {
+			// Any problems and we disable the filter
+			rssiFilterMap = null;
+		}
+	}
 	
 
 	/**
@@ -621,7 +648,7 @@ public class LLRPReaderSession extends AbstractSensorSession implements
 	 */
 	public LLRPReaderSession(AbstractSensor<?> sensor, String id, String host,
 			int port, int reconnectionInterval, int maxConAttempts,
-			String readerConfigPath, NotifierService notifierService,
+			String readerConfigPath, String rssiFilter, NotifierService notifierService,
 			String readerID, Set<AbstractCommandConfiguration<?>> commands) {
 		super(sensor, id, commands);
 		this.host = host;
@@ -633,7 +660,7 @@ public class LLRPReaderSession extends AbstractSensorSession implements
 		this.notifierService = notifierService;
 		this.readerID = readerID;
 		this.setStatus(SessionStatus.CLOSED);
-
+		this.setRSSIFilterMap(rssiFilter);
 	}
 
 	/*
@@ -816,8 +843,7 @@ public class LLRPReaderSession extends AbstractSensorSession implements
 		if (processing.get()) {
 			try {
 				resetCommands();
-				this.submitAndBlock(getResetCommand(), getTimeout(),
-						TimeUnit.MILLISECONDS);
+				this.submitAndBlock(getResetCommand(), getTimeout(), TimeUnit.MILLISECONDS);
 				// if already connected, disconnect
 				if (processing.compareAndSet(true, false)) {
 					logger.debug("Disconnecting");
@@ -1471,7 +1497,6 @@ public class LLRPReaderSession extends AbstractSensorSession implements
 	 */
 	@Override
 	public void messageReceived(LLRPMessage arg0) {
-
 		if (arg0.getTypeNum() == RO_ACCESS_REPORT.TYPENUM) {
 			this.lastTagTimestamp = System.currentTimeMillis();
 			// The message received is an Access Report.
@@ -1519,11 +1544,12 @@ public class LLRPReaderSession extends AbstractSensorSession implements
 			return;
 		}
 		try {
-			Object event = LLRPEventFactory.createEvent(arg0, readerID);
+			Object event = LLRPEventFactory.createEvent(arg0, readerID, rssiFilterMap);
 			if (event != null) {
 				if (event instanceof ReadCycle) {
 					ReadCycle cycle = (ReadCycle) event;
 					sensor.send(cycle);
+					
 
 					// TODO: get rid of this for performance reasons. Need to
 					// have a better way to figure out if we need to send tag

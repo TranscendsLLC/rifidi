@@ -63,6 +63,8 @@ public class LLRPReader extends AbstractSensor<LLRPReaderSession> {
 	private final Set<AbstractCommandConfiguration<?>> commands;
 	/** Set to true to disable autostart */
 	private Boolean disableAutoStart = false;
+	/** */
+	private String rssiFilter = "0:0";
 	/** Flag to check if this reader is destroyed. */
 	private AtomicBoolean destroied = new AtomicBoolean(false);
 	
@@ -97,7 +99,7 @@ public class LLRPReader extends AbstractSensor<LLRPReaderSession> {
 			if (session.compareAndSet(null, new LLRPReaderSession(this,
 					sessionID.toString(), ipAddress, port,
 					reconnectionInterval, maxNumConnectionAttempts,
-					readerConfigPath, notifierService, super.getID(),
+					readerConfigPath, this.rssiFilter, notifierService, super.getID(),
 					commands))) {
 				session.get().restoreCommands(sessionDTO);
 				// TODO: remove this once we get AspectJ in here!
@@ -122,7 +124,7 @@ public class LLRPReader extends AbstractSensor<LLRPReaderSession> {
 			if (session.compareAndSet(null, new LLRPReaderSession(this,
 					sessionID.toString(), ipAddress, port,
 					reconnectionInterval, maxNumConnectionAttempts,
-					readerConfigPath, notifierService, super.getID(),
+					readerConfigPath, this.rssiFilter, notifierService, super.getID(),
 					commands))) {
 
 				// TODO: remove this once we get AspectJ in here!
@@ -150,8 +152,7 @@ public class LLRPReader extends AbstractSensor<LLRPReaderSession> {
 				llrpsession.disconnect();
 				// TODO: remove this once we get AspectJ in here!
 				session.set(null);
-				notifierService
-						.removeSessionEvent(this.getID(), sessionid);
+				notifierService.removeSessionEvent(this.getID(), sessionid);
 			}
 		}
 		logger.warn("Tried to delete a non existant session: " + sessionid);
@@ -295,6 +296,17 @@ public class LLRPReader extends AbstractSensor<LLRPReaderSession> {
 	}
 	public void setDisableAutoStart(Boolean disableAutoStart) {
 		this.disableAutoStart = disableAutoStart;
+	}
+	
+	@Property(displayName = "RSSIFilter", description = "Set to '0:0' to disable.  Any other value will filter any value below (note: an RSSI -5 is a 'stronger signal' than -10) the given RSSI value.  "
+			+ "You can override values for individual antennas like this: '0:-5|1:-25|3:-55'.  This will set the filter from antenna 1 to -25, antenna 3 to -55, "
+			+ "and all other antennas to -5.", writable = true, type = PropertyType.PT_STRING, 
+			category = "reading", orderValue = 9, defaultValue = "0:0")
+	public String getRSSIFilter() {
+		return this.rssiFilter;
+	}
+	public void setRSSIFilter(String rssiFilter) {
+		this.rssiFilter = rssiFilter;
 	}
 
 	/**

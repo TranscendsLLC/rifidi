@@ -15,6 +15,7 @@ package org.rifidi.edge.adapter.llrp;
 import java.math.BigInteger;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
@@ -58,10 +59,10 @@ public class LLRPEventFactory {
 	 *            The ID of the reader that recieved the message
 	 * @return the Rifidi Event or null if no relavent can be created
 	 */
-	public static Object createEvent(LLRPMessage message, String readerID) {
+	public static Object createEvent(LLRPMessage message, String readerID, Map<Integer,Integer> rssiFilter) {
 		// If we have A RO_ACCESS_REPORT, return a ReadCycle
 		if (message instanceof RO_ACCESS_REPORT) {
-			return createReadCycle((RO_ACCESS_REPORT) message, readerID);
+			return createReadCycle((RO_ACCESS_REPORT) message, readerID, rssiFilter);
 		}
 		// If we have a GPIEvent Notification, return a GPIEvent
 		if (message instanceof READER_EVENT_NOTIFICATION) {
@@ -85,7 +86,7 @@ public class LLRPEventFactory {
 	 * @return
 	 */
 	private static ReadCycle createReadCycle(RO_ACCESS_REPORT rar,
-			String readerID) {
+			String readerID, Map<Integer,Integer> rssiFilterMap) {
 		List<TagReportData> trdl = rar.getTagReportDataList();
 		Set<TagReadEvent> tagreaderevents = new HashSet<TagReadEvent>();
 		for (TagReportData t : trdl) {
@@ -147,10 +148,23 @@ public class LLRPEventFactory {
 						rosid);
 			}
 			if (t.getPeakRSSI() != null) {
-				String rssi = t.getPeakRSSI().getPeakRSSI().toInteger()
-						.toString();
-				tag.addExtraInformation(StandardTagReadEventFieldNames.RSSI,
-						rssi);
+				Integer rssi = t.getPeakRSSI().getPeakRSSI().toInteger();
+				try {
+				if (rssiFilterMap != null) {
+					boolean filter = false;
+					if (rssiFilterMap.get(tag.getAntennaID()) != null && rssiFilterMap.get(tag.getAntennaID())!=0) {
+						filter = rssiFilterMap.get(tag.getAntennaID()) < rssi;
+					} else if (rssiFilterMap.get(0) != null && rssiFilterMap.get(0)!=0) {
+						filter = rssiFilterMap.get(0) > rssi;
+					}
+					if (filter) {
+						continue;
+					}
+				}
+				} catch(Exception e) {
+					e.printStackTrace();
+				}
+				tag.addExtraInformation(StandardTagReadEventFieldNames.RSSI, rssi.toString());
 			}
 
 			if (t.getSpecIndex() != null) {
@@ -231,8 +245,12 @@ public class LLRPEventFactory {
 			
 			tagreaderevents.add(tag);
 		}
-		return new ReadCycle(tagreaderevents, readerID, System
-				.currentTimeMillis());
+		
+		if(tagreaderevents.size()==0) {
+			return null;
+		}
+		
+		return new ReadCycle(tagreaderevents, readerID, System.currentTimeMillis());
 	}
 
 	/**
