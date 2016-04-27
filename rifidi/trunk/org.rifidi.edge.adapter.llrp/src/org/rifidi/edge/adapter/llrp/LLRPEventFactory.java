@@ -150,18 +150,19 @@ public class LLRPEventFactory {
 			if (t.getPeakRSSI() != null) {
 				Integer rssi = t.getPeakRSSI().getPeakRSSI().toInteger();
 				try {
-				if (rssiFilterMap != null) {
-					boolean filter = false;
-					if (rssiFilterMap.get(tag.getAntennaID()) != null && rssiFilterMap.get(tag.getAntennaID())!=0) {
-						filter = rssiFilterMap.get(tag.getAntennaID()) < rssi;
-					} else if (rssiFilterMap.get(0) != null && rssiFilterMap.get(0)!=0) {
-						filter = rssiFilterMap.get(0) > rssi;
+					if (rssiFilterMap != null) {
+						boolean filter = false;
+						if (rssiFilterMap.get(tag.getAntennaID()) != null
+								&& rssiFilterMap.get(tag.getAntennaID()) != 0) {
+							filter = rssiFilterMap.get(tag.getAntennaID()) > rssi;
+						} else if (rssiFilterMap.get(0) != null && rssiFilterMap.get(0) != 0) {
+							filter = rssiFilterMap.get(0) > rssi;
+						}
+						if (filter) {
+							continue;
+						}
 					}
-					if (filter) {
-						continue;
-					}
-				}
-				} catch(Exception e) {
+				} catch (Exception e) {
 					e.printStackTrace();
 				}
 				tag.addExtraInformation(StandardTagReadEventFieldNames.RSSI, rssi.toString());
