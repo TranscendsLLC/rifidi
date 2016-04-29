@@ -35,7 +35,7 @@ angular.module('rifidiApp')
 
       $scope.commandWizardData = {};
       $scope.commandWizardData.interval = 1000;
-      $scope.commandWizardData.schedulingOption = "recurring";
+      $scope.commandWizardData.schedulingOption = "oneTime";
       $scope.commandWizardData.session = session;
 
       $scope.go = function ( path ) {
