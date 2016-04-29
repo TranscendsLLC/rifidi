@@ -361,7 +361,7 @@ angular.module('rifidiApp')
       var prepareSchedulingOptions = function(){
         console.log('prepareSchedulingOptions');
         $scope.schedulingInterval = 1000;
-        $scope.schedulingOption = 'recurring';
+        $scope.schedulingOption = 'oneTime';
       }
 
       $scope.commandTypeSelectAction = function(selectedCommandType){
