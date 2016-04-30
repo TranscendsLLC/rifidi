@@ -3,40 +3,58 @@
     <services>
         <attributes>
             <entry>
+                <key>ROSpecID</key>
+                <value>1</value>
+            </entry>
+        </attributes>
+        <factoryID>LLRP-Configure</factoryID>
+        <serviceID>LLRP_Configure_1</serviceID>
+    </services>
+    <services>
+        <attributes>
+            <entry>
                 <key>ReconnectionInterval</key>
-                <value>2500</value>
+                <value>500</value>
             </entry>
             <entry>
-                <key>ra</key>
-                <value>6</value>
+                <key>DisableAutoStart</key>
+                <value>false</value>
             </entry>
             <entry>
                 <key>Port</key>
-                <value>COM8</value>
+                <value>5084</value>
             </entry>
             <entry>
-                <key>ma</key>
-                <value></value>
-            </entry>
-            <entry>
-                <key>ReadRate</key>
-                <value>1000</value>
+                <key>IpAddress</key>
+                <value>192.168.1.20</value>
             </entry>
             <entry>
                 <key>MaxNumConnectionAttempts</key>
                 <value>10</value>
             </entry>
+            <entry>
+                <key>DisplayName</key>
+                <value>LLRP</value>
+            </entry>
+            <entry>
+                <key>ReaderConfigPath</key>
+                <value>config/SET_READER_CONFIG.llrp</value>
+            </entry>
+            <entry>
+                <key>RSSIFilter</key>
+                <value>0:0</value>
+            </entry>
         </attributes>
-        <factoryID>Thinkify50</factoryID>
-        <serviceID>Thinkify50_1</serviceID>
+        <factoryID>LLRP</factoryID>
+        <serviceID>LLRP_1</serviceID>
         <sessionDTOs>
+            <commands>
+                <commandID>LLRP_Configure_1</commandID>
+                <interval>0</interval>
+                <processID>0</processID>
+            </commands>
             <ID>1</ID>
             <status>PROCESSING</status>
         </sessionDTOs>
-    </services>
-    <services>
-        <attributes/>
-        <factoryID>Thinkify265</factoryID>
-        <serviceID>Thinkify265_1</serviceID>
     </services>
 </configurationStore>
