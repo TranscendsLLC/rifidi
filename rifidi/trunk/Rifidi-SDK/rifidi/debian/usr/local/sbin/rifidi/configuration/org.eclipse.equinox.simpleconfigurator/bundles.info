@@ -88,7 +88,7 @@ org.eclipse.osgi.services,3.5.0.v20150519-2006,plugins/org.eclipse.osgi.services
 org.fosstrak.tdt.tdt,0.9.0,plugins/org.fosstrak.tdt.tdt_0.9.0.jar,4,true
 org.jdom,1.0.0.v200806100616,plugins/org.jdom_1.0.0.v200806100616.jar,4,true
 org.postgresql,9.4.1201,plugins/org.postgresql_9.4.1201.jar,4,true
-org.rifidi.edge,5.9.3,plugins/org.rifidi.edge_5.9.3.jar,4,true
+org.rifidi.edge,5.9.4,plugins/org.rifidi.edge_5.9.4.jar,4,true
 org.rifidi.edge.api,1.3.0,plugins/org.rifidi.edge.api_1.3.0.jar,4,true
 org.rifidi.edge.catalina.config,1.0.0,plugins/org.rifidi.edge.catalina.config_1.0.0.jar,4,false
 org.rifidi.edge.init,1.1.0,plugins/org.rifidi.edge.init_1.1.0.jar,2,true
@@ -98,7 +98,7 @@ org.rifidi.edge.adapter.csl,1.1.1,plugins/org.rifidi.edge.adapter.csl_1.1.1.jar,
 org.rifidi.edge.adapter.generic,1.0.4,plugins/org.rifidi.edge.adapter.generic_1.0.4.jar,4,true
 org.rifidi.edge.adapter.llrp,2.4.0,plugins/org.rifidi.edge.adapter.llrp_2.4.0.jar,4,true
 org.rifidi.edge.adapter.opticon,1.0.1,plugins/org.rifidi.edge.adapter.opticon_1.0.1.jar,4,true
-org.rifidi.edge.adapter.thinkify50,1.1.2,plugins/org.rifidi.edge.adapter.thinkify50_1.1.2.jar,4,true
+org.rifidi.edge.adapter.thinkifyusb,1.1.2,plugins/org.rifidi.edge.adapter.thinkifyusb_1.1.2.jar,4,true
 #org.rifidi.edge.adapter.thingmagic6,1.1.1,plugins/org.rifidi.edge.adapter.thingmagic6_1.1.1.jar,4,true
 org.rifidi.edge.adapter.thingmagic,1.1.1,plugins/org.rifidi.edge.adapter.thingmagic_1.1.1.jar,4,true
 org.rifidi.edge.rest,1.5.7,plugins/org.rifidi.edge.rest_1.5.7.jar,4,true
