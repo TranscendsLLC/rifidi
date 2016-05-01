@@ -41,7 +41,7 @@ public class TagReadEvent implements Serializable,
 	/** The ID of the reader that saw the tags */
 	private String readerID;
 	/** The toString */
-	private String toString;
+	private String toString=null;
 	/**
 	 * Any extra information that a tag contains would be stored here. Velocity
 	 * or Distance information, or anything else about the tag which is not in
@@ -73,8 +73,6 @@ public class TagReadEvent implements Serializable,
 		this.timestamp = timestamp;
 		this.readerID = readerID;
 		this.extraInformation = new HashMap<String, Serializable>();
-		toString = "TAG READ EVENT: " + "tag:" + tag + "|readerID:" + readerID
-				+ "|antennaID:" + antennaID + "|timestamp:" + timestamp;
 	}
 
 	/**
@@ -143,6 +141,13 @@ public class TagReadEvent implements Serializable,
 	 */
 	@Override
 	public String toString() {
+		if (toString == null) {
+			toString = "TAG READ EVENT: " + "tag:" + tag + "|readerID:" + readerID + "|antennaID:" + antennaID
+					+ "|timestamp:" + timestamp;
+			String rssi = this.extraInformation.get(StandardTagReadEventFieldNames.RSSI) != null
+					? "|rssi:"+this.extraInformation.get(StandardTagReadEventFieldNames.RSSI).toString() : "";
+			toString += rssi;
+		}
 		return toString;
 	}
 }
