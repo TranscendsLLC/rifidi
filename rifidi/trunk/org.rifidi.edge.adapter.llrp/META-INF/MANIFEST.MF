@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Rifidi Edge LLRP Adapter
 Bundle-SymbolicName: org.rifidi.edge.adapter.llrp
-Bundle-Version: 2.4.0
+Bundle-Version: 2.4.1
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Import-Package: javax.xml.bind,

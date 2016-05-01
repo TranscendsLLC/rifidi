@@ -249,50 +249,50 @@ public class LLRPReaderSession extends AbstractSensorSession implements
 	/** Expected value for Unlock lock privilege taken from jvm **/
 	public final static String UNLOCK_PRIVILEGE = "Unlock";
 
-	private static final int WRITE_EPC_ACCESSSPEC_ID = 1;
+	private static final int WRITE_EPC_ACCESSSPEC_ID = 101;
 	private static final UnsignedShort WRITE_EPC_OPSPEC_ID = new UnsignedShort(
 			2);
 
-	private static final int WRITE_KILLPASS_ACCESSSPEC_ID = 3;
+	private static final int WRITE_KILLPASS_ACCESSSPEC_ID = 103;
 	private static final UnsignedShort WRITE_KILLPASS_OPSPEC_ID = new UnsignedShort(
 			4);
 
-	private static final int WRITE_ACCESSPASS_ACCESSSPEC_ID = 5;
+	private static final int WRITE_ACCESSPASS_ACCESSSPEC_ID = 105;
 	private static final UnsignedShort WRITE_ACCESSPASS_OPSPEC_ID = new UnsignedShort(
 			6);
 
-	private static final int LOCK_EPC_ACCESSSPEC_ID = 7;
+	private static final int LOCK_EPC_ACCESSSPEC_ID = 107;
 	private static final UnsignedShort LOCK_EPC_OPSPEC_ID = new UnsignedShort(8);
 
-	private static final int LOCK_KILLPASS_ACCESSSPEC_ID = 9;
+	private static final int LOCK_KILLPASS_ACCESSSPEC_ID = 109;
 	private static final UnsignedShort LOCK_KILLPASS_OPSPEC_ID = new UnsignedShort(
 			10);
 
-	private static final int LOCK_ACCESSPASS_ACCESSSPEC_ID = 11;
+	private static final int LOCK_ACCESSPASS_ACCESSSPEC_ID = 111;
 	private static final UnsignedShort LOCK_ACCESSPASS_OPSPEC_ID = new UnsignedShort(
 			12);
 	
-	private static final int READ_EPC_ACCESSSPEC_ID = 13;
+	private static final int READ_EPC_ACCESSSPEC_ID = 113;
 	private static final UnsignedShort READ_EPC_OPSPEC_ID = new UnsignedShort(
 			14);
 	
-	private static final int READ_ACCESSPASS_ACCESSSPEC_ID = 15;
+	private static final int READ_ACCESSPASS_ACCESSSPEC_ID = 115;
 	private static final UnsignedShort READ_ACCESSPASS_OPSPEC_ID = new UnsignedShort(
 			16);
 	
-	private static final int READ_KILLPASS_ACCESSSPEC_ID = 17;
+	private static final int READ_KILLPASS_ACCESSSPEC_ID = 117;
 	private static final UnsignedShort READ_KILLPASS_OPSPEC_ID = new UnsignedShort(
 			18);
 	
-	private static final int READ_USER_MEMORY_ACCESSSPEC_ID = 19;
+	private static final int READ_USER_MEMORY_ACCESSSPEC_ID = 119;
 	private static final UnsignedShort READ_USER_MEMORY_OPSPEC_ID = new UnsignedShort(
 			20);
 	
-	private static final int WRITE_USER_MEMORY_ACCESSSPEC_ID = 21;
+	private static final int WRITE_USER_MEMORY_ACCESSSPEC_ID = 121;
 	private static final UnsignedShort WRITE_USER_MEMORY_OPSPEC_ID = new UnsignedShort(
 			22);
 	
-	private static final int LOCK_USER_MEMORY_ACCESSSPEC_ID = 23;
+	private static final int LOCK_USER_MEMORY_ACCESSSPEC_ID = 123;
 	private static final UnsignedShort LOCK_USER_MEMORY_OPSPEC_ID = new UnsignedShort(
 			24);
 
