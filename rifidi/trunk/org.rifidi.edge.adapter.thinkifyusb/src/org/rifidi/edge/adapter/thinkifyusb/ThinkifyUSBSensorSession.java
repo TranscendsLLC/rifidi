@@ -48,7 +48,8 @@ public class ThinkifyUSBSensorSession extends AbstractSensorSession {
 	private String port;
 
 	private int interval;
-	private int ra;
+	private int ag, ra, q, p, fl, fh;
+	private boolean rcs;
 	private String ma;
 
 	ReadThread readthread = null;
@@ -63,15 +64,21 @@ public class ThinkifyUSBSensorSession extends AbstractSensorSession {
 			NotifierService notifierService, String readerID, String port,
 			Integer reconnectionInterval, Integer maxConnectionAttempts,
 			Set<AbstractCommandConfiguration<?>> commandConfigurations,
-			int readrate, int ra, String ma) {
+			int readrate, int ra, String ma, int ag, int q, int p, int fl, int fh, boolean rcs) {
 		super(sensor, ID, commandConfigurations);
 		this.readerID = readerID;
 		this.port = port;
 		this.maxConAttempts = maxConnectionAttempts;
 		this.reconnectionInterval = reconnectionInterval;
 		this.interval = readrate;
+		this.ag = ag;
 		this.ra = ra;
 		this.ma = ma;
+		this.q = q;
+		this.p = p;
+		this.fl = fl;
+		this.rcs = rcs;
+		this.fh = fh;
 	}
 
 	/*
@@ -140,8 +147,17 @@ public class ThinkifyUSBSensorSession extends AbstractSensorSession {
 	public void startReading() {
 		try {
 			logger.info(this.reader.send_receive("ra" + ra));
+			logger.info(this.reader.send_receive("ag"+ag));
+			logger.info(this.reader.send_receive("q"+q));
+			logger.info(this.reader.send_receive("p"+p));
+			logger.info(this.reader.send_receive("fl"+fl));
+			logger.info(this.reader.send_receive("fh"+fh));
 			if (this.ma != "") {
 				this.reader.send_receive("ma" + ma);
+			}
+			if(this.rcs) {
+				//This will take a long time if this is set
+				logger.info(this.reader.send_receive("rcs"));
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -234,7 +250,6 @@ public class ThinkifyUSBSensorSession extends AbstractSensorSession {
 		@Override
 		public void run() {
 			try {
-				this.reader.acquire();
 				this.reader.setAutoMode(true);
 				
 				stop = false;
@@ -242,7 +257,7 @@ public class ThinkifyUSBSensorSession extends AbstractSensorSession {
 					try {
 						try {
 						Set<TagReadEvent> taglist = new HashSet<TagReadEvent>();
-						for (ThinkifyTag aTag : reader.acquire()) {
+						for (ThinkifyTag aTag : reader.taglist) {
 							taglist.add(handler.tagArrived(aTag.getEpc(),
 									aTag.getLastSeenTime(), aTag.getRSSI(),
 									aTag.getReadCount()));
