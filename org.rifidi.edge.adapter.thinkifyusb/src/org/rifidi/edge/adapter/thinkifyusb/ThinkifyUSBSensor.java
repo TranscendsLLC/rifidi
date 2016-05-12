@@ -61,7 +61,14 @@ public class ThinkifyUSBSensor extends AbstractSensor<ThinkifyUSBSensorSession> 
 	/** Flag to check if this reader is destroyed. */
 	private AtomicBoolean destroyed = new AtomicBoolean(false);
 	/** The reader attenuation */
-	private volatile Integer ra = 6;
+	private Integer ra = 7;
+	private Integer ag = 0;
+	private Integer q = 4;
+	private Integer fl = 7;
+	private Integer fh = 7;
+	private Integer p = 131;
+	private Boolean rcs = false;
+	
 	/** The reader mask */
 	private String ma = "";
 	/** Time between two connection attempts. */
@@ -108,7 +115,7 @@ public class ThinkifyUSBSensor extends AbstractSensor<ThinkifyUSBSensorSession> 
 			if (session.compareAndSet(null, new ThinkifyUSBSensorSession(this,
 					sessionID.toString(), notifierService, super.getID(), port,
 					reconnectionInterval, maxNumConnectionAttempts, commands,
-					readrate, ra, ma))) {
+					readrate, ra, ma, ag, q, p, fl, fh, rcs))) {
 
 				// TODO: remove this once we get AspectJ in here!
 				notifierService.addSessionEvent(this.getID(),
@@ -134,7 +141,7 @@ public class ThinkifyUSBSensor extends AbstractSensor<ThinkifyUSBSensorSession> 
 			if (session.compareAndSet(null, new ThinkifyUSBSensorSession(this,
 					sessionID.toString(), notifierService, super.getID(), port,
 					reconnectionInterval, maxNumConnectionAttempts, commands,
-					readrate, ra, ma))) {
+					readrate, ra, ma, ag, q, p, fl, fh, rcs))) {
 				session.get().restoreCommands(sessionDTO);
 				// TODO: remove this once we get AspectJ in here!
 				notifierService.addSessionEvent(this.getID(),
@@ -195,25 +202,47 @@ public class ThinkifyUSBSensor extends AbstractSensor<ThinkifyUSBSensorSession> 
 		this.readrate = readrate;
 	}
 
+	@Property(displayName = "ag", description = "Sets the reader attenuation", writable = true, type = PropertyType.PT_INTEGER, category = "reading"
+			+ "", orderValue = 1, defaultValue = ThinkifyUSBConstants.AG, minValue = "-6", maxValue = "19")
+	public int getag() {return ag;}
+	public void setag(Integer ag) {this.ag = ag;}
+	
 	@Property(displayName = "ra", description = "Sets the reader attenuation", writable = true, type = PropertyType.PT_INTEGER, category = "reading"
 			+ "", orderValue = 2, defaultValue = ThinkifyUSBConstants.RA, minValue = "0", maxValue = "19")
-	public int getra() {
-		return ra;
-	}
-
-	public void setra(Integer ra) {
-		this.ra = ra;
-	}
+	public int getra() {return ra;}
+	public void setra(Integer ra) {this.ra = ra;}
 
 	@Property(displayName = "ma", description = "Sets the mask for the reader", writable = true, type = PropertyType.PT_STRING, category = "reading"
-			+ "", orderValue = 2, defaultValue = ThinkifyUSBConstants.MA)
-	public String getma() {
-		return ma;
-	}
-
-	public void setma(String ma) {
-		this.ma = ma;
-	}
+			+ "", orderValue = 3, defaultValue = ThinkifyUSBConstants.MA)
+	public String getma() {return ma;}
+	public void setma(String ma) {this.ma = ma;}
+	
+	@Property(displayName = "p", description = "Sets the p value for the reader", writable = true, type = PropertyType.PT_INTEGER, category = "reading"
+			+ "", orderValue = 4, defaultValue = ThinkifyUSBConstants.P)
+	public Integer getp() {return p;}
+	public void setp(Integer p) {this.p = p;}
+	
+	@Property(displayName = "q", description = "Sets the q value for the reader.  The number of expected tags on this reader should be 2^q.", writable = true, type = PropertyType.PT_INTEGER, category = "reading"
+			+ "", orderValue = 5, defaultValue = ThinkifyUSBConstants.Q)
+	public Integer getq() {return q;}
+	public void setq(Integer q) {this.q = q;}
+	
+	@Property(displayName = "fl", description = "Sets the fl value for the reader.", writable = true, type = PropertyType.PT_INTEGER, category = "reading"
+			+ "", orderValue = 6, defaultValue = ThinkifyUSBConstants.FL)
+	public Integer getfl() {return fl;}
+	public void setfl(Integer fl) {this.fl = fl;}
+	
+	@Property(displayName = "fr", description = "Sets the fr value for the reader.", writable = true, type = PropertyType.PT_INTEGER, category = "reading"
+			+ "", orderValue = 7, defaultValue = ThinkifyUSBConstants.FH)
+	public Integer getfh() {return fh;}
+	public void setfh(Integer fh) {this.fh = fh;}
+	
+	@Property(displayName = "rcs", description = "If this is set to true, the reader will calibrate the antenna."
+			+ "  This should be done only once; do not set this value to 'true' and leave it there.  Do this "
+			+ "when the antenna is installed in its final environment.", writable = true, type = PropertyType.PT_BOOLEAN, category = "reading"
+			+ "", orderValue = 7, defaultValue = ThinkifyUSBConstants.RCS)
+	public Boolean getrcs() {return rcs;}
+	public void setrcs(Boolean rcs) {this.rcs = rcs;}
 
 	/*
 	 * (non-Javadoc)

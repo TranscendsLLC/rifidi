@@ -30,8 +30,20 @@ public class ThinkifyUSBConstants {
 	public static final String READRATE = "1000";
 
 	public static final String RSSI = "RSSI";
+	
+	public static final String AG = "0";
 
-	public static final String RA = "6";
+	public static final String RA = "7";
 
 	public static final String MA = "";
+	
+	public static final String P = "131";
+	
+	public static final String FL = "7";
+	
+	public static final String FH = "7";
+	
+	public static final String Q = "3";
+	
+	public static final String RCS = "false";
 }
