@@ -49,7 +49,7 @@ public class ThinkifyUSBSensorSession extends AbstractSensorSession {
 
 	private int interval;
 	private int ag, ra, q, p, fl, fh;
-	private boolean rcs;
+	private String generic;
 	private String ma;
 
 	ReadThread readthread = null;
@@ -64,7 +64,8 @@ public class ThinkifyUSBSensorSession extends AbstractSensorSession {
 			NotifierService notifierService, String readerID, String port,
 			Integer reconnectionInterval, Integer maxConnectionAttempts,
 			Set<AbstractCommandConfiguration<?>> commandConfigurations,
-			int readrate, int ra, String ma, int ag, int q, int p, int fl, int fh, boolean rcs) {
+			int readrate, int ra, String ma, int ag, int q, int p, int fl, 
+			int fh, String generic) {
 		super(sensor, ID, commandConfigurations);
 		this.readerID = readerID;
 		this.port = port;
@@ -77,7 +78,7 @@ public class ThinkifyUSBSensorSession extends AbstractSensorSession {
 		this.q = q;
 		this.p = p;
 		this.fl = fl;
-		this.rcs = rcs;
+		this.generic = generic;
 		this.fh = fh;
 	}
 
@@ -140,6 +141,10 @@ public class ThinkifyUSBSensorSession extends AbstractSensorSession {
 		}
 		onConnect();
 	}
+	
+	public void sendRCS() throws Exception {
+		logger.info(this.reader.send_receive("rcs"));
+	}
 
 	/**
 	 * 
@@ -147,17 +152,17 @@ public class ThinkifyUSBSensorSession extends AbstractSensorSession {
 	public void startReading() {
 		try {
 			logger.info(this.reader.send_receive("ra" + ra));
-			logger.info(this.reader.send_receive("ag"+ag));
-			logger.info(this.reader.send_receive("q"+q));
-			logger.info(this.reader.send_receive("p"+p));
-			logger.info(this.reader.send_receive("fl"+fl));
-			logger.info(this.reader.send_receive("fh"+fh));
+			logger.info(this.reader.send_receive("ag" + ag));
+			logger.info(this.reader.send_receive("q" + q));
+			logger.info(this.reader.send_receive("p" + p));
+			logger.info(this.reader.send_receive("fl" + fl));
+			logger.info(this.reader.send_receive("fh" + fh));
 			if (this.ma != "") {
 				this.reader.send_receive("ma" + ma);
 			}
-			if(this.rcs) {
-				//This will take a long time if this is set
-				logger.info(this.reader.send_receive("rcs"));
+			String[] split = this.generic.split("\\|");
+			for(String x:split) {
+				logger.info(this.reader.send_receive(x));
 			}
 		} catch (IOException e) {
 			e.printStackTrace();

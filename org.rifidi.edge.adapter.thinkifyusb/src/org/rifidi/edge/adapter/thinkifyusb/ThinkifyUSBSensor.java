@@ -67,7 +67,7 @@ public class ThinkifyUSBSensor extends AbstractSensor<ThinkifyUSBSensorSession> 
 	private Integer fl = 7;
 	private Integer fh = 7;
 	private Integer p = 131;
-	private Boolean rcs = false;
+	private String generic = "";
 	
 	/** The reader mask */
 	private String ma = "";
@@ -115,7 +115,7 @@ public class ThinkifyUSBSensor extends AbstractSensor<ThinkifyUSBSensorSession> 
 			if (session.compareAndSet(null, new ThinkifyUSBSensorSession(this,
 					sessionID.toString(), notifierService, super.getID(), port,
 					reconnectionInterval, maxNumConnectionAttempts, commands,
-					readrate, ra, ma, ag, q, p, fl, fh, rcs))) {
+					readrate, ra, ma, ag, q, p, fl, fh, generic))) {
 
 				// TODO: remove this once we get AspectJ in here!
 				notifierService.addSessionEvent(this.getID(),
@@ -141,7 +141,7 @@ public class ThinkifyUSBSensor extends AbstractSensor<ThinkifyUSBSensorSession> 
 			if (session.compareAndSet(null, new ThinkifyUSBSensorSession(this,
 					sessionID.toString(), notifierService, super.getID(), port,
 					reconnectionInterval, maxNumConnectionAttempts, commands,
-					readrate, ra, ma, ag, q, p, fl, fh, rcs))) {
+					readrate, ra, ma, ag, q, p, fl, fh, generic))) {
 				session.get().restoreCommands(sessionDTO);
 				// TODO: remove this once we get AspectJ in here!
 				notifierService.addSessionEvent(this.getID(),
@@ -237,12 +237,11 @@ public class ThinkifyUSBSensor extends AbstractSensor<ThinkifyUSBSensorSession> 
 	public Integer getfh() {return fh;}
 	public void setfh(Integer fh) {this.fh = fh;}
 	
-	@Property(displayName = "rcs", description = "If this is set to true, the reader will calibrate the antenna."
-			+ "  This should be done only once; do not set this value to 'true' and leave it there.  Do this "
-			+ "when the antenna is installed in its final environment.", writable = true, type = PropertyType.PT_BOOLEAN, category = "reading"
-			+ "", orderValue = 7, defaultValue = ThinkifyUSBConstants.RCS)
-	public Boolean getrcs() {return rcs;}
-	public void setrcs(Boolean rcs) {this.rcs = rcs;}
+	@Property(displayName = "generic", description = "Allows you pass in any number of valid Thinkify commands, separated by pipes.  Example:"
+			+ "'am3|dt2' will set 'am' to 3 and 'dt' to 2.", writable = true, type = PropertyType.PT_STRING, category = "reading"
+			+ "", orderValue = 8, defaultValue = "")
+	public String getgeneric() {return generic;}
+	public void setgeneric(String generic) {this.generic = generic;}
 
 	/*
 	 * (non-Javadoc)
