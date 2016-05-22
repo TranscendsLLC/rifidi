@@ -20,7 +20,6 @@ import java.io.Writer;
 import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -2237,6 +2236,9 @@ public class SensorManagerServiceRestletImpl extends Application {
 		router.attach("/save", save);
 		router.attach("/currenttags/{readerID}", currenttags);
 
+		// thinkify commands
+		router.attach("/rcs/{readerID}/{sessionID}", rcs);
+		
 		// single shot commands
 
 		router.attach("/llrpgetrospecs/{readerID}/{sessionID}", llrpGetRospecs);
