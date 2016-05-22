@@ -53,6 +53,7 @@ import org.restlet.routing.Router;
 import org.restlet.util.Series;
 import org.rifidi.edge.adapter.llrp.LLRPEncodeMessageDto;
 import org.rifidi.edge.adapter.llrp.LLRPReaderSession;
+import org.rifidi.edge.adapter.thinkifyusb.ThinkifyUSBSensorSession;
 import org.rifidi.edge.api.CommandConfigFactoryDTO;
 import org.rifidi.edge.api.CommandConfigurationDTO;
 import org.rifidi.edge.api.CommandDTO;
@@ -2138,6 +2139,35 @@ public class SensorManagerServiceRestletImpl extends Application {
 					response.setEntity(self.generateReturnString(self.generateErrorMessage(e.toString(), null)), MediaType.TEXT_XML);
 				}
 
+			}
+		};
+		
+		Restlet rcs = new Restlet() {
+			@Override
+			public void handle(Request request, Response response) {
+				try {
+
+					logger.info("rcs requested");
+
+					setResponseHeaders(request, response);
+
+					AbstractSensor<?> sensor = readerDAO.getReaderByID((String) request.getAttributes().get("readerID"));
+
+					if (sensor == null) {
+						throw new Exception("ReaderID is missing or invalid");
+					}
+
+					Map<String, SensorSession> sessionMap = sensor.getSensorSessions();
+					if (sessionMap != null && sessionMap.containsKey(request.getAttributes().get("sessionID"))) {
+						ThinkifyUSBSensorSession session = (ThinkifyUSBSensorSession) sessionMap.get(request.getAttributes().get("sessionID"));
+						session.sendRCS();
+						response.setEntity(self.generateReturnString(self.generateSuccessMessage()), MediaType.TEXT_XML);
+					} else {
+						throw new Exception("SessionID is missing or invalid");
+					}
+				} catch (Exception e) {
+					response.setEntity(self.generateReturnString(self.generateErrorMessage(e.getMessage(), null)), MediaType.TEXT_XML);
+				}
 			}
 		};
 
