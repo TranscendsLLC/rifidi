@@ -52,6 +52,14 @@
 		<property name="jmsTextSender" ref="jmsTagSender" />
 	</bean>
 	<osgi:service ref="tagapp" interface="org.rifidi.edge.api.RifidiApp" />
+	
+		<bean id="statsapp" class="org.rifidi.edge.tools.diagnostics.StatsApp">
+		<constructor-arg index="0" value="Monitoring" />
+		<constructor-arg index="1" value="StatsApp" />
+		<property name="appManager" ref="appManagerRef"/>		
+		<property name="sensorManagerService" ref="sensorManagerServiceRef"/>
+	</bean>
+	<osgi:service ref="statsapp" interface="org.rifidi.edge.api.RifidiApp" />
 
 	<!-- Create the application and inject esper and teh JMS sender -->
 	<bean id="sensorapp" class="org.rifidi.edge.tools.tracking.SensorMonitor">
@@ -98,6 +106,9 @@
 	<!--
 		Get a reference to the JMS Template from the OSGi service registry
 	-->
+	<osgi:reference id="appManagerRef"
+		interface="org.rifidi.edge.api.service.appmanager.AppManager" />
+		
 	<osgi:reference id="externalJMSTemplate"
 		interface="org.springframework.jms.core.JmsTemplate" bean-name="externalJMSTemplate" />
 
@@ -106,6 +117,9 @@
 
 	<osgi:reference id="sensorMonitoringService"
 		interface="org.rifidi.edge.api.service.sensormonitor.SensorStatusMonitoringService" />
+		
+	<osgi:reference id="sensorManagerServiceRef"
+		interface="org.rifidi.edge.rmi.SensorManagerServiceImpl" />
 
 
 </beans>
