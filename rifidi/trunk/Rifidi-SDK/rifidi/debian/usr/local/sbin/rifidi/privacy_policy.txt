@@ -1,0 +1,23 @@
+Privacy Policy - Transcends, LLC
+
+Last change: May 15, 2016
+
+1. What information do we collect?
+
+We collect information about the services that you use and how you use them; specifically when you use the Rifidi Edge Server we collect the following information:
+•	Device information: MAC address and operating system information. 
+•	IP addresses: addresses of the device you are running Rifidi on.
+•	Other configuration information: information about the Rifidi configuration, including name of applications and the state they are in (whether an application is started or not). 
+
+2. How do we use the information that we collect?
+We collect information about the services for various reasons:
+•	We analyze this information and use it to improve Rifidi. The information is used to build our product roadmap.
+•	We might use the information to help you diagnose and troubleshoot technical issues.
+•	We use the information to validate license compliance.
+
+3. What information do we share with others?
+None. Transcends does not share any of the information that is collected, unless there is a legal obligation for Transcends to do so. In that case, Transcends would contact you before sharing the information with any 3rd party or government organization. 
+
+4. What choice do you have?
+You can choose to turn off any information sharing feature of the Rifidi Edge Server. Simply reach out to Transcends (www.transcends.co or info@transcends.co) and ask us.
+
