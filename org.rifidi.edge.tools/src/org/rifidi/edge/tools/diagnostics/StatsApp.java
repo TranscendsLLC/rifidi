@@ -19,10 +19,21 @@ import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.NameValuePair;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.impl.client.HttpClients;
+import org.apache.http.message.BasicNameValuePair;
 import org.rifidi.edge.api.AbstractRifidiApp;
 import org.rifidi.edge.api.ReaderDTO;
 import org.rifidi.edge.api.RifidiApp;
@@ -71,17 +82,17 @@ public class StatsApp extends AbstractRifidiApp {
 		String license = null;
 		Boolean sendOverride = false;
 		try {
-			disable = Boolean.parseBoolean(System.getProperty("org.rifidi.disablestats", null));
+			disable = Boolean.parseBoolean(this.getProperty("disablestats", "false"));
 		} catch (Exception e) {}
 		try {
-			license = System.getProperty("org.rifidi.license");
+			license = this.getProperty("license", "");
 		} catch (Exception e) {}
 		try {
-			sendOverride = Boolean.parseBoolean(System.getProperty("org.rifidi.sendoverride", "false"));
+			sendOverride = Boolean.parseBoolean(this.getProperty("sendoverride", "false"));
 		} catch (Exception e) {}
-
+		
 		String home = System.getProperty("org.rifidi.home");
-		if (!disable && home.contains("Rifidi-SDK/RifidiHome")) {
+		if (!disable && !home.contains("Rifidi-SDK/RifidiHome")) {
 			Thread thread = new Thread(new StatsThread(sensorService, appManager, license, sendOverride));
 			thread.start();
 		}
@@ -151,22 +162,24 @@ public class StatsApp extends AbstractRifidiApp {
 					String xmlfile = home + File.separator + "config" + File.separator + "rifidi.xml";
 					String versionfile = home + File.separator + "version.txt";
 					try {
+						//sleep for 10 minutes
 						Thread.sleep(600000);
 					} catch (InterruptedException e) {
 					}
 					Integer numapps = appManager.getApps().size();
-					StringBuilder appstr = new StringBuilder();
+					StringBuilder appbldr = new StringBuilder();
 					boolean first = true;
 					for (RifidiApp app : appManager.getApps().values()) {
 						if (first) {
 							first = false;
 						} else {
-							appstr.append("|");
+							appbldr.append("|");
 						}
-						appstr.append(app.getName());
-						appstr.append(":");
-						appstr.append(app.getState());
+						appbldr.append(app.getName());
+						appbldr.append(":");
+						appbldr.append(app.getState());
 					}
+					String appstr = appbldr.toString();					
 					Integer numreaders = sensorService.getReaders().size();
 					Map<String, Integer> readerTypeToCount = new HashMap<String, Integer>();
 					for (ReaderDTO reader : sensorService.getReaders()) {
@@ -177,60 +190,69 @@ public class StatsApp extends AbstractRifidiApp {
 							readerTypeToCount.put(reader.getDisplayName(), 1);
 						}
 					}
-					StringBuilder readerstr = new StringBuilder();
+					StringBuilder readerbldr = new StringBuilder();
 					first = true;
 					for (String reader : readerTypeToCount.keySet()) {
 						if (!first) {
-							readerstr.append("|");
+							readerbldr.append("|");
 						}
-						readerstr.append(reader);
-						readerstr.append(":");
-						readerstr.append(readerTypeToCount.get(reader));
+						first = false;
+						readerbldr.append(reader);
+						readerbldr.append(":");
+						readerbldr.append(readerTypeToCount.get(reader));
 					}
+					String readerstr = readerbldr.toString();
 					String email = "";
 					try {
 						email = readFile(emailfile, StandardCharsets.UTF_8);
-					} catch (Exception e) {
-					}
+					} catch (Exception e) {}
+					email=URLEncoder.encode(email, StandardCharsets.UTF_8.name());
 
 					String xmlstr = "";
 					try {
 						xmlstr = readFile(xmlfile, StandardCharsets.UTF_8);
-					} catch (Exception e) {
-					}
+					} catch (Exception e) {}
 					// encode xml
 					xmlstr = URLEncoder.encode(xmlstr, StandardCharsets.UTF_8.name());
 					String version = "";
 					try {
 						version = readFile(versionfile, StandardCharsets.UTF_8);
-					} catch (Exception e) {
-					}
+						version = version.split(" ")[1];
+					} catch (Exception e) {}
+					String os = "";
+					try{
+						os=System.getProperty("os.name");
+					} catch(Exception e) {}
 					
-					StringBuilder url = new StringBuilder("http://transcends.co/www/rifidistats.php?token=Rifidi@2006&local_ip=");
-					url.append(localip.getHostAddress());
-					url.append("&version=");
-					url.append(version);
-					url.append("&uid=");
-					url.append(macsb.toString());
-					url.append("&email=");
-					url.append(email);
-					url.append("&num_apps=");
-					url.append(numapps);
-					url.append("&apps=");
-					url.append(appstr);
-					url.append("&num_readers=");
-					url.append(numreaders);
-					url.append("&reader_type=");
-					url.append(readerstr);
-					url.append("&config=");
-					url.append(xmlstr);
-
-					URL posturl = new URL(url.toString());
-					URLConnection urlc = posturl.openConnection();
+					List<NameValuePair> data = new ArrayList<NameValuePair>(Arrays.asList(
+						    new BasicNameValuePair("token", "Rifidi@2006"),
+						    new BasicNameValuePair("event", "serverstart"),
+						    new BasicNameValuePair("local_ip", localip.getHostAddress()),
+						    new BasicNameValuePair("os", os),
+						    new BasicNameValuePair("version", version.trim()),
+						    new BasicNameValuePair("uid", macsb.toString()),
+						    new BasicNameValuePair("email", email),
+						    new BasicNameValuePair("num_apps", numapps.toString()),
+						    new BasicNameValuePair("apps", appstr),
+						    new BasicNameValuePair("num_readers", numreaders.toString()),
+						    new BasicNameValuePair("reader_type", readerstr),
+						    new BasicNameValuePair("config", xmlstr))
+					);
+					
+					StringBuilder url = new StringBuilder("http://transcends.co/www/rifidistats.php");
+					HttpClient client = HttpClients.createDefault();
+					HttpPost post = new HttpPost(url.toString());
+					post.setEntity(new UrlEncodedFormEntity(data));
+					HttpResponse response = client.execute(post);
+					HttpEntity entity = response.getEntity();
 
 					// get result
-					BufferedReader br = new BufferedReader(new InputStreamReader(urlc.getInputStream()));
-					br.close();
+//					BufferedReader br = new BufferedReader(new InputStreamReader(entity.getContent()));
+//					String next;
+//					while((next = br.readLine())!=null) {
+//						System.out.println(next.trim());
+//					}
+//					br.close();
 				}
 			} catch (Exception e) {
 				e.printStackTrace();
