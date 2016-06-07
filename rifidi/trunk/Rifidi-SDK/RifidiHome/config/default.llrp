@@ -16,9 +16,16 @@
     <llrp:AISpec>
       <llrp:AntennaIDs>0</llrp:AntennaIDs>
       <llrp:AISpecStopTrigger>
-        <llrp:AISpecStopTriggerType>Null</llrp:AISpecStopTriggerType>
-        <llrp:DurationTrigger>0</llrp:DurationTrigger>
-      </llrp:AISpecStopTrigger>
+        <llrp:AISpecStopTriggerType>Tag_Observation</llrp:AISpecStopTriggerType>
+        <llrp:DurationTrigger>100</llrp:DurationTrigger>
+        <llrp:TagObservationTrigger>
+          <llrp:TriggerType>N_Attempts_To_See_All_Tags_In_FOV_Or_Timeout</llrp:TriggerType>
+          <llrp:NumberOfTags>0</llrp:NumberOfTags>
+          <llrp:NumberOfAttempts>5</llrp:NumberOfAttempts>
+          <llrp:T>100</llrp:T>
+          <llrp:Timeout>100</llrp:Timeout>
+        </llrp:TagObservationTrigger>
+	  </llrp:AISpecStopTrigger>
       <llrp:InventoryParameterSpec>
         <llrp:InventoryParameterSpecID>40</llrp:InventoryParameterSpecID>
         <llrp:ProtocolID>EPCGlobalClass1Gen2</llrp:ProtocolID>
