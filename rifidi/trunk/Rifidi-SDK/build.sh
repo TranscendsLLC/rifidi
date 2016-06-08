@@ -53,7 +53,7 @@
 cd rifidi/
 dpkg-deb --build debian
 
-mv debian.deb ./Debian-packages/rifidi-edge-3.5.0-linux.gtk.x86.deb
+mv debian.deb ./Debian-packages/rifidi-edge-3.5.1-linux.gtk.x86.deb
 
 
 
