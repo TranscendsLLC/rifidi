@@ -153,7 +153,7 @@ public class ThinkifyUSBSensorSession extends AbstractSensorSession {
 		try {
 			logger.info(this.reader.send_receive("ra" + ra));
 			logger.info(this.reader.send_receive("ag" + ag));
-			logger.info(this.reader.send_receive("q" + q));
+			logger.info(this.reader.send_receive("iq" + q));
 			logger.info(this.reader.send_receive("p" + p));
 			logger.info(this.reader.send_receive("fl" + fl));
 			logger.info(this.reader.send_receive("fh" + fh));
