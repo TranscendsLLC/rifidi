@@ -162,7 +162,9 @@ public class ThinkifyUSBSensorSession extends AbstractSensorSession {
 			}
 			String[] split = this.generic.split("\\|");
 			for(String x:split) {
-				logger.info(this.reader.send_receive(x));
+				if(x!="") {
+					logger.info(this.reader.send_receive(x));
+				}
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
