@@ -27,11 +27,15 @@ app.service('TagService', function($http, CommonService){
 
             var tagId = xmlVector[index].getElementsByTagName("id")[0].childNodes[0].nodeValue;
             var antennaId = xmlVector[index].getElementsByTagName("antenna")[0].childNodes[0].nodeValue;
+            var timestamp = xmlVector[index].getElementsByTagName("timestamp")[0].childNodes[0].nodeValue;
+            var rssi = xmlVector[index].getElementsByTagName("rssi")[0].childNodes[0].nodeValue;
 
             //Add the tag to tag list
             var tagElement = {
                 "id": tagId,
-                "antenna": antennaId
+                "antenna": antennaId,
+                "timestamp": timestamp,
+                "rssi": rssi
             };
 
             tagsToReturn.push(tagElement);
