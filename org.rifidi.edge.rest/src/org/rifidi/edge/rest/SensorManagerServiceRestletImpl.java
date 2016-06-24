@@ -52,7 +52,6 @@ import org.restlet.routing.Router;
 import org.restlet.util.Series;
 import org.rifidi.edge.adapter.llrp.LLRPEncodeMessageDto;
 import org.rifidi.edge.adapter.llrp.LLRPReaderSession;
-import org.rifidi.edge.adapter.thinkifyusb.ThinkifyUSBSensorSession;
 import org.rifidi.edge.api.CommandConfigFactoryDTO;
 import org.rifidi.edge.api.CommandConfigurationDTO;
 import org.rifidi.edge.api.CommandDTO;
@@ -73,6 +72,7 @@ import org.rifidi.edge.configuration.Configuration;
 import org.rifidi.edge.configuration.ConfigurationService;
 import org.rifidi.edge.daos.CommandDAO;
 import org.rifidi.edge.daos.ReaderDAO;
+import org.rifidi.edge.notification.StandardTagReadEventFieldNames;
 import org.rifidi.edge.notification.TagReadEvent;
 import org.rifidi.edge.rest.exception.NotValidPropertyForObjectException;
 import org.rifidi.edge.sensors.AbstractSensor;
@@ -2141,34 +2141,34 @@ public class SensorManagerServiceRestletImpl extends Application {
 			}
 		};
 		
-		Restlet rcs = new Restlet() {
-			@Override
-			public void handle(Request request, Response response) {
-				try {
-
-					logger.info("rcs requested");
-
-					setResponseHeaders(request, response);
-
-					AbstractSensor<?> sensor = readerDAO.getReaderByID((String) request.getAttributes().get("readerID"));
-
-					if (sensor == null) {
-						throw new Exception("ReaderID is missing or invalid");
-					}
-
-					Map<String, SensorSession> sessionMap = sensor.getSensorSessions();
-					if (sessionMap != null && sessionMap.containsKey(request.getAttributes().get("sessionID"))) {
-						ThinkifyUSBSensorSession session = (ThinkifyUSBSensorSession) sessionMap.get(request.getAttributes().get("sessionID"));
-						session.sendRCS();
-						response.setEntity(self.generateReturnString(self.generateSuccessMessage()), MediaType.TEXT_XML);
-					} else {
-						throw new Exception("SessionID is missing or invalid");
-					}
-				} catch (Exception e) {
-					response.setEntity(self.generateReturnString(self.generateErrorMessage(e.getMessage(), null)), MediaType.TEXT_XML);
-				}
-			}
-		};
+//		Restlet rcs = new Restlet() {
+//			@Override
+//			public void handle(Request request, Response response) {
+//				try {
+//
+//					logger.info("rcs requested");
+//
+//					setResponseHeaders(request, response);
+//
+//					AbstractSensor<?> sensor = readerDAO.getReaderByID((String) request.getAttributes().get("readerID"));
+//
+//					if (sensor == null) {
+//						throw new Exception("ReaderID is missing or invalid");
+//					}
+//
+//					Map<String, SensorSession> sessionMap = sensor.getSensorSessions();
+//					if (sessionMap != null && sessionMap.containsKey(request.getAttributes().get("sessionID"))) {
+//						ThinkifyUSBSensorSession session = (ThinkifyUSBSensorSession) sessionMap.get(request.getAttributes().get("sessionID"));
+//						session.sendRCS();
+//						response.setEntity(self.generateReturnString(self.generateSuccessMessage()), MediaType.TEXT_XML);
+//					} else {
+//						throw new Exception("SessionID is missing or invalid");
+//					}
+//				} catch (Exception e) {
+//					response.setEntity(self.generateReturnString(self.generateErrorMessage(e.getMessage(), null)), MediaType.TEXT_XML);
+//				}
+//			}
+//		};
 
 		Router router = new Router(getContext().createChildContext());
 		router.attach("/readers", readers);
@@ -2237,7 +2237,7 @@ public class SensorManagerServiceRestletImpl extends Application {
 		router.attach("/currenttags/{readerID}", currenttags);
 
 		// thinkify commands
-		router.attach("/rcs/{readerID}/{sessionID}", rcs);
+		// router.attach("/rcs/{readerID}/{sessionID}", rcs);
 		
 		// single shot commands
 
@@ -3046,7 +3046,13 @@ public class SensorManagerServiceRestletImpl extends Application {
 			CurrentTagDTO dto = new CurrentTagDTO();
 			dto.setId(tag.getTag().getFormattedID());
 			dto.setAntenna(tag.getAntennaID());
-			this.currenttags.put(tag.getTag().getFormattedID(),dto);
+			dto.setReader(tag.getReaderID());
+			dto.setTimestamp(tag.getTimestamp());
+			Serializable rssi = tag.getExtraInformation().get(StandardTagReadEventFieldNames.RSSI);
+			if(!rssi.equals(null)) {
+				dto.setRssi((String)rssi);
+			}
+			this.currenttags.put(tag.getTag().getFormattedID()+tag.getReaderID(),dto);
 		}
 
 	}
