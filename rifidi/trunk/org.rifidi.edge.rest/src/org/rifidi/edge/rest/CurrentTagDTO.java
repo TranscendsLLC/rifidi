@@ -27,6 +27,31 @@ public class CurrentTagDTO implements Serializable {
 	//The antenna of the tag
 	@XmlElement(name = "antenna")
 	private Integer antenna;
+	
+	@XmlElement(name = "timestamp")
+	private Long timestamp;
+	
+	@XmlElement(name = "reader")
+	private String reader;
+	
+	@XmlElement(name = "rssi")
+	private String rssi;
+
+	public Long getTimestamp() {
+		return timestamp;
+	}
+
+	public void setTimestamp(Long timestamp) {
+		this.timestamp = timestamp;
+	}
+
+	public String getReader() {
+		return reader;
+	}
+
+	public void setReader(String reader) {
+		this.reader = reader;
+	}
 
 	public String getId() {
 		return id;
@@ -42,6 +67,14 @@ public class CurrentTagDTO implements Serializable {
 
 	public void setAntenna(Integer antenna) {
 		this.antenna = antenna;
+	}
+
+	public String getRssi() {
+		return rssi;
+	}
+
+	public void setRssi(String rssi) {
+		this.rssi = rssi;
 	}
 	
 }
