@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: ThinkifyUSB
 Bundle-SymbolicName: org.rifidi.edge.adapter.thinkifyusb
-Bundle-Version: 1.1.7
+Bundle-Version: 1.1.8
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Export-Package: org.rifidi.edge.adapter.thinkifyusb
 Require-Bundle: org.rifidi.edge.api;bundle-version="1.3.0",

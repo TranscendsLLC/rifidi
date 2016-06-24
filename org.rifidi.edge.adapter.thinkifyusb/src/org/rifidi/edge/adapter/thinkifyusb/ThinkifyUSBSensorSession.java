@@ -13,6 +13,8 @@
 package org.rifidi.edge.adapter.thinkifyusb;
 
 import java.io.IOException;
+import java.net.InetSocketAddress;
+import java.net.ServerSocket;
 import java.util.ConcurrentModificationException;
 import java.util.HashSet;
 import java.util.Set;
@@ -53,9 +55,11 @@ public class ThinkifyUSBSensorSession extends AbstractSensorSession {
 	private String ma;
 
 	ReadThread readthread = null;
-	ConnectedCheckerThread connectthread = null;
+//	ConnectedCheckerThread connectthread = null;
 
 	private ThinkifyReader reader;
+	
+//	private ServerSocket socket;
 
 	/** atomic boolean that is true if we are inside the connection attempt loop */
 	private AtomicBoolean connectingLoop = new AtomicBoolean(false);
@@ -80,6 +84,9 @@ public class ThinkifyUSBSensorSession extends AbstractSensorSession {
 		this.fl = fl;
 		this.generic = generic;
 		this.fh = fh;
+		
+		logger.info("Setting the port: " + this.port);
+		System.setProperty("gnu.io.rxtx.SerialPorts", this.port);
 	}
 
 	/*
@@ -90,26 +97,27 @@ public class ThinkifyUSBSensorSession extends AbstractSensorSession {
 	@Override
 	protected void _connect() throws IOException {
 		// TODO Auto-generated method stub
-
-
-		logger.info("Setting the port: " + this.port);
-		System.setProperty("gnu.io.rxtx.SerialPorts", this.port);
-		
 		boolean connected = false;
 		this.setStatus(SessionStatus.CONNECTING);
 		this.connectingLoop.set(true);
 		try {
 			for (int connCount = 0; connCount < maxConAttempts && !connected
 					|| maxConAttempts == -1; connCount++) {
-
+				
 				try {
 					reader = new ThinkifyReader(this.port);
 					reader.debugLevel = 0;
 					reader.open();
 					logger.info("Thinkify firmware version: " + reader.getVersion()); // some commands may have methods provided for you, like getVersion()
 					connected = true;
-					logger.info("Connected to reader " + this.readerID
-							+ " at port " + this.port);
+					logger.info("Connected to reader " + this.readerID + " at port " + this.port);
+//					try {
+//						this.socket = new ServerSocket();
+//						this.socket.setReuseAddress(true);
+//						this.socket.bind(new InetSocketAddress(8));
+//					} catch (IOException e) {
+//						e.printStackTrace();
+//					}
 				} catch (Exception e) {
 					logger.info("Exception while trying to connect to reader "
 							+ this.readerID + " at port " + this.port + ": "
@@ -171,11 +179,10 @@ public class ThinkifyUSBSensorSession extends AbstractSensorSession {
 		} catch (TimeoutException e) {
 			e.printStackTrace();
 		}
-		readthread = new ReadThread(reader, new ThinkifyUSBTagHandler(this,
-				this.readerID), this, interval);
+		readthread = new ReadThread(reader, new ThinkifyUSBTagHandler(this.readerID), this, interval);
 		Thread thread = new Thread(readthread);
 		thread.start();
-//		connectthread = new ConnectedCheckerThread(reader);
+//		connectthread = new ConnectedCheckerThread(reader, socket);
 //		Thread cThread = new Thread(connectthread);
 //		cThread.start();
 	}
@@ -184,8 +191,8 @@ public class ThinkifyUSBSensorSession extends AbstractSensorSession {
 	 * 
 	 */
 	public void stopReading() {
-		readthread.stop = true;
-		connectthread.stop = true;
+//		readthread.stop = true;
+//		connectthread.stop = true;
 	}
 
 	/**
@@ -211,8 +218,14 @@ public class ThinkifyUSBSensorSession extends AbstractSensorSession {
 		} catch (InterruptedException e) {
 		}
 		reader.close();
+//		try {
+//			socket.close();
+//		} catch (IOException e) {
+//			e.printStackTrace();
+//		}
 		logger.info("Finished disconnecting from the reader");
 		setStatus(SessionStatus.CLOSED);
+		reader = null;
 	}
 
 	public String getReaderID() {
@@ -266,7 +279,7 @@ public class ThinkifyUSBSensorSession extends AbstractSensorSession {
 						Set<TagReadEvent> taglist = new HashSet<TagReadEvent>();
 						for (ThinkifyTag aTag : reader.taglist) {
 							taglist.add(handler.tagArrived(aTag.getEpc(),
-									aTag.getLastSeenTime(), aTag.getRSSI(),
+									aTag.getLastSeenTime(), Float.toString(aTag.getRSSI()),
 									aTag.getReadCount()));
 						}
 						ReadCycle cycle = new ReadCycle(taglist, readerID,
@@ -294,50 +307,58 @@ public class ThinkifyUSBSensorSession extends AbstractSensorSession {
 		}
 	}
 	
-	public class ConnectedCheckerThread implements Runnable {
-
-		public volatile boolean stop = false;
-		
-		private ThinkifyReader reader;
-
-		public ConnectedCheckerThread(ThinkifyReader reader) {
-			this.reader = reader;
-		}
-
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see java.lang.Thread#start()
-		 */
-		@Override
-		public void run() {
-			stop = false;
-			while (!stop) {
-				try {
-					this.reader.getVersion();
-				} catch (Exception e) {
-					e.printStackTrace();
-					logger.info("Reader port is closed");
-					disconnect();
-					logger.info("Reader is disconnected " + readerID);
-					stop = true;
-					try {
-						Thread.sleep(2000);
-						connect();
-					} catch (InterruptedException e1) {
-					} catch (IOException e1) {
-						e1.printStackTrace();
-					}
-				}
-				try {
-					Thread.sleep(5000);
-				} catch (InterruptedException e) {
-				}
-			}
-		}
-
-		public void stopReading() {
-			this.stop = true;
-		}
-	}
+//	public class ConnectedCheckerThread implements Runnable {
+//
+//		public volatile boolean stop = false;
+//		
+//		private ThinkifyReader reader;
+//		
+//		private ServerSocket socket;
+//
+//		public ConnectedCheckerThread(ThinkifyReader reader, ServerSocket socket) {
+//			this.reader = reader;
+//			this.socket = socket;
+//		}
+//
+//		/*
+//		 * (non-Javadoc)
+//		 * 
+//		 * @see java.lang.Thread#start()
+//		 */
+//		@Override
+//		public void run() {
+//			stop = false;
+//			while (!stop) {
+//				try {
+//					this.reader.getVersion();
+//				} catch (Exception e) {
+//					e.printStackTrace();
+//					logger.info("Reader port is closed");
+//					disconnect();
+//					logger.info("Reader is disconnected " + readerID);
+//					stop = true;
+//					try {
+//						Thread.sleep(2000);
+//						logger.info("Just before reconnect");
+//						connect();
+//						logger.info("Just after reconnect");
+//					} catch (InterruptedException e1) {
+//						e1.printStackTrace();
+//					} catch (IOException e1) {
+//						e1.printStackTrace();
+//					} catch(Exception e2) {
+//						e.printStackTrace();
+//					}
+//				}
+//				try {
+//					Thread.sleep(5000);
+//				} catch (InterruptedException e) {
+//				}
+//			}
+//		}
+//
+//		public void stopReading() {
+//			this.stop = true;
+//		}
+//	}
 }

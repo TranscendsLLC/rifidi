@@ -14,8 +14,6 @@ package org.rifidi.edge.adapter.thinkifyusb;
 
 import java.math.BigInteger;
 
-import org.apache.commons.codec.DecoderException;
-import org.apache.commons.codec.binary.Hex;
 import org.rifidi.edge.notification.EPCGeneration2Event;
 import org.rifidi.edge.notification.TagReadEvent;
 
@@ -25,7 +23,6 @@ import org.rifidi.edge.notification.TagReadEvent;
  * @author Matthew Dean - matt@transcends.co
  */
 public class ThinkifyUSBTagHandler {
-	private ThinkifyUSBSensorSession session;
 
 	private String readerID;
 
@@ -33,8 +30,7 @@ public class ThinkifyUSBTagHandler {
 	 * 
 	 * @param session
 	 */
-	public ThinkifyUSBTagHandler(ThinkifyUSBSensorSession session, String readerID) {
-		this.session = session;
+	public ThinkifyUSBTagHandler(String readerID) {
 		this.readerID = readerID;
 	}
 
@@ -42,7 +38,7 @@ public class ThinkifyUSBTagHandler {
 	 * 
 	 * @param tag
 	 */
-	public TagReadEvent tagArrived(String epc, Long time, Float rssi, int count) {
+	public TagReadEvent tagArrived(String epc, Long time, String rssi, int count) {
 		EPCGeneration2Event gen2event = new EPCGeneration2Event();
 		int numbits = epc.length() * 4;
 		BigInteger bigint = null;
