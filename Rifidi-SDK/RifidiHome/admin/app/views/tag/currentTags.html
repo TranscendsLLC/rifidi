@@ -10,12 +10,16 @@
 		      <tr>
 		        <th>Antenna</th>
 		        <th>Tag</th>
+		        <th>Timestamp</th>
+		        <th>Rssi</th>
 		      </tr>
 		    </thead>
 		    <tbody>
 		      <tr ng-repeat="tag in tags | orderBy: 'antenna'">
 			    <td>{{tag.antenna}}</td>
 		        <td>{{tag.id}}</td>
+		        <td>{{tag.timestamp}}</td>
+		        <td>{{tag.rssi}}</td>
 		      </tr>
 		    </tbody>
 		</table>
