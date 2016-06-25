@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Rifidi Edge CSL Adapter
 Bundle-SymbolicName: org.rifidi.edge.adapter.csl
-Bundle-Version: 1.1.1
+Bundle-Version: 1.1.2
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Require-Bundle: org.rifidi.edge;bundle-version="5.4.1",
  org.apache.commons.codec
