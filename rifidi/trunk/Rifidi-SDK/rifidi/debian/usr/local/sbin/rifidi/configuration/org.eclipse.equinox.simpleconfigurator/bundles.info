@@ -94,7 +94,7 @@ org.rifidi.edge.catalina.config,1.0.0,plugins/org.rifidi.edge.catalina.config_1.
 org.rifidi.edge.init,1.1.0,plugins/org.rifidi.edge.init_1.1.0.jar,2,true
 org.rifidi.edge.adapter.alien,2.11.1,plugins/org.rifidi.edge.adapter.alien_2.11.1.jar,4,true
 org.rifidi.edge.adapter.awid,1.1.1,plugins/org.rifidi.edge.adapter.awid_1.1.1.jar,4,true
-org.rifidi.edge.adapter.csl,1.1.1,plugins/org.rifidi.edge.adapter.csl_1.1.1.jar,4,true
+org.rifidi.edge.adapter.csl,1.1.2,plugins/org.rifidi.edge.adapter.csl_1.1.2.jar,4,true
 org.rifidi.edge.adapter.generic,1.0.4,plugins/org.rifidi.edge.adapter.generic_1.0.4.jar,4,true
 org.rifidi.edge.adapter.llrp,2.4.2,plugins/org.rifidi.edge.adapter.llrp_2.4.2.jar,4,true
 org.rifidi.edge.adapter.opticon,1.0.1,plugins/org.rifidi.edge.adapter.opticon_1.0.1.jar,4,true
