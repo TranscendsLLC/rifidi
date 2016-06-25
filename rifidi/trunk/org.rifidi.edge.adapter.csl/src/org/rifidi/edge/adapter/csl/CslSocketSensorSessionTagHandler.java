@@ -74,12 +74,8 @@ class CslSocketSensorSessionTagHandler {
 					BigInteger t_membank = new BigInteger("1");
 					// BigInteger epc = null;
 					String epc = null;
-					try {
-						// epc = new BigInteger(Hex.decodeHex(val.toCharArray()));
-						epc = new String(Hex.decodeHex(val.toCharArray()));
-					} catch (DecoderException e) {
-						throw new RuntimeException("Cannot decode tag: " + val);
-					}
+					// epc = new BigInteger(Hex.decodeHex(val.toCharArray()));
+					epc =  new String(val);
 
 					gen2event.setEPCMemory(t_membank, epc, numbits);
 					// gen2event.setEPCMemory(t_membank, numbits);
