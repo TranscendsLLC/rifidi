@@ -51,6 +51,9 @@ public class GenericSensor extends AbstractSensor<GenericSensorSession> {
 	 * 
 	 */
 	private Integer port = 4567;
+	private Integer mqttPort = -1;	
+	private Integer restPort = -1;
+	
 	/** The ID of the session */
 	private AtomicInteger sessionID = new AtomicInteger(0);
 	/** The name of the reader that will be displayed */
@@ -61,6 +64,7 @@ public class GenericSensor extends AbstractSensor<GenericSensorSession> {
 	private AtomicReference<GenericSensorSession> session = new AtomicReference<GenericSensorSession>();
 	
 	private Boolean disableAutoStart=false;
+	
 
 	/** MBeanInfo for this class. */
 	public static final MBeanInfo mbeaninfo;
@@ -92,7 +96,7 @@ public class GenericSensor extends AbstractSensor<GenericSensorSession> {
 			Integer sessionID = this.sessionID.incrementAndGet();
 			if (session.compareAndSet(null, new GenericSensorSession(this,
 					Integer.toString(sessionID), notifierService,
-					super.getID(), this.port,
+					super.getID(), this.port, this.restPort, this.mqttPort,
 					new HashSet<AbstractCommandConfiguration<?>>()))) {
 				// TODO: remove this once we get AspectJ in here!
 				notifierService.addSessionEvent(this.getID(), Integer
@@ -117,7 +121,7 @@ public class GenericSensor extends AbstractSensor<GenericSensorSession> {
 			Integer sessionID = this.sessionID.incrementAndGet();
 			if (session.compareAndSet(null, new GenericSensorSession(this,
 					Integer.toString(sessionID), notifierService,
-					super.getID(), this.port,
+					super.getID(), this.port, this.restPort, this.mqttPort,
 					new HashSet<AbstractCommandConfiguration<?>>()))) {
 				// TODO: remove this once we get AspectJ in here!
 				notifierService.addSessionEvent(this.getID(), Integer
@@ -215,6 +219,46 @@ public class GenericSensor extends AbstractSensor<GenericSensorSession> {
 	public void setPort(Integer port) {
 		this.port = port;
 	}
+	
+	/**
+	 * @return the The name of the Serial Port.
+	 */
+	@Property(displayName = "MqttPort", description = "Sets a port for incoming mqtt connections, "
+			+ "-1 to disable.", writable = true, type = PropertyType.PT_INTEGER, category = "connection"
+			+ "", defaultValue = "-1", orderValue = 2)
+	public Integer getMqttPort() {
+		return this.mqttPort;
+	}
+
+	/**
+	 * Sets the port for the reader.
+	 * 
+	 * @param port
+	 */
+	public void setMqttPort(Integer port) {
+		this.mqttPort = port;
+	}
+	
+	/**
+	 * @return the The name of the Serial Port.
+	 */
+	@Property(displayName = "RestPort", description = "Sets a port for incoming rest connections, "
+			+ "-1 to disable.", writable = true, type = PropertyType.PT_INTEGER, category = "connection"
+			+ "", defaultValue = "-1", orderValue = 3)
+	public Integer getRestPort() {
+		return this.restPort;
+	}
+
+	/**
+	 * Sets the port for the reader.
+	 * 
+	 * @param port
+	 */
+	public void setRestPort(Integer port) {
+		this.restPort = port;
+	}
+	
+	
 	
 	@Property(displayName = "DisableAutoStart", description = "Set to true to disable autostart", writable = true, type = PropertyType.PT_BOOLEAN, 
 			category = "connection", orderValue = 8, defaultValue = "false")

@@ -17,6 +17,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
+import org.eclipse.paho.client.mqttv3.MqttClient;
+import org.eclipse.paho.client.mqttv3.MqttException;
 import org.rifidi.edge.api.SessionStatus;
 import org.rifidi.edge.notification.NotifierService;
 import org.rifidi.edge.notification.ReadCycle;
@@ -47,16 +49,36 @@ public class GenericSensorSession extends AbstractServerSocketSensorSession {
 
 	/** The ID for the reader. */
 	private String readerID = null;
+	
+	//rest
+	private Integer restPort;
+	
+	//mqtt
+	private Integer mqttPort;
+	private MqttClient mqttclient;
+	private String mqttURI;
+	private String mqttClientId;
+	
 
 	public GenericSensorSession(AbstractSensor<?> sensor, String ID,
 			NotifierService notifierService, String readerID,
-			int serverSocketPort,
+			int serverSocketPort, int restPort, int mqttPort,
 			Set<AbstractCommandConfiguration<?>> commandConfigurations) {
 		super(sensor, ID, serverSocketPort, 10, commandConfigurations);
 		this.readerID = readerID;
 		this.notifierService = notifierService;
 		this.tagHandler = new GenericSensorSessionTagHandler(readerID);
-
+		this.restPort = restPort;
+		this.mqttPort = mqttPort;
+	}
+	
+	public void startMqttService() {
+		try {
+			this.mqttclient = new MqttClient(mqttURI, mqttClientId);
+		} catch (MqttException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	/*
