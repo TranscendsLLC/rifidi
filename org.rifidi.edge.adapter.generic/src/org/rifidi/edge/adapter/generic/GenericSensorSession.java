@@ -12,14 +12,22 @@
  *******************************************************************************/
 package org.rifidi.edge.adapter.generic;
 
+import java.io.IOException;
+import java.lang.reflect.Type;
+import java.math.BigInteger;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
+import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
+import org.eclipse.paho.client.mqttv3.MqttCallback;
 import org.eclipse.paho.client.mqttv3.MqttClient;
 import org.eclipse.paho.client.mqttv3.MqttException;
+import org.eclipse.paho.client.mqttv3.MqttMessage;
 import org.rifidi.edge.api.SessionStatus;
+import org.rifidi.edge.notification.EPCGeneration2Event;
 import org.rifidi.edge.notification.NotifierService;
 import org.rifidi.edge.notification.ReadCycle;
 import org.rifidi.edge.notification.TagReadEvent;
@@ -31,12 +39,15 @@ import org.rifidi.edge.sensors.sessions.MessageParsingStrategyFactory;
 import org.rifidi.edge.sensors.sessions.MessageProcessingStrategy;
 import org.rifidi.edge.sensors.sessions.MessageProcessingStrategyFactory;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+
 /**
  * The session class for the Generic sensor.
  * 
  * @author Matthew Dean - matt@pramari.com
  */
-public class GenericSensorSession extends AbstractServerSocketSensorSession {
+public class GenericSensorSession extends AbstractServerSocketSensorSession implements MqttCallback {
 
 	/** Logger for this class. */
 	// private static final Log logger = LogFactory
@@ -58,28 +69,41 @@ public class GenericSensorSession extends AbstractServerSocketSensorSession {
 	private MqttClient mqttclient;
 	private String mqttURI;
 	private String mqttClientId;
+	private String mqttTopic;
+	
+	private GenericSensorSession session;
 	
 
 	public GenericSensorSession(AbstractSensor<?> sensor, String ID,
 			NotifierService notifierService, String readerID,
-			int serverSocketPort, int restPort, int mqttPort,
-			Set<AbstractCommandConfiguration<?>> commandConfigurations) {
+			int serverSocketPort, int restPort, int mqttPort, String mqttURI, 
+			String mqttClientId,
+			Set<AbstractCommandConfiguration<?>> commandConfigurations, GenericSensorSession session) {
 		super(sensor, ID, serverSocketPort, 10, commandConfigurations);
 		this.readerID = readerID;
 		this.notifierService = notifierService;
 		this.tagHandler = new GenericSensorSessionTagHandler(readerID);
 		this.restPort = restPort;
 		this.mqttPort = mqttPort;
+		this.mqttURI = mqttURI;
+		this.mqttClientId = mqttClientId;
+		
+		this.session = session;
 	}
 	
 	public void startMqttService() {
 		try {
-			this.mqttclient = new MqttClient(mqttURI, mqttClientId);
+			this.mqttclient = new MqttClient(this.mqttURI, this.mqttClientId);
+			this.mqttclient.connect();
+			this.mqttclient.subscribe(mqttTopic);
+			this.mqttclient.setCallback(this);
 		} catch (MqttException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
+	
+	
 
 	/*
 	 * (non-Javadoc)
@@ -114,6 +138,18 @@ public class GenericSensorSession extends AbstractServerSocketSensorSession {
 		//TODO: SEND TAGS
 		//this.template.send(this.template.getDefaultDestination(),
 		//		new ReadCycleMessageCreator(cycle));
+	}
+	
+	/**
+	 * Parses and sends the tag to the desired destination.
+	 * 
+	 * @param tag
+	 */
+	public void sendTags(Set<TagReadEvent> tres) {
+		ReadCycle cycle = new ReadCycle(tres, readerID, System
+				.currentTimeMillis());
+
+		this.getSensor().send(cycle);
 	}
 
 
@@ -235,6 +271,51 @@ public class GenericSensorSession extends AbstractServerSocketSensorSession {
 		public void processMessage(byte[] message) {
 			this.session.sendTag(message);
 		}
+	}
+
+	@Override
+	public void connectionLost(Throwable arg0) {
+		// TODO Auto-generated method stub		
+	}
+
+	@Override
+	public void deliveryComplete(IMqttDeliveryToken arg0) {
+		// TODO Auto-generated method stub		
+	}
+
+	@Override
+	public void messageArrived(String arg0, MqttMessage arg1) throws Exception {
+		String message = new String(arg1.getPayload());
+		this.session.sendTags(this.processTags(message));
+	}
+	
+	public Set<TagReadEvent> processTags(String json) throws IOException{
+		Gson gson = new Gson();
+		Type type = new TypeToken<List<GenericTagDTO>>(){}.getType();
+		List<GenericTagDTO> dtolist = gson.fromJson(json, type);
+		return dtoToTagReadEventSet(dtolist);
+	}
+	
+	private Set<TagReadEvent> dtoToTagReadEventSet(List<GenericTagDTO> dtoList) {
+		Set<TagReadEvent> retval = new HashSet<TagReadEvent>();
+		for(GenericTagDTO dto:dtoList) {
+			EPCGeneration2Event gen2event = new EPCGeneration2Event();
+			String val = dto.getId();
+			int numbits = val.length() * 4;
+			BigInteger epc;
+			try {
+				epc = new BigInteger(val, 16);
+			} catch (Exception e) {
+				throw new RuntimeException("Cannot decode ID: " + val);
+			}
+			gen2event.setEPCMemory(epc, val, numbits);
+			TagReadEvent tag = new TagReadEvent(dto.getReader(), gen2event, dto.getAntenna(), dto.getTimestamp());
+			if (dto.getRssi() != null && dto.getRssi()!="") {
+				tag.addExtraInformation("RSSI", dto.getRssi());
+			}
+			retval.add(tag);
+		}
+		return retval;
 	}
 
 }

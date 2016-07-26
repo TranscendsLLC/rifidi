@@ -33,7 +33,7 @@ public class CurrentTagsReponseMessageDTO implements Serializable {
 	 */
 	private static final long serialVersionUID = -5864386747857666489L;
 	
-	@XmlElementWrapper(required = true, name="currenttags")
+	@XmlElementWrapper(required = true, name="tags")
 	@XmlElement(name = "tag")
 	private List<CurrentTagDTO> tags;
 
