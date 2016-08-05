@@ -71,14 +71,13 @@ public class GenericSensorSession extends AbstractServerSocketSensorSession impl
 	private String mqttClientId;
 	private String mqttTopic;
 	
-	private GenericSensorSession session;
+	private GenericSensor sensor;
 	
 
 	public GenericSensorSession(AbstractSensor<?> sensor, String ID,
 			NotifierService notifierService, String readerID,
 			int serverSocketPort, int restPort, int mqttPort, String mqttURI, 
-			String mqttClientId,
-			Set<AbstractCommandConfiguration<?>> commandConfigurations, GenericSensorSession session) {
+			String mqttClientId, String mqttTopic, Set<AbstractCommandConfiguration<?>> commandConfigurations) {
 		super(sensor, ID, serverSocketPort, 10, commandConfigurations);
 		this.readerID = readerID;
 		this.notifierService = notifierService;
@@ -87,8 +86,9 @@ public class GenericSensorSession extends AbstractServerSocketSensorSession impl
 		this.mqttPort = mqttPort;
 		this.mqttURI = mqttURI;
 		this.mqttClientId = mqttClientId;
+		this.mqttTopic = mqttTopic;
 		
-		this.session = session;
+		this.sensor = (GenericSensor) sensor;
 	}
 	
 	public void startMqttService() {
@@ -286,7 +286,7 @@ public class GenericSensorSession extends AbstractServerSocketSensorSession impl
 	@Override
 	public void messageArrived(String arg0, MqttMessage arg1) throws Exception {
 		String message = new String(arg1.getPayload());
-		this.session.sendTags(this.processTags(message));
+		this.sendTags(this.processTags(message));
 	}
 	
 	public Set<TagReadEvent> processTags(String json) throws IOException{

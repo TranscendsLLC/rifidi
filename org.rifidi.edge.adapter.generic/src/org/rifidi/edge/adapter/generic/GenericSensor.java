@@ -51,8 +51,12 @@ public class GenericSensor extends AbstractSensor<GenericSensorSession> {
 	 * 
 	 */
 	private Integer port = 4567;
-	private Integer mqttPort = -1;	
 	private Integer restPort = -1;
+
+	private Integer mqttPort = -1;	
+	private String mqttURI;
+	private String mqttClientId;
+	private String mqttTopic;
 	
 	/** The ID of the session */
 	private AtomicInteger sessionID = new AtomicInteger(0);
@@ -97,6 +101,7 @@ public class GenericSensor extends AbstractSensor<GenericSensorSession> {
 			if (session.compareAndSet(null, new GenericSensorSession(this,
 					Integer.toString(sessionID), notifierService,
 					super.getID(), this.port, this.restPort, this.mqttPort,
+					this.mqttURI, this.mqttClientId, this.mqttTopic, 
 					new HashSet<AbstractCommandConfiguration<?>>()))) {
 				// TODO: remove this once we get AspectJ in here!
 				notifierService.addSessionEvent(this.getID(), Integer
@@ -122,6 +127,7 @@ public class GenericSensor extends AbstractSensor<GenericSensorSession> {
 			if (session.compareAndSet(null, new GenericSensorSession(this,
 					Integer.toString(sessionID), notifierService,
 					super.getID(), this.port, this.restPort, this.mqttPort,
+					this.mqttURI, this.mqttClientId, this.mqttTopic, 
 					new HashSet<AbstractCommandConfiguration<?>>()))) {
 				// TODO: remove this once we get AspectJ in here!
 				notifierService.addSessionEvent(this.getID(), Integer
@@ -220,23 +226,45 @@ public class GenericSensor extends AbstractSensor<GenericSensorSession> {
 		this.port = port;
 	}
 	
-	/**
-	 * @return the The name of the Serial Port.
-	 */
+	
 	@Property(displayName = "MqttPort", description = "Sets a port for incoming mqtt connections, "
 			+ "-1 to disable.", writable = true, type = PropertyType.PT_INTEGER, category = "connection"
 			+ "", defaultValue = "-1", orderValue = 2)
 	public Integer getMqttPort() {
 		return this.mqttPort;
 	}
-
-	/**
-	 * Sets the port for the reader.
-	 * 
-	 * @param port
-	 */
 	public void setMqttPort(Integer port) {
 		this.mqttPort = port;
+	}
+	
+	@Property(displayName = "MqttURI", description = "The URI for incoming MQTT tags "
+			+ "", writable = true, type = PropertyType.PT_STRING, category = "connection"
+			+ "", defaultValue = "-1", orderValue = 2)
+	public String getMqttURI() {
+		return this.mqttURI;
+	}
+	public void setMqttUri(String mqttURI) {
+		this.mqttURI = mqttURI;
+	}
+	
+	@Property(displayName = "MqttTopic", description = "The topic to listen to for MQTT tags"
+			+ "", writable = true, type = PropertyType.PT_STRING, category = "connection"
+			+ "", defaultValue = "-1", orderValue = 2)
+	public String getMqttTopic() {
+		return this.mqttTopic;
+	}
+	public void getMqttTopic(String topic) {
+		this.mqttTopic = topic;
+	}
+	
+	@Property(displayName = "MqttClientID", description = "Sets the client ID for mqtt"
+			+ "", writable = true, type = PropertyType.PT_INTEGER, category = "connection"
+			+ "", defaultValue = "-1", orderValue = 2)
+	public String getMqttClientID() {
+		return this.mqttClientId;
+	}
+	public void setMqttClientID(String mqttClientID) {
+		this.mqttClientId = mqttClientID;
 	}
 	
 	/**
