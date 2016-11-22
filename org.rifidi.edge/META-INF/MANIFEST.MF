@@ -2,14 +2,13 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Rifidi Edge Core
 Bundle-SymbolicName: org.rifidi.edge
-Bundle-Version: 5.9.4
+Bundle-Version: 6.0.0
 Bundle-Vendor: Transcends
 Import-Package: com.espertech.esper.client,
  com.espertech.esper.client.metric,
  com.espertech.esper.client.soda,
  com.espertech.esper.client.time,
  com.espertech.esper.event,
- gnu.io,
  javax.jms;version="1.1.0",
  javax.servlet,
  javax.xml.namespace,

@@ -14,11 +14,11 @@
 		<property name="jmsTemplate" ref="externalJMSTemplate" />
 	</bean>
 
-	<bean id="serialResourceService"
-		class="org.rifidi.edge.api.resources.SerialResourceService" />
+	<!-- <bean id="serialResourceService"
+		class="org.rifidi.edge.api.resources.SerialResourceService" /> -->
 
-	<osgi:service ref="serialResourceService"
-		interface="org.rifidi.edge.api.resources.SerialResourceService" />
+	<!-- <osgi:service ref="serialResourceService"
+		interface="org.rifidi.edge.api.resources.SerialResourceService" /> -->
 	<osgi:service ref="dbResourceService"
 		interface="org.rifidi.edge.api.resources.DBResourceService" />
 	<osgi:service ref="JMSResourceServce"

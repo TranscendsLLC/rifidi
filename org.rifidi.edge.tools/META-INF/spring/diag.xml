@@ -18,11 +18,11 @@
 		<constructor-arg index="1" value="GPIOSimulator" />
 	</bean>
 
-	<bean id="SerialApp" class="org.rifidi.edge.tools.diagnostics.SerialApp">
+	<!-- <bean id="SerialApp" class="org.rifidi.edge.tools.diagnostics.SerialApp">
 		<constructor-arg index="0" value="Diagnostic" />
 		<constructor-arg index="1" value="Serial" />
 	</bean>
-	<osgi:service ref="SerialApp" interface="org.rifidi.edge.api.RifidiApp" />
+	<osgi:service ref="SerialApp" interface="org.rifidi.edge.api.RifidiApp" /> -->
 
 	<bean id="TagApp" class="org.rifidi.edge.tools.diagnostics.TagApp">
 		<constructor-arg index="0" value="Diagnostic" />
