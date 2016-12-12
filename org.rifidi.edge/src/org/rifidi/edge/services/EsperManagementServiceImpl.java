@@ -14,6 +14,8 @@ package org.rifidi.edge.services;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.rifidi.edge.notification.AppStartedEvent;
+import org.rifidi.edge.notification.AppStoppedEvent;
 import org.rifidi.edge.notification.BarcodeTagEvent;
 import org.rifidi.edge.notification.DatacontainerEvent;
 import org.rifidi.edge.notification.EPCGeneration1Event;
@@ -49,6 +51,8 @@ public class EsperManagementServiceImpl implements EsperManagementService {
 	public EsperManagementServiceImpl() {
 		logger.info("EsperManagementServiceImpl created.");
 		config = new Configuration();
+		config.addEventType("AppStartedEvent", AppStartedEvent.class);
+		config.addEventType("AppStoppedEvent", AppStoppedEvent.class);
 		config.addEventType("StopEvent", StopEvent.class);
 		config.addEventType("StartEvent", StartEvent.class);
 		config.addEventType("DestroyEvent", DestroyEvent.class);

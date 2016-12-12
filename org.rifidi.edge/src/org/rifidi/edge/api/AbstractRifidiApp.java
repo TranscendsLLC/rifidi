@@ -24,6 +24,8 @@ import org.eclipse.osgi.framework.console.CommandProvider;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceRegistration;
 import org.rifidi.edge.api.service.tagmonitor.ReadZone;
+import org.rifidi.edge.notification.AppStartedEvent;
+import org.rifidi.edge.notification.AppStoppedEvent;
 import org.rifidi.edge.services.EsperManagementService;
 import org.rifidi.edge.util.RifidiEdgeHelper;
 import org.springframework.osgi.context.BundleContextAware;
@@ -40,8 +42,7 @@ import com.espertech.esper.client.StatementAwareUpdateListener;
  * @author Kyle Neumeier - kyle@pramari.com
  * 
  */
-public abstract class AbstractRifidiApp implements RifidiApp,
-		BundleContextAware {
+public abstract class AbstractRifidiApp implements RifidiApp, BundleContextAware {
 
 	/** All the esper statements that have been defined so far */
 	private final Set<EPStatement> statements = new CopyOnWriteArraySet<EPStatement>();
@@ -233,6 +234,10 @@ public abstract class AbstractRifidiApp implements RifidiApp,
 			readZones = RifidiEdgeHelper.getReadZones(getGroup());
 			
 			_start();
+			AppStartedEvent event = new AppStartedEvent();
+			event.setGroup(this.getGroup());
+			event.setName(this.getName());
+			this.getEPRuntime().sendEvent(event);
 		} catch (Exception e) {
 			logger.warn("Cannot start " + this + ". ", e);
 			return;
@@ -277,6 +282,10 @@ public abstract class AbstractRifidiApp implements RifidiApp,
 					commandProviderService.unregister();
 				}
 				_stop();
+				AppStoppedEvent event = new AppStoppedEvent();
+				event.setGroup(this.getGroup());
+				event.setName(this.getName());
+				this.getEPRuntime().sendEvent(event);
 			} catch (Exception e) {
 
 			}
