@@ -73,3 +73,6 @@ edge.log*
 
 # mqtt
 moquette_store.mapdb*
+
+# deb
+*.deb
