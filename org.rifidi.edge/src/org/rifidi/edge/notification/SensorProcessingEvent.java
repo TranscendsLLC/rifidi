@@ -16,40 +16,39 @@ import java.util.Date;
 
 
 /**
- * This class represents an event when a sensor becomes disconnected.
+ * This class represents an event when a sensor becomes connected.
  * 
  * @author Kyle Neumeier - kyle@pramari.com
- * 
+ * @author Matthew Dean - matt@transcends.co
  */
-public class SensorDisconnectedEvent extends SensorStatusEvent {
+public class SensorProcessingEvent extends SensorStatusEvent {
 
-	/** Serial Version UID */
-	private static final long serialVersionUID = 1L;
-	/** The ID of the session that was disconnected */
+	private static final long serialVersionUID = 7549924222357637889L;
+	/** The ID of the session that went up */
 	private final String sessionID;
-	/** The string to display in the toString() method */
+	/** The string to display in toString() */
 	private final String toString;
 
 	/**
 	 * Constructor
 	 * 
 	 * @param sensorID
-	 *            The ID of the sensor became disconnected
+	 *            The sensor that was connected
 	 * @param timestamp
-	 *            The timestamp of the event
+	 *            The time the sensor was connected
 	 * @param sessionID
-	 *            The ID of the session that became disconnected.
+	 *            The session of the sensor that was connected.
 	 */
-	public SensorDisconnectedEvent(String sensorID, Long timestamp,
+	public SensorProcessingEvent(String sensorID, Long timestamp,
 			String sessionID) {
 		super(sensorID, timestamp);
 		this.sessionID = sessionID;
-		toString = "SENSOR DISCONNECTED EVENT: " + sensorID + ":" + sessionID
+		this.toString = "SENSOR CONNECTED EVENT: " + sensorID + ":" + sessionID
 				+ " at " + dateFormat.format(new Date(timestamp));
 	}
 
 	/**
-	 * @return the ID of the session that became disconnected.
+	 * @return the ID of the session that was connected.
 	 */
 	public String getSessionID() {
 		return sessionID;
@@ -64,4 +63,5 @@ public class SensorDisconnectedEvent extends SensorStatusEvent {
 	public String toString() {
 		return toString;
 	}
+
 }

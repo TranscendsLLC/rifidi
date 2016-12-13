@@ -34,8 +34,10 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.rifidi.edge.api.CommandDTO;
 import org.rifidi.edge.api.SessionStatus;
-import org.rifidi.edge.notification.SensorConnectedEvent;
-import org.rifidi.edge.notification.SensorDisconnectedEvent;
+import org.rifidi.edge.notification.SensorProcessingEvent;
+import org.rifidi.edge.notification.SensorClosedEvent;
+import org.rifidi.edge.notification.SensorConnectingEvent;
+import org.rifidi.edge.notification.SensorLoggingInEvent;
 import org.rifidi.edge.sensors.AbstractCommandConfiguration;
 import org.rifidi.edge.sensors.AbstractSensor;
 import org.rifidi.edge.sensors.Command;
@@ -397,14 +399,24 @@ public abstract class AbstractSensorSession extends SensorSession {
 		SessionStatus oldStatus = this.status;
 		this.status = status;
 		if (status == SessionStatus.PROCESSING && oldStatus != SessionStatus.PROCESSING) {
-			SensorConnectedEvent connectedEvent = new SensorConnectedEvent(this
+			SensorProcessingEvent processingEvent = new SensorProcessingEvent(this
 					.getSensor().getID(), System.currentTimeMillis(), this.getID());
-			this.getSensor().sendEvent(connectedEvent);
+			this.getSensor().sendEvent(processingEvent);
 		}
 		if (oldStatus == SessionStatus.PROCESSING && status != SessionStatus.PROCESSING) {
-			SensorDisconnectedEvent disconnectedEvent = new SensorDisconnectedEvent(
+			SensorClosedEvent closedEvent = new SensorClosedEvent(
 					this.getSensor().getID(), System.currentTimeMillis(), this.getID());
-			this.getSensor().sendEvent(disconnectedEvent);
+			this.getSensor().sendEvent(closedEvent);
+		}
+		if (oldStatus != SessionStatus.CONNECTING && status == SessionStatus.CONNECTING) {
+			SensorConnectingEvent connectingEvent = new SensorConnectingEvent(
+					this.getSensor().getID(), System.currentTimeMillis(), this.getID());
+			this.getSensor().sendEvent(connectingEvent);
+		}
+		if (oldStatus != SessionStatus.LOGGINGIN && status == SessionStatus.LOGGINGIN) {
+			SensorLoggingInEvent loggingInEvent = new SensorLoggingInEvent(
+					this.getSensor().getID(), System.currentTimeMillis(), this.getID());
+			this.getSensor().sendEvent(loggingInEvent);
 		}
 	}
 

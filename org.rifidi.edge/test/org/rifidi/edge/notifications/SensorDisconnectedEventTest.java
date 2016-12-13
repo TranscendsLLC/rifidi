@@ -55,7 +55,7 @@ public class SensorDisconnectedEventTest {
 	}
 
 	/**
-	 * Test method for {@link org.rifidi.edge.notification.SensorDisconnectedEvent#SensorDisconnectedEvent(java.lang.String, java.lang.Long, java.lang.String)}.
+	 * Test method for {@link org.rifidi.edge.notification.SensorClosedEvent#SensorDisconnectedEvent(java.lang.String, java.lang.Long, java.lang.String)}.
 	 */
 	@Test
 	public void testSensorDisconnectedEvent() {
@@ -63,7 +63,7 @@ public class SensorDisconnectedEventTest {
 	}
 
 	/**
-	 * Test method for {@link org.rifidi.edge.notification.SensorDisconnectedEvent#getSessionID()}.
+	 * Test method for {@link org.rifidi.edge.notification.SensorClosedEvent#getSessionID()}.
 	 */
 	@Test
 	public void testGetSessionID() {
@@ -71,7 +71,7 @@ public class SensorDisconnectedEventTest {
 	}
 
 	/**
-	 * Test method for {@link org.rifidi.edge.notification.SensorDisconnectedEvent#toString()}.
+	 * Test method for {@link org.rifidi.edge.notification.SensorClosedEvent#toString()}.
 	 */
 	@Test
 	public void testToString() {
