@@ -62,7 +62,7 @@
 	<osgi:service ref="statsapp" interface="org.rifidi.edge.api.RifidiApp" />
 	
 	<bean id="mqttnotifierapp" class="org.rifidi.edge.tools.diagnostics.MqttNotifierApp">
-		<constructor-arg index="0" value="MqttNotifier" />
+		<constructor-arg index="0" value="Monitoring" />
 		<constructor-arg index="1" value="MqttNotifierApp" />
 	</bean>
 	<osgi:service ref="mqttnotifierapp" interface="org.rifidi.edge.api.RifidiApp" />

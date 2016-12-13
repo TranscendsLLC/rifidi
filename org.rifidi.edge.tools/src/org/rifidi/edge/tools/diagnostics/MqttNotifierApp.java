@@ -27,19 +27,21 @@ import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
 import org.rifidi.edge.api.AbstractRifidiApp;
 import org.rifidi.edge.notification.AppStartedEvent;
 import org.rifidi.edge.notification.AppStoppedEvent;
-import org.rifidi.edge.notification.SensorConnectedEvent;
-import org.rifidi.edge.notification.SensorDisconnectedEvent;
+import org.rifidi.edge.notification.SensorClosedEvent;
+import org.rifidi.edge.notification.SensorConnectingEvent;
+import org.rifidi.edge.notification.SensorLoggingInEvent;
+import org.rifidi.edge.notification.SensorProcessingEvent;
 import org.rifidi.edge.tools.notification.AppStartedDTO;
 import org.rifidi.edge.tools.notification.AppStoppedDTO;
-import org.rifidi.edge.tools.notification.SensorProcessingDTO;
 import org.rifidi.edge.tools.notification.SensorClosedDTO;
+import org.rifidi.edge.tools.notification.SensorConnectingDTO;
+import org.rifidi.edge.tools.notification.SensorLoggingInDTO;
+import org.rifidi.edge.tools.notification.SensorProcessingDTO;
 
 import com.espertech.esper.client.EPServiceProvider;
 import com.espertech.esper.client.EPStatement;
 import com.espertech.esper.client.EventBean;
 import com.espertech.esper.client.StatementAwareUpdateListener;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 
 /**
  * 
@@ -161,12 +163,12 @@ public class MqttNotifierApp extends AbstractRifidiApp {
 		final MqttClient mqttClient = this.mqttClient;
 		final int mqttQos = this.mqttQos;
 
-		addStatement("select * from SensorConnectedEvent", new StatementAwareUpdateListener() {
+		addStatement("select * from SensorProcessingEvent", new StatementAwareUpdateListener() {
 			@Override
 			public void update(EventBean[] arg0, EventBean[] arg1, EPStatement arg2, EPServiceProvider arg3) {
 				if (arg0 != null) {
 					for (EventBean b : arg0) {
-						SensorConnectedEvent sce = (SensorConnectedEvent) b.getUnderlying();
+						SensorProcessingEvent sce = (SensorProcessingEvent) b.getUnderlying();
 						// send to mqtt
 						SensorProcessingDTO sc = new SensorProcessingDTO();
 						sc.setIp(ip);
@@ -178,14 +180,52 @@ public class MqttNotifierApp extends AbstractRifidiApp {
 			}
 		});
 
-		addStatement("select * from SensorDisconnectedEvent", new StatementAwareUpdateListener() {
+		addStatement("select * from SensorClosedEvent", new StatementAwareUpdateListener() {
 			@Override
 			public void update(EventBean[] arg0, EventBean[] arg1, EPStatement arg2, EPServiceProvider arg3) {
 				if (arg0 != null) {
 					for (EventBean b : arg0) {
-						SensorDisconnectedEvent sde = (SensorDisconnectedEvent) b.getUnderlying();
+						SensorClosedEvent sde = (SensorClosedEvent) b.getUnderlying();
 						// send to mqtt
 						SensorClosedDTO sd = new SensorClosedDTO();
+						sd.setIp(ip);
+						sd.setSensor(sde.getSensorID());
+						sd.setTimestamp(System.currentTimeMillis());
+						postMqttMesssage(mqttClient, mqttTopic, mqttQos, sd);
+						
+					}
+				}
+
+			}
+		});
+		
+		addStatement("select * from SensorConnectingEvent", new StatementAwareUpdateListener() {
+			@Override
+			public void update(EventBean[] arg0, EventBean[] arg1, EPStatement arg2, EPServiceProvider arg3) {
+				if (arg0 != null) {
+					for (EventBean b : arg0) {
+						SensorConnectingEvent sde = (SensorConnectingEvent) b.getUnderlying();
+						// send to mqtt
+						SensorConnectingDTO sd = new SensorConnectingDTO();
+						sd.setIp(ip);
+						sd.setSensor(sde.getSensorID());
+						sd.setTimestamp(System.currentTimeMillis());
+						postMqttMesssage(mqttClient, mqttTopic, mqttQos, sd);
+						
+					}
+				}
+
+			}
+		});
+		
+		addStatement("select * from SensorLoggingInEvent", new StatementAwareUpdateListener() {
+			@Override
+			public void update(EventBean[] arg0, EventBean[] arg1, EPStatement arg2, EPServiceProvider arg3) {
+				if (arg0 != null) {
+					for (EventBean b : arg0) {
+						SensorLoggingInEvent sde = (SensorLoggingInEvent) b.getUnderlying();
+						// send to mqtt
+						SensorLoggingInDTO sd = new SensorLoggingInDTO();
 						sd.setIp(ip);
 						sd.setSensor(sde.getSensorID());
 						sd.setTimestamp(System.currentTimeMillis());
