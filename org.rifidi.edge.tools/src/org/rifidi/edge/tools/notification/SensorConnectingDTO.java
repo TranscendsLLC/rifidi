@@ -15,7 +15,7 @@ import javax.xml.bind.annotation.XmlRootElement;
  *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlRootElement(name = "sensorconnectingdto")
+@XmlRootElement(name = "sensorconnecting")
 public class SensorConnectingDTO implements Serializable {
 	
 	private static final long serialVersionUID = 3832994746764208962L;
