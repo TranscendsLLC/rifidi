@@ -61,6 +61,14 @@ public class MqttNotifierApp extends AbstractRifidiApp {
 	private String mqttBroker;
 	private String mqttClientId;
 	
+	private Boolean mqttDisable;
+	private Boolean processingDisable;
+	private Boolean connectingDisable;
+	private Boolean logginginDisable;
+	private Boolean closedDisable;
+	private Boolean appStartedDisable;
+	private Boolean appStoppedDisable;
+	
 
 
 	/** Quality of service used to send the message **/
@@ -137,6 +145,13 @@ public class MqttNotifierApp extends AbstractRifidiApp {
 		this.mqttBroker = getProperty("mqttnotifier.broker", "tcp://localhost:1883");
 		this.mqttClientId = getProperty("mqttnotifier.clientid", "MyAppRifidiServicesId");
 		this.mqttTopic = getProperty("mqttnotifier.topic", "notifications");
+		this.mqttDisable = Boolean.parseBoolean(getProperty("mqttnotifier.global.disable", "false"));
+		this.processingDisable = Boolean.parseBoolean(getProperty("mqttnotifier.processing.disable", "false"));
+		this.connectingDisable = Boolean.parseBoolean(getProperty("mqttnotifier.connecting.disable", "false"));
+		this.logginginDisable = Boolean.parseBoolean(getProperty("mqttnotifier.loggingin.disable", "false"));
+		this.closedDisable = Boolean.parseBoolean(getProperty("mqttnotifier.closed.disable", "false"));
+		this.appStartedDisable = Boolean.parseBoolean(getProperty("mqttnotifier.app.started.disable", "false"));
+		this.appStoppedDisable = Boolean.parseBoolean(getProperty("mqttnotifier.app.stopped.disable", "false"));
 		
 		MemoryPersistence persistence = new MemoryPersistence();
 
@@ -166,7 +181,7 @@ public class MqttNotifierApp extends AbstractRifidiApp {
 		addStatement("select * from SensorProcessingEvent", new StatementAwareUpdateListener() {
 			@Override
 			public void update(EventBean[] arg0, EventBean[] arg1, EPStatement arg2, EPServiceProvider arg3) {
-				if (arg0 != null) {
+				if (arg0 != null && !mqttDisable && !processingDisable) {
 					for (EventBean b : arg0) {
 						SensorProcessingEvent sce = (SensorProcessingEvent) b.getUnderlying();
 						// send to mqtt
@@ -183,7 +198,7 @@ public class MqttNotifierApp extends AbstractRifidiApp {
 		addStatement("select * from SensorClosedEvent", new StatementAwareUpdateListener() {
 			@Override
 			public void update(EventBean[] arg0, EventBean[] arg1, EPStatement arg2, EPServiceProvider arg3) {
-				if (arg0 != null) {
+				if (arg0 != null && !mqttDisable && !closedDisable) {
 					for (EventBean b : arg0) {
 						SensorClosedEvent sde = (SensorClosedEvent) b.getUnderlying();
 						// send to mqtt
@@ -202,7 +217,7 @@ public class MqttNotifierApp extends AbstractRifidiApp {
 		addStatement("select * from SensorConnectingEvent", new StatementAwareUpdateListener() {
 			@Override
 			public void update(EventBean[] arg0, EventBean[] arg1, EPStatement arg2, EPServiceProvider arg3) {
-				if (arg0 != null) {
+				if (arg0 != null && !mqttDisable && !connectingDisable) {
 					for (EventBean b : arg0) {
 						SensorConnectingEvent sde = (SensorConnectingEvent) b.getUnderlying();
 						// send to mqtt
@@ -221,7 +236,7 @@ public class MqttNotifierApp extends AbstractRifidiApp {
 		addStatement("select * from SensorLoggingInEvent", new StatementAwareUpdateListener() {
 			@Override
 			public void update(EventBean[] arg0, EventBean[] arg1, EPStatement arg2, EPServiceProvider arg3) {
-				if (arg0 != null) {
+				if (arg0 != null && !mqttDisable && !logginginDisable) {
 					for (EventBean b : arg0) {
 						SensorLoggingInEvent sde = (SensorLoggingInEvent) b.getUnderlying();
 						// send to mqtt
@@ -229,8 +244,7 @@ public class MqttNotifierApp extends AbstractRifidiApp {
 						sd.setIp(ip);
 						sd.setSensor(sde.getSensorID());
 						sd.setTimestamp(System.currentTimeMillis());
-						postMqttMesssage(mqttClient, mqttTopic, mqttQos, sd);
-						
+						postMqttMesssage(mqttClient, mqttTopic, mqttQos, sd);						
 					}
 				}
 
@@ -240,7 +254,7 @@ public class MqttNotifierApp extends AbstractRifidiApp {
 		addStatement("select * from AppStartedEvent", new StatementAwareUpdateListener() {
 			@Override
 			public void update(EventBean[] arg0, EventBean[] arg1, EPStatement arg2, EPServiceProvider arg3) {
-				if (arg0 != null) {
+				if (arg0 != null && !mqttDisable && !appStartedDisable) {
 					for (EventBean b : arg0) {
 						AppStartedEvent ase = (AppStartedEvent) b.getUnderlying();
 						// send to mqtt
@@ -259,7 +273,7 @@ public class MqttNotifierApp extends AbstractRifidiApp {
 		addStatement("select * from AppStoppedEvent", new StatementAwareUpdateListener() {
 			@Override
 			public void update(EventBean[] arg0, EventBean[] arg1, EPStatement arg2, EPServiceProvider arg3) {
-				if (arg0 != null) {
+				if (arg0 != null && !mqttDisable && !appStoppedDisable) {
 					for (EventBean b : arg0) {
 						AppStoppedEvent ase = (AppStoppedEvent) b.getUnderlying();
 						// send to mqtt
@@ -293,31 +307,31 @@ public class MqttNotifierApp extends AbstractRifidiApp {
 			logger.debug("Publishing message: " + content);
 			MqttMessage message = new MqttMessage(content.getBytes());
 			message.setQos(mqttQos);
+			synchronized (mqttClient) {
+				try {
+					mqttClient.connect();
+					logger.debug("Connected to broker: " + mqttClient.getServerURI());
+				} catch (MqttException mEx) {
+					logger.error("Error connecting to broker", mEx);
+					throw new RuntimeException(mEx);
+				}
 
-			try {
-				mqttClient.connect();
-				logger.debug("Connected to broker: " + mqttClient.getServerURI());
-			} catch (MqttException mEx) {
-				logger.error("Error connecting to broker", mEx);
-				throw new RuntimeException(mEx);
+				try {
+					mqttClient.publish(mqttTopic, message);
+					logger.debug("Message published");
+				} catch (MqttException mEx) {
+					logger.error("Error publishing to queue", mEx);
+					throw new RuntimeException(mEx);
+				}
+
+				try {
+					mqttClient.disconnect();
+					logger.debug("mqttClient disconnected.");
+				} catch (MqttException mEx) {
+					logger.error("Error trying to disconnect mqttClient", mEx);
+					throw new RuntimeException(mEx);
+				}
 			}
-
-			try {
-				mqttClient.publish(mqttTopic, message);
-				logger.debug("Message published");
-			} catch (MqttException mEx) {
-				logger.error("Error publishing to queue", mEx);
-				throw new RuntimeException(mEx);
-			}
-
-			try {
-				mqttClient.disconnect();
-				logger.debug("mqttClient disconnected.");
-			} catch (MqttException mEx) {
-				logger.error("Error trying to disconnect mqttClient", mEx);
-				throw new RuntimeException(mEx);
-			}
-
 		} catch (JAXBException jEx) {
 			logger.error("Error publishing to queue", jEx);
 			throw new RuntimeException(jEx);
