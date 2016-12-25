@@ -1591,6 +1591,7 @@ public class SensorManagerServiceRestletImpl extends Application {
 					setResponseHeaders(request, response);
 
 					AbstractSensor<?> sensor = readerDAO.getReaderByID((String) request.getAttributes().get("readerID"));
+					
 
 					if (sensor == null) {
 						throw new Exception("ReaderID is missing or invalid");
@@ -1600,12 +1601,21 @@ public class SensorManagerServiceRestletImpl extends Application {
 					String llrpResponse = "";
 					if (sessionMap != null && sessionMap.containsKey(request.getAttributes().get("sessionID"))) {
 						LLRPReaderSession session = (LLRPReaderSession) sessionMap.get(request.getAttributes().get("sessionID"));
-
+						Boolean sendonly = false;
+						try {
+							sendonly = Boolean.parseBoolean((String) request.getAttributes().get("sendonly"));
+						} catch (Exception e) {
+							// Do nothing
+						}
+						
 						SAXBuilder sb = new SAXBuilder();
-
+						
 						String strEntityAsText = request.getEntityAsText();
 						Document doc = sb.build(new StringReader(strEntityAsText));
-						llrpResponse = session.sendLLRPMessage(doc);
+						llrpResponse = session.sendLLRPMessage(doc, sendonly);
+						if (llrpResponse == null) {
+							llrpResponse = self.generateReturnString(self.generateSuccessMessage());
+						}
 						response.setEntity(llrpResponse, MediaType.TEXT_XML);
 					} else {
 						throw new Exception("SessionID is missing or invalid");
@@ -2321,6 +2331,7 @@ public class SensorManagerServiceRestletImpl extends Application {
 		router.attach("/llrpencode/{readerID}/{sessionID}/{tag}", llrpEncode);
 
 		router.attach("/llrpmessage/{readerID}/{sessionID}", llrpMessage);
+		router.attach("/llrpmessage/{readerID}/{sessionID}/{sendonly}", llrpMessage);
 
 		router.attach("/ping", ping);
 
