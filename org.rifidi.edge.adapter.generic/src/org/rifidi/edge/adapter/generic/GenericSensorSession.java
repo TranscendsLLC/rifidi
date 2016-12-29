@@ -61,9 +61,6 @@ public class GenericSensorSession extends AbstractServerSocketSensorSession impl
 	/** The ID for the reader. */
 	private String readerID = null;
 	
-	//rest
-	private Integer restPort;
-	
 	//mqtt
 	private Integer mqttPort;
 	private MqttClient mqttclient;
@@ -76,13 +73,12 @@ public class GenericSensorSession extends AbstractServerSocketSensorSession impl
 
 	public GenericSensorSession(AbstractSensor<?> sensor, String ID,
 			NotifierService notifierService, String readerID,
-			int serverSocketPort, int restPort, int mqttPort, String mqttURI, 
+			int serverSocketPort, int mqttPort, String mqttURI, 
 			String mqttClientId, String mqttTopic, Set<AbstractCommandConfiguration<?>> commandConfigurations) {
 		super(sensor, ID, serverSocketPort, 10, commandConfigurations);
 		this.readerID = readerID;
 		this.notifierService = notifierService;
 		this.tagHandler = new GenericSensorSessionTagHandler(readerID);
-		this.restPort = restPort;
 		this.mqttPort = mqttPort;
 		this.mqttURI = mqttURI;
 		this.mqttClientId = mqttClientId;
