@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
@@ -57,12 +58,30 @@ public class RestletServerAle extends Restlet {
 
 	@Autowired
 	private ALELRServicePortType alelrServicePortType;
+	
+	private static Boolean isWindows = null;
 
 	/**
 	 * 
 	 */
 	public RestletServerAle() {
 
+	}
+	
+	public static boolean IsWindows() {
+		if (isWindows == null) {
+			String OS = System.getProperty("os.name", "generic").toLowerCase(Locale.ENGLISH);
+			if ((OS.indexOf("mac") >= 0) || (OS.indexOf("darwin") >= 0)) {
+				isWindows = false;
+			} else if (OS.indexOf("win") >= 0) {
+				isWindows = true;
+			} else if (OS.indexOf("nux") >= 0) {
+				isWindows = false;
+			} else {
+				isWindows = false;
+			}
+		}
+		return isWindows;
 	}
 
 	@PostConstruct
@@ -142,6 +161,11 @@ public class RestletServerAle extends Restlet {
 				// Publish alelr service
 				logger.info("Starting alelr service on port: " + port);
 				Endpoint alelrEndPoint = Endpoint.create(HTTPBinding.HTTP_BINDING,alelrServicePortType);
+				if (IsWindows()) {
+					alelrEndPoint = Endpoint.create(alelrServicePortType);
+				} else {
+					alelrEndPoint = Endpoint.create(HTTPBinding.HTTP_BINDING,alelrServicePortType);
+				}
 				alelrEndPoint.setMetadata(metadataAlelr);
 				// alelrEndPoint.setProperties(properties);
 				URI uriAlelr = URI.create("http://localhost:" + port + "/alelrservice");
@@ -149,7 +173,12 @@ public class RestletServerAle extends Restlet {
 
 				// Publish ale service
 				logger.info("Starting ale service on port: " + port);
-				Endpoint aleEndPoint = Endpoint.create(HTTPBinding.HTTP_BINDING,aleServicePortType);
+				Endpoint aleEndPoint;
+				if (IsWindows()) {
+					aleEndPoint = Endpoint.create(aleServicePortType);
+				} else {
+					aleEndPoint = Endpoint.create(HTTPBinding.HTTP_BINDING,aleServicePortType);
+				}
 				aleEndPoint.setMetadata(metadataAle);
 				URI uriAle = URI.create("http://localhost:" + port + "/aleservice");
 				aleEndPoint.publish(uriAle.toString());
