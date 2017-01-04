@@ -3,6 +3,7 @@ package org.rifidi.edge.adapter.generic;
 import java.io.Serializable;
 import java.io.StringWriter;
 import java.io.Writer;
+import java.net.URLDecoder;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Marshaller;
@@ -19,15 +20,22 @@ import org.restlet.data.Reference;
 import org.restlet.routing.Router;
 import org.restlet.util.Series;
 import org.rifidi.edge.adapter.generic.dtos.PingDTO;
+import org.rifidi.edge.adapter.generic.dtos.RestResponseMessageDTO;
+
 
 public class GenericRestletApplication extends Application {
 
 	/** Logger */
 	private final Log logger = LogFactory.getLog(getClass());
 	private Boolean debugmode;
+	private GenericSensorSession session;
+	
+	public static final String SUCCESS_MESSAGE = "Success";
+	public static final String FAIL_MESSAGE = "Fail";
 
-	public GenericRestletApplication(Boolean debugmode) {
+	public GenericRestletApplication(GenericSensorSession session, Boolean debugmode) {
 		this.debugmode = debugmode;
+		this.session = session;
 	}
 
 	/*
@@ -54,11 +62,57 @@ public class GenericRestletApplication extends Application {
 				response.setEntity(self.generateReturnString(ping), MediaType.TEXT_XML);
 			}
 		};
+		
+		Restlet tags = new Restlet() {
+			@Override
+			public void handle(Request request, Response response) {
+				String items = null;
+				try {
+					if (request.getEntityAsText() != null) {
+						items = URLDecoder.decode(request.getEntityAsText(), "UTF-8");
+					} else if (request.getAttributes().get("tags") != null) {
+						items = URLDecoder.decode((String) request.getAttributes().get("tags"), "UTF-8");
+					}
+				} catch (Exception e) {
+					response.setEntity(self.generateReturnString(self.generateErrorMessage(e.getMessage(), null)), MediaType.TEXT_XML);
+					return;
+				}
+				
+				if (items != null && items != "") {
+					try {
+						self.session.sendTags(self.session.processTags(items));
+					} catch (Exception e) {
+						response.setEntity(self.generateReturnString(self.generateErrorMessage(e.getMessage(), null)), MediaType.TEXT_XML);
+						if(self.debugmode) {
+							logger.info("Exception while processing tags: " + e.getMessage());
+							e.printStackTrace();
+						}
+					}
+				}
+				setResponseHeaders(request, response);
+			}
+		};
 
 		Router router = new Router(getContext().createChildContext());
 		router.attach("/ping", ping);
+		router.attach("/generic/tags", tags);
+		router.attach("/generic/tags/{tags}", tags);
 
 		return router;
+	}
+	
+	public RestResponseMessageDTO generateSuccessMessage() {
+		RestResponseMessageDTO message = new RestResponseMessageDTO();
+		message.setMessage(SUCCESS_MESSAGE);
+		return message;
+	}
+
+	public RestResponseMessageDTO generateErrorMessage(String description, String currentState) {
+		RestResponseMessageDTO message = new RestResponseMessageDTO();
+		message.setMessage(FAIL_MESSAGE);
+		message.setDescription(description);
+		message.setState(currentState);
+		return message;
 	}
 
 	private void setResponseHeaders(Request request, Response response) {
@@ -120,7 +174,9 @@ public class GenericRestletApplication extends Application {
 			writer.close();
 			return content;
 		} catch (Exception e) {
-			e.printStackTrace();
+			if(debugmode) {
+				e.printStackTrace();
+			}
 			return e.toString();
 		}
 	}

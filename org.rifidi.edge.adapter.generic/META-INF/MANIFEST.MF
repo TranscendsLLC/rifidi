@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: General
 Bundle-SymbolicName: org.rifidi.edge.adapter.generic
-Bundle-Version: 1.0.4
+Bundle-Version: 1.1.4
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Require-Bundle: org.rifidi.edge;bundle-version="5.4.0",
  org.rifidi.edge.api;bundle-version="1.3.0",
@@ -16,9 +16,11 @@ Import-Package: com.espertech.esper.client,
  org.apache.commons.logging;version="1.1.1",
  org.eclipse.osgi.framework.console;version="1.0.0",
  org.eclipse.paho.client.mqttv3,
+ org.json;version="20160212.0.0",
  org.osgi.framework;version="1.3.0",
  org.restlet,
  org.restlet.data,
+ org.restlet.ext.json,
  org.restlet.representation,
  org.restlet.routing,
  org.restlet.util,

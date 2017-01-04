@@ -22,7 +22,10 @@ public class GenericRestServer {
 	/** Logger */
 	private final Log logger = LogFactory.getLog(getClass());
 
-	Server restServer = null;
+	//Server restServer = null;
+	
+	Component restServer = null;
+	Component sslRestServer = null;
 
 	/**
 	 * 
@@ -32,24 +35,24 @@ public class GenericRestServer {
 		try {
 
 			logger.info("RestletServer called");
-			boolean restletEnabled = Boolean.parseBoolean(System.getProperty("org.rifidi.restlet.enabled"));
+			boolean restletEnabled = port>0;
 			if (restletEnabled) {
 				logger.info("Starting restlet server on port: " + port);
-				Component component = new Component();
-				Server jettyServer = new Server(component.getContext().createChildContext(), Protocol.HTTP, port);
+				restServer = new Component();
+				Server jettyServer = new Server(restServer.getContext().createChildContext(), Protocol.HTTP, port);
 				Series<Parameter> parameters = jettyServer.getContext().getParameters();
 
 				// jetty parameters
 				addArguments(parameters);
-				component.getServers().add(jettyServer);
-				component.getClients().add(Protocol.FILE);
+				restServer.getServers().add(jettyServer);
+				restServer.getClients().add(Protocol.FILE);
 
-				component.getDefaultHost().attach(app);
-				component.start();
+				restServer.getDefaultHost().attach(app);
+				restServer.start();
 			}
 
 			// Check if ssl is enabled
-			boolean sslEnabled = Boolean.parseBoolean(System.getProperty("org.rifidi.restlet.ssl.enabled"));
+			boolean sslEnabled = sslPort>0;
 
 			if (sslEnabled) {
 				logger.info("Restlet SSL Server enabled");
@@ -64,9 +67,8 @@ public class GenericRestServer {
 
 				logger.info("Starting ssl restlet server on port: " + sslPort);
 
-				Component sslComponent = new Component();
-				Server sjettyServer = new Server(sslComponent.getContext().createChildContext(), Protocol.HTTPS,
-						sslPort);
+				sslRestServer = new Component();
+				Server sjettyServer = new Server(sslRestServer.getContext().createChildContext(), Protocol.HTTPS, sslPort);
 
 				sjettyServer.getProtocols().add(Protocol.FILE);
 
@@ -80,10 +82,10 @@ public class GenericRestServer {
 				// jetty parameters
 				addArguments(parameters);
 
-				sslComponent.getServers().add(sjettyServer);
+				sslRestServer.getServers().add(sjettyServer);
 
-				sslComponent.getDefaultHost().attach(app);
-				sslComponent.start();
+				sslRestServer.getDefaultHost().attach(app);
+				sslRestServer.start();
 			}
 
 		} catch (Exception e) {
@@ -107,17 +109,18 @@ public class GenericRestServer {
 		}
 	}
 
-	public void startServer() {
-		try {
-			restServer.start();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
-
+//	public void startServer() {
+//		try {
+//			restServer.start();
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//		}
+//	}
+	
 	public void stopServer() {
 		try {
 			restServer.stop();
+			sslRestServer.stop();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

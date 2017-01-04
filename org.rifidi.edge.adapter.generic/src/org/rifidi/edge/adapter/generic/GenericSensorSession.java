@@ -21,11 +21,14 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
 import org.eclipse.paho.client.mqttv3.MqttCallback;
 import org.eclipse.paho.client.mqttv3.MqttClient;
 import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
+import org.rifidi.edge.adapter.generic.dtos.GenericTagDTO;
 import org.rifidi.edge.api.SessionStatus;
 import org.rifidi.edge.notification.EPCGeneration2Event;
 import org.rifidi.edge.notification.NotifierService;
@@ -49,9 +52,8 @@ import com.google.gson.reflect.TypeToken;
  */
 public class GenericSensorSession extends AbstractServerSocketSensorSession implements MqttCallback {
 
-	/** Logger for this class. */
-	// private static final Log logger = LogFactory
-	// .getLog(GenericSensorSession.class);
+	/** Logger */
+	private final Log logger = LogFactory.getLog(getClass());
 
 	/** Service used to send out notifications */
 	private volatile NotifierService notifierService;
@@ -68,13 +70,15 @@ public class GenericSensorSession extends AbstractServerSocketSensorSession impl
 	private String mqttClientId;
 	private String mqttTopic;
 	
+	private Boolean restdebug;
+	
 	private GenericSensor sensor;
 	
 
 	public GenericSensorSession(AbstractSensor<?> sensor, String ID,
 			NotifierService notifierService, String readerID,
 			int serverSocketPort, int mqttPort, String mqttURI, 
-			String mqttClientId, String mqttTopic, Set<AbstractCommandConfiguration<?>> commandConfigurations) {
+			String mqttClientId, String mqttTopic, Boolean restdebug, Set<AbstractCommandConfiguration<?>> commandConfigurations) {
 		super(sensor, ID, serverSocketPort, 10, commandConfigurations);
 		this.readerID = readerID;
 		this.notifierService = notifierService;
@@ -83,6 +87,8 @@ public class GenericSensorSession extends AbstractServerSocketSensorSession impl
 		this.mqttURI = mqttURI;
 		this.mqttClientId = mqttClientId;
 		this.mqttTopic = mqttTopic;
+		
+		this.restdebug=restdebug;
 		
 		this.sensor = (GenericSensor) sensor;
 	}
@@ -308,6 +314,18 @@ public class GenericSensorSession extends AbstractServerSocketSensorSession impl
 			TagReadEvent tag = new TagReadEvent(dto.getReader(), gen2event, dto.getAntenna(), dto.getTimestamp());
 			if (dto.getRssi() != null && dto.getRssi()!="") {
 				tag.addExtraInformation("RSSI", dto.getRssi());
+			}
+			if (dto.getExtrainformation() != null && dto.getExtrainformation() != "") {
+				String[] pairs = dto.getExtrainformation().split("\\|");
+				for(String s:pairs) {
+					String[] kv = s.split(":");
+					String key = kv[0];
+					String value = kv[1];
+					tag.addExtraInformation(key, value);
+				}
+			}
+			if(restdebug) {
+				logger.info("Adding a tag through REST or MQTT: " + tag.toString());
 			}
 			retval.add(tag);
 		}

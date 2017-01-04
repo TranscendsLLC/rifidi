@@ -57,10 +57,9 @@ public class GenericSensor extends AbstractSensor<GenericSensorSession> {
 	private String mqttClientId;
 	private String mqttTopic;
 	
-	private Integer restport;
-	private Integer restsslport;
-	private Boolean restenabled;
-	private Boolean restdebug;
+	private Integer restport=-1;
+	private Integer restsslport=-1;
+	private Boolean restdebug=false;
 	
 	private GenericRestServer restserver = null;
 	
@@ -107,11 +106,12 @@ public class GenericSensor extends AbstractSensor<GenericSensorSession> {
 			if (session.compareAndSet(null, new GenericSensorSession(this,
 					Integer.toString(sessionID), notifierService,
 					super.getID(), this.port, this.mqttPort,
-					this.mqttURI, this.mqttClientId, this.mqttTopic, 
+					this.mqttURI, this.mqttClientId, this.mqttTopic, this.restdebug,
 					new HashSet<AbstractCommandConfiguration<?>>()))) {
 				// TODO: remove this once we get AspectJ in here!
 				notifierService.addSessionEvent(this.getID(), Integer.toString(sessionID));
-				restserver = new GenericRestServer(this.restport, this.restsslport, new GenericRestletApplication(this.restdebug));
+				restserver = new GenericRestServer(this.restport, this.restsslport, new GenericRestletApplication(session.get(), this.restdebug));
+				//restserver.startServer();
 				return sessionID.toString();
 			}
 		}
@@ -133,11 +133,12 @@ public class GenericSensor extends AbstractSensor<GenericSensorSession> {
 			if (session.compareAndSet(null, new GenericSensorSession(this,
 					Integer.toString(sessionID), notifierService,
 					super.getID(), this.port, this.mqttPort,
-					this.mqttURI, this.mqttClientId, this.mqttTopic, 
+					this.mqttURI, this.mqttClientId, this.mqttTopic, this.restdebug,
 					new HashSet<AbstractCommandConfiguration<?>>()))) {
 				// TODO: remove this once we get AspectJ in here!
 				notifierService.addSessionEvent(this.getID(), Integer.toString(sessionID));
-				restserver = new GenericRestServer(this.restport, this.restsslport, new GenericRestletApplication(this.restdebug));	
+				restserver = new GenericRestServer(this.restport, this.restsslport, new GenericRestletApplication(session.get(), this.restdebug));
+				//restserver.startServer();
 				return sessionID.toString();
 			}
 		}
@@ -154,7 +155,7 @@ public class GenericSensor extends AbstractSensor<GenericSensorSession> {
 	@Override
 	public void destroySensorSession(String id)
 			throws CannotDestroySensorException {
-
+		restserver.stopServer();
 	}
 
 	/*
@@ -302,32 +303,15 @@ public class GenericSensor extends AbstractSensor<GenericSensorSession> {
 	 * Should the rest service be started
 	 * @return
 	 */
-	@Property(displayName = "RestEnabled", description = "Should the rest server be enabled"
-			+ "", writable = true, type = PropertyType.PT_BOOLEAN, category = "connection"
-			+ "", defaultValue = "false", orderValue = 5)
-	public Boolean getRestEnabled() {
-		return this.restenabled;
-	}
-	public void setRestEnabled(Boolean enabled) {
-		this.restenabled = enabled;
-	}
-	/**
-	 * Should the rest service be started
-	 * @return
-	 */
 	@Property(displayName = "RestDebug", description = "Should the rest server be enabled"
 			+ "", writable = true, type = PropertyType.PT_BOOLEAN, category = "connection"
 			+ "", defaultValue = "false", orderValue = 5)
 	public Boolean getRestDebug() {
-		return this.restenabled;
+		return this.restdebug;
 	}
 	public void setRestDebug(Boolean enabled) {
-		this.restenabled = enabled;
-	}
-	
-	
-	
-	
+		this.restdebug = enabled;
+	}	
 	
 	@Property(displayName = "DisableAutoStart", description = "Set to true to disable autostart", writable = true, type = PropertyType.PT_BOOLEAN, 
 			category = "connection", orderValue = 8, defaultValue = "false")
