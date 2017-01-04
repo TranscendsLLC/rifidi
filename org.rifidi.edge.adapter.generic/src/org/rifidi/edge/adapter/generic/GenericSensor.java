@@ -51,12 +51,17 @@ public class GenericSensor extends AbstractSensor<GenericSensorSession> {
 	 * 
 	 */
 	private Integer port = 4567;
-	private Integer restPort = -1;
 
 	private Integer mqttPort = -1;	
 	private String mqttURI;
 	private String mqttClientId;
 	private String mqttTopic;
+	
+	private Integer restport=-1;
+	private Integer restsslport=-1;
+	private Boolean restdebug=false;
+	
+	private GenericRestServer restserver = null;
 	
 	/** The ID of the session */
 	private AtomicInteger sessionID = new AtomicInteger(0);
@@ -100,12 +105,13 @@ public class GenericSensor extends AbstractSensor<GenericSensorSession> {
 			Integer sessionID = this.sessionID.incrementAndGet();
 			if (session.compareAndSet(null, new GenericSensorSession(this,
 					Integer.toString(sessionID), notifierService,
-					super.getID(), this.port, this.restPort, this.mqttPort,
-					this.mqttURI, this.mqttClientId, this.mqttTopic, 
+					super.getID(), this.port, this.mqttPort,
+					this.mqttURI, this.mqttClientId, this.mqttTopic, this.restdebug,
 					new HashSet<AbstractCommandConfiguration<?>>()))) {
 				// TODO: remove this once we get AspectJ in here!
-				notifierService.addSessionEvent(this.getID(), Integer
-						.toString(sessionID));
+				notifierService.addSessionEvent(this.getID(), Integer.toString(sessionID));
+				restserver = new GenericRestServer(this.restport, this.restsslport, new GenericRestletApplication(session.get(), this.restdebug));
+				//restserver.startServer();
 				return sessionID.toString();
 			}
 		}
@@ -126,12 +132,13 @@ public class GenericSensor extends AbstractSensor<GenericSensorSession> {
 			Integer sessionID = this.sessionID.incrementAndGet();
 			if (session.compareAndSet(null, new GenericSensorSession(this,
 					Integer.toString(sessionID), notifierService,
-					super.getID(), this.port, this.restPort, this.mqttPort,
-					this.mqttURI, this.mqttClientId, this.mqttTopic, 
+					super.getID(), this.port, this.mqttPort,
+					this.mqttURI, this.mqttClientId, this.mqttTopic, this.restdebug,
 					new HashSet<AbstractCommandConfiguration<?>>()))) {
 				// TODO: remove this once we get AspectJ in here!
-				notifierService.addSessionEvent(this.getID(), Integer
-						.toString(sessionID));
+				notifierService.addSessionEvent(this.getID(), Integer.toString(sessionID));
+				restserver = new GenericRestServer(this.restport, this.restsslport, new GenericRestletApplication(session.get(), this.restdebug));
+				//restserver.startServer();
 				return sessionID.toString();
 			}
 		}
@@ -148,7 +155,7 @@ public class GenericSensor extends AbstractSensor<GenericSensorSession> {
 	@Override
 	public void destroySensorSession(String id)
 			throws CannotDestroySensorException {
-
+		restserver.stopServer();
 	}
 
 	/*
@@ -266,27 +273,45 @@ public class GenericSensor extends AbstractSensor<GenericSensorSession> {
 	public void setMqttClientID(String mqttClientID) {
 		this.mqttClientId = mqttClientID;
 	}
-	
 	/**
-	 * @return the The name of the Serial Port.
+	 * The port to use for incoming rest connections
+	 * @return
 	 */
 	@Property(displayName = "RestPort", description = "Sets a port for incoming rest connections, "
 			+ "-1 to disable.", writable = true, type = PropertyType.PT_INTEGER, category = "connection"
 			+ "", defaultValue = "-1", orderValue = 3)
 	public Integer getRestPort() {
-		return this.restPort;
+		return this.restport;
 	}
-
-	/**
-	 * Sets the port for the reader.
-	 * 
-	 * @param port
-	 */
 	public void setRestPort(Integer port) {
-		this.restPort = port;
+		this.restport = port;
 	}
-	
-	
+	/**
+	 * The port to use for incoming rest ssl connections
+	 * @return
+	 */
+	@Property(displayName = "RestSSLPort", description = "Sets a port for incoming rest ssl connections, "
+			+ "-1 to disable.", writable = true, type = PropertyType.PT_INTEGER, category = "connection"
+			+ "", defaultValue = "-1", orderValue = 4)
+	public Integer getRestSSLPort() {
+		return this.restsslport;
+	}
+	public void setRestSSLPort(Integer port) {
+		this.restsslport = port;
+	}
+	/**
+	 * Should the rest service be started
+	 * @return
+	 */
+	@Property(displayName = "RestDebug", description = "Should the rest server be enabled"
+			+ "", writable = true, type = PropertyType.PT_BOOLEAN, category = "connection"
+			+ "", defaultValue = "false", orderValue = 5)
+	public Boolean getRestDebug() {
+		return this.restdebug;
+	}
+	public void setRestDebug(Boolean enabled) {
+		this.restdebug = enabled;
+	}	
 	
 	@Property(displayName = "DisableAutoStart", description = "Set to true to disable autostart", writable = true, type = PropertyType.PT_BOOLEAN, 
 			category = "connection", orderValue = 8, defaultValue = "false")

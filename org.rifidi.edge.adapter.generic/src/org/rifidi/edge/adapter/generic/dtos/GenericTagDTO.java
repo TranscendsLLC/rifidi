@@ -1,4 +1,4 @@
-package org.rifidi.edge.adapter.generic;
+package org.rifidi.edge.adapter.generic.dtos;
 import java.io.Serializable;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -36,6 +36,9 @@ public class GenericTagDTO implements Serializable {
 	
 	@XmlElement(name = "rssi")
 	private String rssi;
+	
+	@XmlElement(name = "extrainformation")
+	private String extrainformation;
 
 	public Long getTimestamp() {
 		return timestamp;
@@ -75,6 +78,14 @@ public class GenericTagDTO implements Serializable {
 
 	public void setRssi(String rssi) {
 		this.rssi = rssi;
+	}
+
+	public String getExtrainformation() {
+		return extrainformation;
+	}
+
+	public void setExtrainformation(String extrainformation) {
+		this.extrainformation = extrainformation;
 	}
 	
 }
