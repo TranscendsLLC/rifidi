@@ -138,5 +138,5 @@ com.github.oxo42.stateless4j,2.5.0,plugins/stateless4j-2.5.0.jar,4,true
 org.objenesis,2.2.0,plugins/objenesis-2.2.jar,4,true
 uk.com.robust-it.cloning,1.9.2,plugins/cloning-1.9.2.jar,4,true
 org.jvnet.hyperjaxb3,0.6.1,plugins/org.jvnet.hyperjaxb3_0.6.1.jar,4,true
-org.json,20160212.0.0,plugins/org.json.jar,4,true
+json,20160212.0.0,plugins/org.json.jar,4,true
 org.restlet.ext.json,2.3.7.v20160314-1810,plugins/org.restlet.ext.json.jar,4,true
