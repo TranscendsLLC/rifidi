@@ -8,7 +8,7 @@
             </entry>
             <entry>
                 <key>RestDebug</key>
-                <value>false</value>
+                <value>true</value>
             </entry>
             <entry>
                 <key>DisableAutoStart</key>
@@ -35,7 +35,7 @@
         <serviceID>Generic_1</serviceID>
         <sessionDTOs>
             <ID>1</ID>
-            <status>CREATED</status>
+            <status>PROCESSING</status>
         </sessionDTOs>
     </services>
 </configurationStore>
