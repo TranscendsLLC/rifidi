@@ -2,12 +2,11 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: RifidiMqttApp
 Bundle-SymbolicName: org.rifidi.app.rifidimqtt
-Bundle-Version: 1.0.0
+Bundle-Version: 1.0.1
 Bundle-Vendor: Transcends, LLC
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Import-Package: net.sf.cglib.reflect;version="2.1.3",
  org.apache.commons.logging,
- org.dna.mqtt.moquette.server,
  org.eclipse.moquette.server,
  org.eclipse.paho.client.mqttv3,
  org.eclipse.paho.client.mqttv3.persist,

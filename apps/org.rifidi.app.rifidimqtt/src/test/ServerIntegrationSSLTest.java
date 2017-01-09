@@ -30,57 +30,35 @@
 
 package test;
 
+import static org.junit.Assert.assertFalse;
+
 import java.io.File;
-
 import java.io.IOException;
-
 import java.io.InputStream;
-
 import java.security.KeyManagementException;
-
 import java.security.KeyStore;
-
 import java.security.KeyStoreException;
-
 import java.security.NoSuchAlgorithmException;
-
 import java.security.UnrecoverableKeyException;
-
 import java.security.cert.CertificateException;
 
 import javax.net.ssl.KeyManagerFactory;
-
 import javax.net.ssl.SSLContext;
-
 import javax.net.ssl.SSLSocketFactory;
-
 import javax.net.ssl.TrustManager;
-
 import javax.net.ssl.TrustManagerFactory;
 
-import org.dna.mqtt.moquette.server.Server;
+import org.eclipse.moquette.server.Server;
 import org.eclipse.paho.client.mqttv3.IMqttClient;
-
 import org.eclipse.paho.client.mqttv3.MqttClient;
-
 import org.eclipse.paho.client.mqttv3.MqttClientPersistence;
-
 import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
-
 import org.eclipse.paho.client.mqttv3.persist.MqttDefaultFilePersistence;
-
 import org.junit.After;
-
-import static org.junit.Assert.assertFalse;
-
 import org.junit.Before;
-
 import org.junit.BeforeClass;
-
 import org.junit.Test;
-
 import org.slf4j.Logger;
-
 import org.slf4j.LoggerFactory;
 
 /**
@@ -100,7 +78,7 @@ public class ServerIntegrationSSLTest {
 	public static void main(String[] args)
 			throws Exception {
 		ServerIntegrationSSLTest test = new ServerIntegrationSSLTest();
-		test.beforeTests();
+		beforeTests();
 		test.startServer();
 		test.setUp();
 		test.checkSupportSSL();
@@ -169,35 +147,17 @@ public class ServerIntegrationSSLTest {
 
 		m_server.stopServer();
 
-		File dbFile = new File(Server.STORAGE_FILE_PATH);
-
-		if (dbFile.exists()) {
-
-			dbFile.delete();
-
-		}
-
-		assertFalse(dbFile.exists());
-
 	}
 
 	@Test
 	public void checkSupportSSL() throws Exception {
-
 		LOG.info("*** checkSupportSSL ***");
-
 		SSLSocketFactory ssf = configureSSLSocketFactory();
-
 		MqttConnectOptions options = new MqttConnectOptions();
-
 		options.setSocketFactory(ssf);
-
 		m_client.connect(options);
-
 		m_client.subscribe("/topic", 0);
-
 		m_client.disconnect();
-
 	}
 
 	/**
