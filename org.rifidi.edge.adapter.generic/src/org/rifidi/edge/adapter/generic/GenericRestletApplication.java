@@ -90,6 +90,7 @@ public class GenericRestletApplication extends Application {
 					}
 				}
 				setResponseHeaders(request, response);
+				response.setEntity(self.generateReturnString(self.generateSuccessMessage()), MediaType.TEXT_XML);
 			}
 		};
 
@@ -159,8 +160,7 @@ public class GenericRestletApplication extends Application {
 			response.getAttributes().put("org.restlet.http.headers", responseHeaders);
 		}
 
-		responseHeaders.add(new Header("Access-Control-Allow-Headers",
-				"Access-Control-Allow-Origin, Origin, X-Requested-With, Content-Type, Accept"));
+		responseHeaders.add(new Header("Access-Control-Allow-Headers", "Access-Control-Allow-Origin, Origin, X-Requested-With, Content-Type, Accept"));
 		responseHeaders.add(new Header("Access-Control-Allow-Origin", "*"));
 	}
 

@@ -32,8 +32,29 @@ public class GenericRestServer {
 	 * @param port
 	 */
 	public GenericRestServer(int port, int sslPort, Application app) {
+		// If you want to see json output
+		// GenericTagDTO tag1 = new GenericTagDTO();
+		// GenericTagDTO tag2 = new GenericTagDTO();
+		// tag1.setAntenna(1);
+		// tag1.setExtrainformation("Direction:1|Speed:50");
+		// tag1.setEpc("123456781234567812345678");
+		// tag1.setReader("Alien_1");
+		// tag1.setRssi("123");
+		// tag1.setTimestamp(System.currentTimeMillis());
+		// tag2.setAntenna(1);
+		// tag2.setExtrainformation("Direction:1|Speed:50");
+		// tag2.setEpc("123456781234567800000000");
+		// tag2.setReader("Alien_1");
+		// tag2.setRssi("123");
+		// tag2.setTimestamp(System.currentTimeMillis());
+		// List<GenericTagDTO> taglist = new ArrayList<GenericTagDTO>();
+		// taglist.add(tag1);
+		// taglist.add(tag2);
+		// Gson gson = new Gson();
+		// String jsontest = gson.toJson(taglist);
+		// System.out.println(jsontest);
+		
 		try {
-
 			logger.info("RestletServer called");
 			boolean restletEnabled = port>0;
 			if (restletEnabled) {
@@ -108,14 +129,6 @@ public class GenericRestServer {
 			}
 		}
 	}
-
-//	public void startServer() {
-//		try {
-//			restServer.start();
-//		} catch (Exception e) {
-//			e.printStackTrace();
-//		}
-//	}
 	
 	public void stopServer() {
 		try {

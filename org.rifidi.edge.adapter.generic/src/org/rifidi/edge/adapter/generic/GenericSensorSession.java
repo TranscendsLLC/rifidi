@@ -64,46 +64,45 @@ public class GenericSensorSession extends AbstractServerSocketSensorSession impl
 	private String readerID = null;
 	
 	//mqtt
-	private Integer mqttPort;
-	private MqttClient mqttclient;
-	private String mqttURI;
-	private String mqttClientId;
-	private String mqttTopic;
+//	private Integer mqttPort;
+//	private MqttClient mqttclient;
+//	private String mqttURI;
+//	private String mqttClientId;
+//	private String mqttTopic;
 	
 	private Boolean restdebug;
 	
 	private GenericSensor sensor;
 	
-
+	//int mqttPort, String mqttURI, String mqttClientId, String mqttTopic,
 	public GenericSensorSession(AbstractSensor<?> sensor, String ID,
 			NotifierService notifierService, String readerID,
-			int serverSocketPort, int mqttPort, String mqttURI, 
-			String mqttClientId, String mqttTopic, Boolean restdebug, Set<AbstractCommandConfiguration<?>> commandConfigurations) {
+			int serverSocketPort, Boolean restdebug, Set<AbstractCommandConfiguration<?>> commandConfigurations) {
 		super(sensor, ID, serverSocketPort, 10, commandConfigurations);
 		this.readerID = readerID;
 		this.notifierService = notifierService;
 		this.tagHandler = new GenericSensorSessionTagHandler(readerID);
-		this.mqttPort = mqttPort;
-		this.mqttURI = mqttURI;
-		this.mqttClientId = mqttClientId;
-		this.mqttTopic = mqttTopic;
+//		this.mqttPort = mqttPort;
+//		this.mqttURI = mqttURI;
+//		this.mqttClientId = mqttClientId;
+//		this.mqttTopic = mqttTopic;
 		
 		this.restdebug=restdebug;
 		
 		this.sensor = (GenericSensor) sensor;
 	}
 	
-	public void startMqttService() {
-		try {
-			this.mqttclient = new MqttClient(this.mqttURI, this.mqttClientId);
-			this.mqttclient.connect();
-			this.mqttclient.subscribe(mqttTopic);
-			this.mqttclient.setCallback(this);
-		} catch (MqttException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
+//	public void startMqttService() {
+//		try {
+//			this.mqttclient = new MqttClient(this.mqttURI, this.mqttClientId);
+//			this.mqttclient.connect();
+//			this.mqttclient.subscribe(mqttTopic);
+//			this.mqttclient.setCallback(this);
+//		} catch (MqttException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+//	}
 	
 	
 
@@ -148,9 +147,7 @@ public class GenericSensorSession extends AbstractServerSocketSensorSession impl
 	 * @param tag
 	 */
 	public void sendTags(Set<TagReadEvent> tres) {
-		ReadCycle cycle = new ReadCycle(tres, readerID, System
-				.currentTimeMillis());
-
+		ReadCycle cycle = new ReadCycle(tres, readerID, System.currentTimeMillis());
 		this.getSensor().send(cycle);
 	}
 
@@ -302,7 +299,7 @@ public class GenericSensorSession extends AbstractServerSocketSensorSession impl
 		Set<TagReadEvent> retval = new HashSet<TagReadEvent>();
 		for(GenericTagDTO dto:dtoList) {
 			EPCGeneration2Event gen2event = new EPCGeneration2Event();
-			String val = dto.getId();
+			String val = dto.getEpc();
 			int numbits = val.length() * 4;
 			BigInteger epc;
 			try {
@@ -325,7 +322,7 @@ public class GenericSensorSession extends AbstractServerSocketSensorSession impl
 				}
 			}
 			if(restdebug) {
-				logger.info("Adding a tag through REST or MQTT: " + tag.toString());
+				logger.info("Adding a tag through REST: " + tag.toString());
 			}
 			retval.add(tag);
 		}

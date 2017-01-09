@@ -21,8 +21,8 @@ public class GenericTagDTO implements Serializable {
 	private static final long serialVersionUID = -3035982716629339545L;
 
 	//The ID of the tag
-	@XmlElement(name = "id")
-	private String id;
+	@XmlElement(name = "epc")
+	private String epc;
 	
 	//The antenna of the tag
 	@XmlElement(name = "antenna")
@@ -56,12 +56,12 @@ public class GenericTagDTO implements Serializable {
 		this.reader = reader;
 	}
 
-	public String getId() {
-		return id;
+	public String getEpc() {
+		return epc;
 	}
 
-	public void setId(String id) {
-		this.id = id;
+	public void setEpc(String epc) {
+		this.epc = epc;
 	}
 
 	public Integer getAntenna() {
