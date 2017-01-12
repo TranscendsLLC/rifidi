@@ -88,7 +88,7 @@ app.service('CommonService', function($http) {
 
             } else if (property.key == 'antennas') {
 
-                property.helpText = '(optional) Where you list the antennas. Blank means all antennas';
+                property.helpText = '(optional) Where you list the antennas. Blank means all antennas. To filter based on a list of antennas use a comma-delimited list of integers corresponding to the antenna.';
 
             } else if (property.key == 'tagPattern') {
 

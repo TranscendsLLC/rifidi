@@ -51,6 +51,18 @@ public class GenericSensor extends AbstractSensor<GenericSensorSession> {
 	 * 
 	 */
 	private Integer port = 4567;
+//this.mqttPort, this.mqttURI, this.mqttClientId, this.mqttTopic,
+//	private Integer mqttPort = 2883;	
+//	private String mqttURI="";
+//	private String mqttClientId="GenericReaderId";
+//	private String mqttTopic;
+	
+	private Integer restport=-1;
+	private Integer restsslport=-1;
+	private Boolean restdebug=false;
+	
+	private GenericRestServer restserver = null;
+	
 	/** The ID of the session */
 	private AtomicInteger sessionID = new AtomicInteger(0);
 	/** The name of the reader that will be displayed */
@@ -61,6 +73,7 @@ public class GenericSensor extends AbstractSensor<GenericSensorSession> {
 	private AtomicReference<GenericSensorSession> session = new AtomicReference<GenericSensorSession>();
 	
 	private Boolean disableAutoStart=false;
+	
 
 	/** MBeanInfo for this class. */
 	public static final MBeanInfo mbeaninfo;
@@ -92,11 +105,12 @@ public class GenericSensor extends AbstractSensor<GenericSensorSession> {
 			Integer sessionID = this.sessionID.incrementAndGet();
 			if (session.compareAndSet(null, new GenericSensorSession(this,
 					Integer.toString(sessionID), notifierService,
-					super.getID(), this.port,
+					super.getID(), this.port, this.restdebug,
 					new HashSet<AbstractCommandConfiguration<?>>()))) {
 				// TODO: remove this once we get AspectJ in here!
-				notifierService.addSessionEvent(this.getID(), Integer
-						.toString(sessionID));
+				notifierService.addSessionEvent(this.getID(), Integer.toString(sessionID));
+				restserver = new GenericRestServer(this.restport, this.restsslport, new GenericRestletApplication(session.get(), this.restdebug));
+				//restserver.startServer();
 				return sessionID.toString();
 			}
 		}
@@ -117,11 +131,12 @@ public class GenericSensor extends AbstractSensor<GenericSensorSession> {
 			Integer sessionID = this.sessionID.incrementAndGet();
 			if (session.compareAndSet(null, new GenericSensorSession(this,
 					Integer.toString(sessionID), notifierService,
-					super.getID(), this.port,
+					super.getID(), this.port, this.restdebug,
 					new HashSet<AbstractCommandConfiguration<?>>()))) {
 				// TODO: remove this once we get AspectJ in here!
-				notifierService.addSessionEvent(this.getID(), Integer
-						.toString(sessionID));
+				notifierService.addSessionEvent(this.getID(), Integer.toString(sessionID));
+				restserver = new GenericRestServer(this.restport, this.restsslport, new GenericRestletApplication(session.get(), this.restdebug));
+				//restserver.startServer();
 				return sessionID.toString();
 			}
 		}
@@ -138,7 +153,7 @@ public class GenericSensor extends AbstractSensor<GenericSensorSession> {
 	@Override
 	public void destroySensorSession(String id)
 			throws CannotDestroySensorException {
-
+		restserver.stopServer();
 	}
 
 	/*
@@ -215,6 +230,86 @@ public class GenericSensor extends AbstractSensor<GenericSensorSession> {
 	public void setPort(Integer port) {
 		this.port = port;
 	}
+	
+	
+//	@Property(displayName = "MqttPort", description = "Sets a port for incoming mqtt connections, "
+//			+ "-1 to disable.", writable = true, type = PropertyType.PT_INTEGER, category = "connection"
+//			+ "", defaultValue = "-1", orderValue = 2)
+//	public Integer getMqttPort() {
+//		return this.mqttPort;
+//	}
+//	public void setMqttPort(Integer port) {
+//		this.mqttPort = port;
+//	}
+//	
+//	@Property(displayName = "MqttURI", description = "The URI for incoming MQTT tags "
+//			+ "", writable = true, type = PropertyType.PT_STRING, category = "connection"
+//			+ "", defaultValue = "-1", orderValue = 2)
+//	public String getMqttURI() {
+//		return this.mqttURI;
+//	}
+//	public void setMqttUri(String mqttURI) {
+//		this.mqttURI = mqttURI;
+//	}
+//	
+//	@Property(displayName = "MqttTopic", description = "The topic to listen to for MQTT tags"
+//			+ "", writable = true, type = PropertyType.PT_STRING, category = "connection"
+//			+ "", defaultValue = "GenericReader", orderValue = 2)
+//	public String getMqttTopic() {
+//		return this.mqttTopic;
+//	}
+//	public void getMqttTopic(String topic) {
+//		this.mqttTopic = topic;
+//	}
+//	
+//	@Property(displayName = "MqttClientID", description = "Sets the client ID for mqtt"
+//			+ "", writable = true, type = PropertyType.PT_INTEGER, category = "connection"
+//			+ "", defaultValue = "GenericReaderMqtt", orderValue = 2)
+//	public String getMqttClientID() {
+//		return this.mqttClientId;
+//	}
+//	public void setMqttClientID(String mqttClientID) {
+//		this.mqttClientId = mqttClientID;
+//	}
+	/**
+	 * The port to use for incoming rest connections
+	 * @return
+	 */
+	@Property(displayName = "RestPort", description = "Sets a port for incoming rest connections, "
+			+ "-1 to disable.", writable = true, type = PropertyType.PT_INTEGER, category = "connection"
+			+ "", defaultValue = "-1", orderValue = 3)
+	public Integer getRestPort() {
+		return this.restport;
+	}
+	public void setRestPort(Integer port) {
+		this.restport = port;
+	}
+	/**
+	 * The port to use for incoming rest ssl connections
+	 * @return
+	 */
+	@Property(displayName = "RestSSLPort", description = "Sets a port for incoming rest ssl connections, "
+			+ "-1 to disable.", writable = true, type = PropertyType.PT_INTEGER, category = "connection"
+			+ "", defaultValue = "-1", orderValue = 4)
+	public Integer getRestSSLPort() {
+		return this.restsslport;
+	}
+	public void setRestSSLPort(Integer port) {
+		this.restsslport = port;
+	}
+	/**
+	 * Should the rest service be started
+	 * @return
+	 */
+	@Property(displayName = "RestDebug", description = "Should the rest server be enabled"
+			+ "", writable = true, type = PropertyType.PT_BOOLEAN, category = "connection"
+			+ "", defaultValue = "false", orderValue = 5)
+	public Boolean getRestDebug() {
+		return this.restdebug;
+	}
+	public void setRestDebug(Boolean enabled) {
+		this.restdebug = enabled;
+	}	
 	
 	@Property(displayName = "DisableAutoStart", description = "Set to true to disable autostart", writable = true, type = PropertyType.PT_BOOLEAN, 
 			category = "connection", orderValue = 8, defaultValue = "false")

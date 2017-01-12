@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" attributeFormDefault="unqualified">
+        <xs:element name="LogicalReaders">
+                <xs:annotation>
+                        <xs:documentation>List of logical readers</xs:documentation>
+                </xs:annotation>
+                <xs:complexType>
+                        <xs:sequence>
+                                <xs:element ref="LogicalReader" minOccurs="0" maxOccurs="unbounded"/>
+                        </xs:sequence>
+                </xs:complexType>
+        </xs:element>
+        <xs:element name="LogicalReader">
+                <xs:complexType>
+                        <xs:sequence>
+                                <xs:element ref="LRSpec"/>
+                        </xs:sequence>
+                        <xs:attribute name="name" type="xs:string"/>
+                </xs:complexType>
+        </xs:element>
+        <xs:element name="LRSpec">
+                <xs:complexType>
+                        <xs:sequence>
+                                <xs:element ref="LRProperty" minOccurs="0" maxOccurs="unbounded"/>
+                                <xs:element name="readers" type="xs:string" minOccurs="0" maxOccurs="unbounded"/>
+                        </xs:sequence>
+                        <xs:attribute name="isComposite" type="xs:boolean" use="required"/>
+                        <xs:attribute name="readerType" type="xs:string"/>
+                </xs:complexType>
+        </xs:element>
+        <xs:element name="LRProperty">
+                <xs:complexType>
+                        <xs:attribute name="name" type="xs:string"/>
+                        <xs:attribute name="value" type="xs:string"/>
+                </xs:complexType>
+        </xs:element>
+</xs:schema>

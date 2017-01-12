@@ -1464,14 +1464,18 @@ public class LLRPReaderSession extends AbstractSensorSession implements
 		return retVal.toArray(new String[arg.length()]);
 	}
 
-	public String sendLLRPMessage(Document xmlMessage) {
+	public String sendLLRPMessage(Document xmlMessage, boolean sendonly) {
 		try {
-			LLRPMessage message = LLRPMessageFactory
-					.createLLRPMessage(xmlMessage);
+			LLRPMessage message = LLRPMessageFactory.createLLRPMessage(xmlMessage);
 			LLRPMessage response = null;
 			try {
-				response = this.transact(message);
-				return response.toXMLString();
+				if(!sendonly) {
+					response = this.transact(message);
+					return response.toXMLString();
+				} else {
+					this.send(message);
+					return null;
+				}
 			} catch (TimeoutException e) {
 				return e.getMessage();
 			}

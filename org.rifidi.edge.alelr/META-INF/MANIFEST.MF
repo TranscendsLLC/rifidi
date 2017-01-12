@@ -1,0 +1,11 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: org.rifidi.edge.ale.lr
+Bundle-SymbolicName: org.rifidi.edge.ale.lr
+Bundle-Version: 1.0.0
+Bundle-Activator: alelr2.Activator
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Import-Package: org.osgi.framework;version="1.3.0"
+Bundle-ActivationPolicy: lazy
+Export-Package: org.rifidi.edge.alelr.xsd,
+ org.rifidi.edge.epcglobal.alelr

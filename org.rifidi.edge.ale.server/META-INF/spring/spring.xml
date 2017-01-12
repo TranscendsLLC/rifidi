@@ -1,0 +1,82 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	xmlns:osgi="http://www.springframework.org/schema/osgi"
+	xmlns:amq="http://activemq.apache.org/schema/core"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans 
+	http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+	http://www.springframework.org/schema/context
+    http://www.springframework.org/schema/context/spring-context-3.0.xsd
+    http://www.springframework.org/schema/osgi http://www.springframework.org/schema/osgi/spring-osgi.xsd">
+    
+    <context:component-scan base-package="*" />
+
+	<osgi:reference id="sensorManagerServiceAleRef"
+		interface="org.rifidi.edge.rmi.SensorManagerServiceImpl" />
+		
+	<osgi:reference id="commandManagerServiceAleRef"
+		interface="org.rifidi.edge.rmi.CommandManagerServiceImpl" />
+		
+	<osgi:reference id="configurationServiceRegistrationAle" 
+		interface="org.rifidi.edge.configuration.ConfigurationService" />
+		
+	<osgi:reference id="provisioningServiceRegistrationAle" 
+		interface="org.rifidi.edge.services.ProvisioningService" />
+		
+		
+	<osgi:reference id="readerDAOAleRef" interface="org.rifidi.edge.daos.ReaderDAO"/>
+	
+	<!-- 
+	<osgi:reference id="commandDAOImplAle" interface="org.rifidi.edge.daos.CommandDAO"/>
+	-->
+	
+	<osgi:reference id="rawTagMonitoringServiceAleRef" interface="org.rifidi.edge.api.service.tagmonitor.RawTagMonitoringService" />
+	
+	<!--osgi:reference id="readZoneMonitoringServiceAleRef" interface="org.rifidi.edge.api.service.tagmonitor.ReadZoneMonitoringService" />
+	<osgi:reference id="stableSetServiceAleRef" interface="org.rifidi.edge.api.service.tagmonitor.StableSetService" />
+	<osgi:reference id="limitStableSetServiceAleRef" interface="org.rifidi.edge.api.service.tagmonitor.LimitStableSetService" /-->
+	
+	
+	<!--bean id="llrpDeviceAleRef" class="org.rifidi.edge.server.ale.infrastructure.LLRPDevice">
+		<property name="sensorManagerService" ref="sensorManagerServiceAleRef"/>
+		<property name="readerDAO" ref="readerDAOAleRef" />
+		<property name="readZoneMonitoringService" ref="readZoneMonitoringServiceAleRef"/>
+		<property name="rawTagMonitoringService" ref="rawTagMonitoringServiceAleRef" />
+		<property name="commandManagerService" ref="commandManagerServiceAleRef" />
+		<property name="limitStableSetService" ref="limitStableSetServiceAleRef" />
+		<property name="stableSetService" ref="stableSetServiceAleRef" />
+	</bean-->
+	
+	<bean id="physicalDeviceServiceAleRef" class="org.rifidi.edge.server.epcglobal.alelr.services.PhysicalDeviceService">
+		
+		<property name="sensorManagerService" ref="sensorManagerServiceAleRef"/>
+		<property name="readerDAO" ref="readerDAOAleRef" />
+		<!--property name="readZoneMonitoringService" ref="readZoneMonitoringServiceAleRef"/-->
+		<property name="rawTagMonitoringService" ref="rawTagMonitoringServiceAleRef" />
+		<property name="commandManagerService" ref="commandManagerServiceAleRef" />
+		<!--property name="limitStableSetService" ref="limitStableSetServiceAleRef" />
+		<property name="stableSetService" ref="stableSetServiceAleRef" /-->
+		<property name="rifidiHelper" ref="rifidiHelperRef"/>
+		<!-- <property name="aleApp" ref="aleAppRef"/>-->
+	</bean>
+	
+	<bean id="aleAppRef" class="org.rifidi.app.ale.AleApp">
+		<constructor-arg index="0" value="Ale" />
+		<constructor-arg index="1" value="AleApp" />
+		<!--  <property name="readZoneMonitoringService" ref="readZoneMonitoringService" /> -->
+	</bean>
+	<osgi:service ref="aleAppRef" interface="org.rifidi.edge.api.RifidiApp" />
+	
+	<bean id="rifidiHelperRef" class="org.rifidi.edge.utils.RifidiHelper">
+	</bean>
+	
+	<!-- 
+	<bean id="llrpDeviceRef" class="org.rifidi.edge.server.ale.infrastructure.LLRPDevice">
+		<property name="aleApp" ref="aleAppRef"/>
+	</bean>
+		-->
+	
+	
+	
+     
+</beans>

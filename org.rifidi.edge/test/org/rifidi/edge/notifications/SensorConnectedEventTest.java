@@ -55,7 +55,7 @@ public class SensorConnectedEventTest {
 	}
 
 	/**
-	 * Test method for {@link org.rifidi.edge.notification.SensorConnectedEvent#SensorConnectedEvent(java.lang.String, java.lang.Long, java.lang.String)}.
+	 * Test method for {@link org.rifidi.edge.notification.SensorProcessingEvent#SensorConnectedEvent(java.lang.String, java.lang.Long, java.lang.String)}.
 	 */
 	@Test
 	public void testSensorConnectedEvent() {
@@ -63,7 +63,7 @@ public class SensorConnectedEventTest {
 	}
 
 	/**
-	 * Test method for {@link org.rifidi.edge.notification.SensorConnectedEvent#getSessionID()}.
+	 * Test method for {@link org.rifidi.edge.notification.SensorProcessingEvent#getSessionID()}.
 	 */
 	@Test
 	public void testGetSessionID() {
@@ -71,7 +71,7 @@ public class SensorConnectedEventTest {
 	}
 
 	/**
-	 * Test method for {@link org.rifidi.edge.notification.SensorConnectedEvent#toString()}.
+	 * Test method for {@link org.rifidi.edge.notification.SensorProcessingEvent#toString()}.
 	 */
 	@Test
 	public void testToString() {
