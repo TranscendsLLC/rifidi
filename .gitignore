@@ -77,3 +77,6 @@ moquette_store.mapdb*
 
 # deb
 *.deb
+com.sendgrid/
+com.amazon.ion/
+com.amazonaws.jmespath/
