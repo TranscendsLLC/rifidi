@@ -89,13 +89,6 @@ public class MqttNotifierApp extends AbstractRifidiApp {
 	 */
 	public MqttNotifierApp(String group, String name) {
 		super(group, name);
-		try {
-			InetAddress localip = getFirstNonLoopbackAddress(true, false);
-			//NetworkInterface network = NetworkInterface.getByInetAddress(localip);
-			this.ip = localip.getHostAddress();
-		} catch (SocketException e) {
-			e.printStackTrace();
-		}
 	}
 	
 	/* (non-Javadoc)
@@ -172,6 +165,17 @@ public class MqttNotifierApp extends AbstractRifidiApp {
 	 */
 	@Override
 	protected void _start() {
+		try {
+			InetAddress localip = getFirstNonLoopbackAddress(true, false);
+			//NetworkInterface network = NetworkInterface.getByInetAddress(localip);
+			if(localip!=null) {
+				this.ip = localip.getHostAddress();
+			} else {
+				this.ip = "127.0.0.1";
+			}
+		} catch (SocketException e) {
+			e.printStackTrace();
+		}
 		
 		final String ip = this.ip;
 		final String mqttTopic = this.mqttTopic;
