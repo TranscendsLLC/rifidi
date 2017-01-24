@@ -140,7 +140,7 @@ uk.com.robust-it.cloning,1.9.2,plugins/cloning-1.9.2.jar,4,true
 org.jvnet.hyperjaxb3,0.6.1,plugins/org.jvnet.hyperjaxb3_0.6.1.jar,4,true
 json,20160212.0.0,plugins/org.json.jar,4,true
 org.restlet.ext.json,2.3.7.v20160314-1810,plugins/org.restlet.ext.json.jar,4,true
-com.springsource.org.apache.poi,3.9.0.FINAL,plugins/com.springsource.org.apache.poi-3.9.0.FINAL.jar,4,true
+org.apache.poi,3.15.0,plugins/org.apache.poi_3.15.0.jar,4,true
 com.amazonaws.aws-java-sdk-osgi,1.11.78,plugins/aws-java-sdk-1.11.78.jar,4,true
 com.amazon.ion,1.0.1,plugins/com.amazon.ion_1.0.1.jar,4,true
 com.amazonaws.aws-java-sdk-osgi,1.11.78,plugins/com.amazonaws.jmespath_1.11.78.jar,4,true
