@@ -80,3 +80,4 @@ moquette_store.mapdb*
 com.sendgrid/
 com.amazon.ion/
 com.amazonaws.jmespath/
+org.apache.poi/
