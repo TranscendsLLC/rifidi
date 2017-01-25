@@ -27,8 +27,8 @@ import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
 import org.rifidi.edge.api.AbstractRifidiApp;
 import org.rifidi.edge.notification.AppStartedEvent;
 import org.rifidi.edge.notification.AppStoppedEvent;
-import org.rifidi.edge.notification.SensorConnectedEvent;
-import org.rifidi.edge.notification.SensorDisconnectedEvent;
+import org.rifidi.edge.notification.SensorClosedEvent;
+import org.rifidi.edge.notification.SensorProcessingEvent;
 
 import com.espertech.esper.client.EPServiceProvider;
 import com.espertech.esper.client.EPStatement;
@@ -163,7 +163,7 @@ public class MqttNotifierApp extends AbstractRifidiApp {
 			public void update(EventBean[] arg0, EventBean[] arg1, EPStatement arg2, EPServiceProvider arg3) {
 				if (arg0 != null) {
 					for (EventBean b : arg0) {
-						SensorConnectedEvent sce = (SensorConnectedEvent) b.getUnderlying();
+						SensorProcessingEvent sce = (SensorProcessingEvent) b.getUnderlying();
 						// send to mqtt
 						SensorConnected sc = new SensorConnected();
 						sc.setIp(ip);
@@ -182,7 +182,7 @@ public class MqttNotifierApp extends AbstractRifidiApp {
 			public void update(EventBean[] arg0, EventBean[] arg1, EPStatement arg2, EPServiceProvider arg3) {
 				if (arg0 != null) {
 					for (EventBean b : arg0) {
-						SensorDisconnectedEvent sde = (SensorDisconnectedEvent) b.getUnderlying();
+						SensorClosedEvent sde = (SensorClosedEvent) b.getUnderlying();
 						// send to mqtt
 						SensorDisconnected sd = new SensorDisconnected();
 						sd.setIp(ip);
