@@ -35,6 +35,7 @@ import javax.xml.bind.Marshaller;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.FrameworkUtil;
 import org.restlet.Application;
@@ -1441,11 +1442,45 @@ public class SensorManagerServiceRestletImpl extends Application {
 					response.setEntity(self.generateReturnString(self.generateErrorMessage(e.toString(), null)), MediaType.TEXT_XML);
 				}
 			}
-		};		
+		};
+		
+		Restlet bundles = new Restlet() {
+			@Override
+			public void handle(Request request, Response response) {
+				try {
+					Map<Integer,String> states = new HashMap<Integer,String>();
+					states.put(1, "UNINSTALLED");
+					states.put(2, "INSTALLED");
+					states.put(4, "RESOLVED");
+					states.put(8, "STARTING");
+					states.put(16, "STOPPING");
+					states.put(32, "ACTIVE");
+					
+					
+					final BundleContext bundleContext = FrameworkUtil.getBundle(this.getClass()).getBundleContext();
+					BundleResponseMessageDTO bundleResponse = new BundleResponseMessageDTO();
+					List<BundleDTO> bundleDTOs = new LinkedList<BundleDTO>();
+					for(Bundle bundle:bundleContext.getBundles()) {
+						BundleDTO bundleDTO = new BundleDTO();
+						bundleDTO.setName(bundle.getSymbolicName());
+						bundleDTO.setId(bundle.getBundleId());
+						bundleDTO.setState(states.get(bundle.getState()));
+						bundleDTOs.add(bundleDTO);
+					}
+					bundleResponse.setBundles(bundleDTOs);
+					
+					restletHelper.setResponseHeaders(request, response);
+					response.setEntity(self.generateReturnString(bundleResponse), MediaType.TEXT_XML);	
+				} catch (Exception e) {
+					response.setEntity(self.generateReturnString(self.generateErrorMessage(e.toString(), null)), MediaType.TEXT_XML);
+				}
+			}
+		};	
 		
 		Router router = new Router(getContext().createChildContext());
 		
 		router.attach("/shutdown", shutdown);
+		router.attach("/ss", bundles);
 		router.attach("/readers", readers);
 		router.attach("/commands", commands);
 		router.attach("/readerstatus/{readerID}", readerStatus);
