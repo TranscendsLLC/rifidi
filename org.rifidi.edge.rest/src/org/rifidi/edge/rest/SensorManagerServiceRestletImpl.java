@@ -910,7 +910,6 @@ public class SensorManagerServiceRestletImpl extends Application {
 			public void handle(Request request, Response response) {
 
 				restletHelper.setResponseHeaders(request, response);
-
 				PingDTO ping = new PingDTO();
 				ping.setTimestamp(Long.toString(System.currentTimeMillis()));
 				response.setEntity(self.generateReturnString(ping), MediaType.TEXT_XML);
