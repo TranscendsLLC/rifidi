@@ -408,13 +408,15 @@ public class LLRPRestletHelper {
 			if (sessionMap.containsKey(objSessionId)) {
 
 				session = (LLRPReaderSession) sessionMap.get(objSessionId);
+				
+				if(!session.getStatus().equals(SessionStatus.PROCESSING)) {
+					throw new Exception("Session with id " + objSessionId + " of reader with id " + strReaderId + " is not in the processing state.");
+				}
 
 				// Validate no current operations on session are
 				// running, and response to user if so
 				if (session.isRunningLLRPEncoding()) {
-
 					throw new Exception("Session with id " + objSessionId + " of reader with id " + strReaderId + " is currently in the middle of encoding operations. Try again in a while");
-
 				}
 
 				// Check if there is more than one tag in the scope
@@ -423,17 +425,12 @@ public class LLRPRestletHelper {
 				boolean thereIsOneTag = (numberOfTags == 1);
 
 				if (!thereIsOneTag) {
-
 					if (numberOfTags < 1) {
-
 						// There is no tag in the scope of the reader
 						throw new Exception("There is no tag in the scope of reader with id " + strReaderId);
 					} else {
-
 						throw new Exception("There are " + numberOfTags + " tags in the scope of the reader with id " + strReaderId);
-
 					}
-
 				}
 
 				// Set the block length of data to be written on this reader'
