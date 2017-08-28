@@ -40,8 +40,12 @@ public class LLRPRestletHelper {
 	/** Logger for this class */
 	private final Log logger = LogFactory.getLog(getClass());
 	
-	public LLRPRestletHelper(RestletHelper restletHelper) {
+	public LLRPRestletHelper(RestletHelper restletHelper, ReaderDAO readerDAO, CommandDAO commandDAO, SensorManagerService sensorManagerService, ConfigurationService configService) {
 		this.restletHelper = restletHelper;
+		this.readerDAO = readerDAO;
+		this.commandDAO = commandDAO;
+		this.sensorManagerService = sensorManagerService;
+		this.configService = configService;
 	}	
 
 	/** The sensor manager service for sensor commands */
@@ -481,7 +485,9 @@ public class LLRPRestletHelper {
 					String strPropAttr = (String) request.getAttributes().get("properties");
 
 					// Decode url attributes
-					strPropAttr = URLDecoder.decode(strPropAttr, "UTF-8");
+					if(strPropAttr!=null) {
+						strPropAttr = URLDecoder.decode(strPropAttr, "UTF-8");
+					}
 
 					// Validate that if there are parameters, they are well pair
 					// formed values
@@ -494,6 +500,9 @@ public class LLRPRestletHelper {
 
 						// check for accesspwd and tag
 						String accesspwd = (String) getAttributeValue(attributes, "accesspwd");
+						if(accesspwd==null) {
+							accesspwd=System.getProperty("org.rifidi.llrp.encode.accesspwd");
+						}
 						validatePassword(accesspwd, "Access");
 						session.setAccessPwd(accesspwd);
 

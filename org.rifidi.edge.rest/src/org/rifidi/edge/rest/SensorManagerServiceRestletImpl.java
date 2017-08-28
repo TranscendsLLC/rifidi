@@ -33,6 +33,7 @@ import javax.management.openmbean.OpenMBeanAttributeInfoSupport;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Marshaller;
 
+import org.apache.commons.lang3.SystemUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.osgi.framework.Bundle;
@@ -44,6 +45,8 @@ import org.restlet.Response;
 import org.restlet.Restlet;
 import org.restlet.data.MediaType;
 import org.restlet.resource.Directory;
+import org.restlet.resource.Get;
+import org.restlet.resource.Post;
 import org.restlet.routing.Router;
 import org.rifidi.edge.api.CommandConfigFactoryDTO;
 import org.rifidi.edge.api.CommandConfigurationDTO;
@@ -134,7 +137,7 @@ public class SensorManagerServiceRestletImpl extends Application {
 		final SensorManagerServiceRestletImpl self = this;
 		
 		this.restletHelper = new RestletHelper(this.sensorManagerService, this.commandManagerService, this.readerDAO, this.commandDAO);
-		LLRPRestletHelper llrpHelper = new LLRPRestletHelper(this.restletHelper);
+		LLRPRestletHelper llrpHelper = new LLRPRestletHelper(this.restletHelper, this.readerDAO, this.commandDAO, this.sensorManagerService, this.configService);
 
 		Restlet readers = new Restlet() {
 			@Override
@@ -1431,7 +1434,7 @@ public class SensorManagerServiceRestletImpl extends Application {
 		};
 		
 		Restlet shutdown = new Restlet() {
-			@Override
+			@Override @Post
 			public void handle(Request request, Response response) {
 				try {
 					restletHelper.setResponseHeaders(request, response);
@@ -1444,8 +1447,26 @@ public class SensorManagerServiceRestletImpl extends Application {
 			}
 		};
 		
+		Restlet restart = new Restlet() {
+			@Override @Post
+			public void handle(Request request, Response response) {
+				try {
+					restletHelper.setResponseHeaders(request, response);
+					response.setEntity(self.generateReturnString(self.generateSuccessMessage()), MediaType.TEXT_XML);
+					if(SystemUtils.IS_OS_LINUX) {
+						Thread thread = new Thread(new RestletRestart());
+						thread.start();
+					} else {
+						throw new Exception("Restart will only work on Linux");
+					}
+				} catch (Exception e) {
+					response.setEntity(self.generateReturnString(self.generateErrorMessage(e.toString(), null)), MediaType.TEXT_XML);
+				}
+			}
+		};
+		
 		Restlet bundles = new Restlet() {
-			@Override
+			@Override @Post @Get
 			public void handle(Request request, Response response) {
 				try {
 					Map<Integer,String> states = new HashMap<Integer,String>();
@@ -1475,12 +1496,88 @@ public class SensorManagerServiceRestletImpl extends Application {
 					response.setEntity(self.generateReturnString(self.generateErrorMessage(e.toString(), null)), MediaType.TEXT_XML);
 				}
 			}
-		};	
+		};
+		
+		Restlet startBundle = new Restlet() {
+			@Override @Post
+			public void handle(Request request, Response response) {
+				try {
+					String bundleID = (String) request.getAttributes().get("bundleID");
+					
+					final BundleContext bundleContext = FrameworkUtil.getBundle(this.getClass()).getBundleContext();
+					logger.info("Starting a bundle: " + bundleContext.getBundle(Long.parseLong(bundleID)).getSymbolicName());		
+					bundleContext.getBundle(Long.parseLong(bundleID)).start();;
+					
+					restletHelper.setResponseHeaders(request, response);
+					response.setEntity(self.generateReturnString(self.generateSuccessMessage()), MediaType.TEXT_XML);
+				} catch (Exception e) {
+					response.setEntity(self.generateReturnString(self.generateErrorMessage(e.toString(), null)), MediaType.TEXT_XML);
+				}
+			}
+		};
+		
+		Restlet stopBundle = new Restlet() {
+			@Override @Post
+			public void handle(Request request, Response response) {
+				try {
+					String bundleID = (String) request.getAttributes().get("bundleID");
+					
+					final BundleContext bundleContext = FrameworkUtil.getBundle(this.getClass()).getBundleContext();
+					logger.info("Stopping a bundle: " + bundleContext.getBundle(Long.parseLong(bundleID)).getSymbolicName());		
+					bundleContext.getBundle(Long.parseLong(bundleID)).stop();
+					
+					restletHelper.setResponseHeaders(request, response);
+					response.setEntity(self.generateReturnString(self.generateSuccessMessage()), MediaType.TEXT_XML);
+				} catch (Exception e) {
+					response.setEntity(self.generateReturnString(self.generateErrorMessage(e.toString(), null)), MediaType.TEXT_XML);
+				}
+			}
+		};
+		
+		Restlet installBundle = new Restlet() {
+			@Override @Post
+			public void handle(Request request, Response response) {
+				try {
+					String bundlePath = (String) request.getEntityAsText();
+					logger.info("Installing a bundle: " + bundlePath);
+					final BundleContext bundleContext = FrameworkUtil.getBundle(this.getClass()).getBundleContext();
+					bundleContext.installBundle(bundlePath);
+					
+					restletHelper.setResponseHeaders(request, response);
+					response.setEntity(self.generateReturnString(self.generateSuccessMessage()), MediaType.TEXT_XML);
+				} catch (Exception e) {
+					response.setEntity(self.generateReturnString(self.generateErrorMessage(e.toString(), null)), MediaType.TEXT_XML);
+				}
+			}
+		};
+		
+		Restlet uninstallBundle = new Restlet() {
+			@Override @Post
+			public void handle(Request request, Response response) {
+				try {
+					String bundleID = (String) request.getAttributes().get("bundleID");
+
+					final BundleContext bundleContext = FrameworkUtil.getBundle(this.getClass()).getBundleContext();
+					logger.info("Uninstalling a bundle: " + bundleContext.getBundle(Long.parseLong(bundleID)).getSymbolicName());					
+					bundleContext.getBundle(Long.parseLong(bundleID)).uninstall();
+					
+					restletHelper.setResponseHeaders(request, response);
+					response.setEntity(self.generateReturnString(self.generateSuccessMessage()), MediaType.TEXT_XML);
+				} catch (Exception e) {
+					response.setEntity(self.generateReturnString(self.generateErrorMessage(e.toString(), null)), MediaType.TEXT_XML);
+				}
+			}
+		};
 		
 		Router router = new Router(getContext().createChildContext());
 		
 		router.attach("/shutdown", shutdown);
+		router.attach("/restart", restart);
 		router.attach("/ss", bundles);
+		router.attach("/startbundle/{bundleID}", startBundle);
+		router.attach("/stopbundle/{bundleID}", stopBundle);
+		router.attach("/installbundle", installBundle);
+		router.attach("/uninstallbundle/{bundleID}", uninstallBundle);
 		router.attach("/readers", readers);
 		router.attach("/commands", commands);
 		router.attach("/readerstatus/{readerID}", readerStatus);
