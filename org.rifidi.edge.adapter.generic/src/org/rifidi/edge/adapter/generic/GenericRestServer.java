@@ -132,8 +132,12 @@ public class GenericRestServer {
 	
 	public void stopServer() {
 		try {
-			restServer.stop();
-			sslRestServer.stop();
+			if(restServer!=null) {
+				restServer.stop();
+			}
+			if(sslRestServer!=null) {
+				sslRestServer.stop();			
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

@@ -21,6 +21,8 @@ import java.util.concurrent.atomic.AtomicReference;
 
 import javax.management.MBeanInfo;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.rifidi.edge.api.SessionDTO;
 import org.rifidi.edge.configuration.AnnotationMBeanInfoStrategy;
 import org.rifidi.edge.configuration.JMXMBean;
@@ -47,6 +49,7 @@ import org.rifidi.edge.sensors.SensorSession;
 @JMXMBean
 public class GenericSensor extends AbstractSensor<GenericSensorSession> {
 
+	private static final Log logger = LogFactory.getLog(GenericSensor.class);
 	/**
 	 * 
 	 */
@@ -102,7 +105,7 @@ public class GenericSensor extends AbstractSensor<GenericSensorSession> {
 	@Override
 	public String createSensorSession() throws CannotCreateSessionException {
 		if (!destroyed.get() && session.get() == null) {
-			Integer sessionID = this.sessionID.incrementAndGet();
+			Integer sessionID = 1;
 			if (session.compareAndSet(null, new GenericSensorSession(this,
 					Integer.toString(sessionID), notifierService,
 					super.getID(), this.port, this.restdebug,
@@ -128,7 +131,7 @@ public class GenericSensor extends AbstractSensor<GenericSensorSession> {
 	public String createSensorSession(SessionDTO sessionDTO)
 			throws CannotCreateSessionException {
 		if (!destroyed.get() && session.get() == null) {
-			Integer sessionID = this.sessionID.incrementAndGet();
+			Integer sessionID = 1;
 			if (session.compareAndSet(null, new GenericSensorSession(this,
 					Integer.toString(sessionID), notifierService,
 					super.getID(), this.port, this.restdebug,
@@ -151,8 +154,18 @@ public class GenericSensor extends AbstractSensor<GenericSensorSession> {
 	 * (java.lang.String)
 	 */
 	@Override
-	public void destroySensorSession(String id)
-			throws CannotDestroySensorException {
+	public void destroySensorSession(String id)	throws CannotDestroySensorException {
+		GenericSensorSession genericsession = session.get();
+		if(genericsession!=null && genericsession.getID().equals(id)) {
+			session.set(null);
+			genericsession.killAllCommands();
+			genericsession.disconnect();
+			notifierService.removeSessionEvent(this.getID(), id);
+		} else {
+			String error = "Tried to delete a non existend session: " + id;
+			logger.warn(error);
+			throw new CannotDestroySensorException(error);
+		}
 		restserver.stopServer();
 	}
 
