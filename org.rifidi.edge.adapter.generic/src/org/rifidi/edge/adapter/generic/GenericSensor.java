@@ -67,7 +67,7 @@ public class GenericSensor extends AbstractSensor<GenericSensorSession> {
 	private GenericRestServer restserver = null;
 	
 	/** The ID of the session */
-	private AtomicInteger sessionID = new AtomicInteger(0);
+	private Integer sessionID = new Integer(1);
 	/** The name of the reader that will be displayed */
 	private String displayName = "Generic";
 	/** Flag to check if this reader is destroyed. */
