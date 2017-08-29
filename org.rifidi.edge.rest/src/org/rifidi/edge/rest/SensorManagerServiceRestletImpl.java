@@ -337,11 +337,44 @@ public class SensorManagerServiceRestletImpl extends Application {
 					sensorManagerService.deleteSession((String) request.getAttributes().get("readerID"), (String) request.getAttributes().get("sessionID"));
 					response.setEntity(self.generateReturnString(self.generateSuccessMessage()), MediaType.TEXT_XML);
 				} catch (Exception e) {
-
 					response.setEntity(self.generateReturnString(self.generateErrorMessage(e.toString(), null)), MediaType.TEXT_XML);
 				}
 			}
 		};
+		Restlet resetSession = new Restlet() {
+			@Override
+			public void handle(Request request, Response response) {
+				try {
+					logger.info("resetSession requested");
+					String readerID = (String) request.getAttributes().get("readerID");
+					String sessionID = (String) request.getAttributes().get("sessionID");
+					
+					restletHelper.setResponseHeaders(request, response);
+
+					//Get the current commands
+					List<CommandDTO> commands = sensorManagerService.getSession(readerID, sessionID).getCommands();
+					
+					//Delete the session
+					sensorManagerService.deleteSession(readerID, sessionID);
+					
+					//Recreate the session
+					sensorManagerService.createSession(readerID);
+					
+					//Re-execute commands
+					for(CommandDTO command:commands) {
+						sensorManagerService.submitCommand(readerID, sessionID, command.getCommandID(), command.getInterval(), command.getTimeUnit());
+					}
+					
+					//Start the session
+					sensorManagerService.startSession(readerID, sessionID);
+										
+					response.setEntity(self.generateReturnString(self.generateSuccessMessage()), MediaType.TEXT_XML);
+				} catch (Exception e) {
+					response.setEntity(self.generateReturnString(self.generateErrorMessage(e.toString(), null)), MediaType.TEXT_XML);
+				}
+			}
+		};
+		
 
 		Restlet deleteReader = new Restlet() {
 			@Override
@@ -1585,6 +1618,7 @@ public class SensorManagerServiceRestletImpl extends Application {
 		router.attach("/stopsession/{readerID}/{sessionID}", stopSession);
 		router.attach("/createsession/{readerID}", createSession);
 		router.attach("/deletesession/{readerID}/{sessionID}", deleteSession);
+		router.attach("/resetsession/{readerID}/{sessionID}", resetSession);
 		router.attach("/deletereader/{readerID}", deleteReader);
 		router.attach("/deletecommand/{commandID}", deleteCommand);
 		router.attach("/executecommand/{readerID}/{sessionID}/{commandID}/{repeatInterval}", executeCommand);
