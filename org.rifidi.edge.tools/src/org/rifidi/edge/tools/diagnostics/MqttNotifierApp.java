@@ -172,9 +172,11 @@ public class MqttNotifierApp extends AbstractRifidiApp {
 			throw new RuntimeException(mEx);
 		}
 		
-		this.keepalive = new KeepAliveThread(keepAliveName, keepAliveTimeout);
-		keepAliveThread = new Thread(keepalive);
-		keepAliveThread.start();
+		if(!keepAliveDisable) {
+			this.keepalive = new KeepAliveThread(keepAliveName, keepAliveTimeout);
+			keepAliveThread = new Thread(keepalive);
+			keepAliveThread.start();
+		}
 	}
 
 	/*
@@ -389,7 +391,9 @@ public class MqttNotifierApp extends AbstractRifidiApp {
 	 */
 	@Override
 	public void _stop() {
-		this.keepalive.stop = true;
+		if (this.keepalive != null) {
+			this.keepalive.stop = true;
+		}
 	}
 	
 	/**
