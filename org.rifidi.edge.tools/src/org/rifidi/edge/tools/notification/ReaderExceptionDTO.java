@@ -11,24 +11,25 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
- * Represents and antenna coming online
+ * 
  * 
  * @author Matthew Dean - matt@transcends.co
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlRootElement(name = "antennaup")
-public class AntennaDTO implements Serializable {
+public class ReaderExceptionDTO implements Serializable {
 	
-	private static final long serialVersionUID = 5324534795492066991L;
+	private static final long serialVersionUID = -2419766855643906060L;
 	
 	@XmlElement(name = "sensor")
 	private String sensor;
-	@XmlElement(name = "antenna")
-	private Integer antenna;
+	@XmlElement(name = "errordescription")
+	private String errordescription;
+	@XmlElement(name = "statuscode")
+	private String statuscode;
 	@XmlElement(name = "timestamp")
 	private Long timestamp;
-	@XmlElement(name = "up")
-	private Boolean up;
+	
 	
 	public String getSensor() {
 		return sensor;
@@ -36,23 +37,23 @@ public class AntennaDTO implements Serializable {
 	public void setSensor(String sensor) {
 		this.sensor = sensor;
 	}
-	public Integer getAntenna() {
-		return antenna;
+	public String getErrordescription() {
+		return errordescription;
 	}
-	public void setAntenna(Integer antenna) {
-		this.antenna = antenna;
+	public void setErrordescription(String errordescription) {
+		this.errordescription = errordescription;
+	}
+	public String getStatuscode() {
+		return statuscode;
+	}
+	public void setStatuscode(String statuscode) {
+		this.statuscode = statuscode;
 	}
 	public Long getTimestamp() {
 		return timestamp;
 	}
 	public void setTimestamp(Long timestamp) {
 		this.timestamp = timestamp;
-	}
-	public Boolean isUp() {
-		return up;
-	}
-	public void setUp(Boolean up) {
-		this.up = up;
 	}
 	
 }

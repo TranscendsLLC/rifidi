@@ -25,6 +25,7 @@ import org.rifidi.edge.notification.GPIEvent;
 import org.rifidi.edge.notification.GPOEvent;
 import org.rifidi.edge.notification.RSSITagReadEvent;
 import org.rifidi.edge.notification.ReadCycle;
+import org.rifidi.edge.notification.ReaderExceptionEvent;
 import org.rifidi.edge.notification.SensorProcessingEvent;
 import org.rifidi.edge.notification.SensorClosedEvent;
 import org.rifidi.edge.notification.SensorConnectingEvent;
@@ -74,6 +75,7 @@ public class EsperManagementServiceImpl implements EsperManagementService {
 		config.addEventType("SensorConnectingEvent", SensorConnectingEvent.class);
 		config.addEventType("SensorLoggingInEvent", SensorLoggingInEvent.class);
 		config.addEventType("RSSITagReadEvent", RSSITagReadEvent.class);
+		config.addEventType("ReaderExceptionEvent", ReaderExceptionEvent.class);
 	}
 
 	/*

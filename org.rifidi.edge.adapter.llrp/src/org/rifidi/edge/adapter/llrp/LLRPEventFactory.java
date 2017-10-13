@@ -71,7 +71,7 @@ public class LLRPEventFactory {
 			if (gpiEvent != null) {
 				return createGPIEvent(gpiEvent, readerID);
 			}
-//			AntennaEvent antennaEvent = notification.getReaderEventNotificationData().getAntennaEvent();
+//			antennaEvent = notification.getReaderEventNotificationData().getAntennaEvent();
 //			if(antennaEvent != null) {
 //				return createAntennaEvent(antennaEvent, readerID);
 //			}

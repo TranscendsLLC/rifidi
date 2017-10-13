@@ -14,7 +14,6 @@ package org.rifidi.edge.adapter.llrp;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -32,7 +31,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.mina.common.RuntimeIOException;
 import org.jdom.Document;
-import org.jdom.input.SAXBuilder;
 import org.llrp.ltk.exceptions.InvalidLLRPMessageException;
 import org.llrp.ltk.generated.LLRPMessageFactory;
 import org.llrp.ltk.generated.enumerations.AccessReportTriggerType;
@@ -49,9 +47,7 @@ import org.llrp.ltk.generated.interfaces.AccessCommandOpSpecResult;
 import org.llrp.ltk.generated.messages.ADD_ACCESSSPEC;
 import org.llrp.ltk.generated.messages.ADD_ACCESSSPEC_RESPONSE;
 import org.llrp.ltk.generated.messages.DELETE_ACCESSSPEC;
-import org.llrp.ltk.generated.messages.DELETE_ROSPEC;
 import org.llrp.ltk.generated.messages.ENABLE_ACCESSSPEC;
-import org.llrp.ltk.generated.messages.ENABLE_ROSPEC;
 import org.llrp.ltk.generated.messages.GET_READER_CAPABILITIES;
 import org.llrp.ltk.generated.messages.GET_READER_CONFIG;
 import org.llrp.ltk.generated.messages.GET_ROSPECS;
@@ -88,7 +84,6 @@ import org.rifidi.edge.adapter.llrp.commands.internal.LLRPReset;
 import org.rifidi.edge.api.SessionStatus;
 import org.rifidi.edge.notification.NotifierService;
 import org.rifidi.edge.notification.ReadCycle;
-import org.rifidi.edge.notification.TagReadEvent;
 import org.rifidi.edge.sensors.AbstractCommandConfiguration;
 import org.rifidi.edge.sensors.AbstractSensor;
 import org.rifidi.edge.sensors.Command;
@@ -346,8 +341,8 @@ public class LLRPReaderSession extends AbstractSensorSession implements
 			}
 		} catch (Exception e) {
 			// Any problems and we disable the filter
-			rssiFilterMap = null;
-		}
+			rssiFilterMap = null;   
+		} 
 	}
 	
 
@@ -883,23 +878,22 @@ public class LLRPReaderSession extends AbstractSensorSession implements
 		synchronized (connection) {
 			try {
 				if (timingOut.get()) {
-					throw new IllegalStateException(
-							"Cannot execute while timing out: "
-									+ message.getName());
+					throw new IllegalStateException("Cannot execute while timing out: " + message.getName());
 				}
 				LLRPMessage response = this.connection.transact(message, 20000);
-				if (response != null) {
-					return response;
-				} else {
-					logger.error("Response for message: " + message.getName()
-							+ " was null");
-					throw new TimeoutException();
-				}
+				// Determine if the response has an error
+//				try {
+				LLRPExceptionHandler handler = new LLRPExceptionHandler(this.readerID, this.sensor);
+				handler.checkForErrors(response);
+				
+//				} catch (InvalidLLRPMessageException e) {
+//					e.printStackTrace();
+//				}
+				return response;
 			} catch (TimeoutException e) {
 				timingOut.set(true);
-				logger.error("Timeout when sending an LLRP Message: "
-						+ message.getName());
-				//Disconnect and possibly reconnect
+				logger.error("Timeout when sending an LLRP Message: " + message.getName());
+				// Disconnect and possibly reconnect
 				logger.info("Attempting to reconnect to reader " + this.readerID + " after a timeout");
 				this.disconnect();
 				throw e;
@@ -1490,6 +1484,16 @@ public class LLRPReaderSession extends AbstractSensorSession implements
 	 */
 	@Override
 	public void messageReceived(LLRPMessage arg0) {
+		LLRPExceptionHandler handler = new LLRPExceptionHandler(this.readerID, this.sensor);
+		try {
+			handler.checkForErrors(arg0);
+			if(logger.isDebugEnabled()) {
+				logger.debug(arg0.getResponseType());
+				logger.debug(arg0.toXMLString());
+			}
+		} catch (InvalidLLRPMessageException e) {
+			e.printStackTrace();
+		}
 		if (arg0.getTypeNum() == RO_ACCESS_REPORT.TYPENUM) {
 			this.lastTagTimestamp = System.currentTimeMillis();
 			// The message received is an Access Report.
@@ -1500,8 +1504,7 @@ public class LLRPReaderSession extends AbstractSensorSession implements
 			for (TagReportData tag : tags) {
 				// System.out.println(tag.getEPCParameter());
 				// System.out.println(tag.getLastSeenTimestampUTC());
-				List<AccessCommandOpSpecResult> ops = tag
-						.getAccessCommandOpSpecResultList();
+				List<AccessCommandOpSpecResult> ops = tag.getAccessCommandOpSpecResultList();
 				// See if any operations were performed on
 				// this tag (read, write, kill).
 				// If so, print out the details.

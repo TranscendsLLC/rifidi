@@ -28,6 +28,7 @@ import org.rifidi.edge.api.AbstractRifidiApp;
 import org.rifidi.edge.notification.AntennaEvent;
 import org.rifidi.edge.notification.AppStartedEvent;
 import org.rifidi.edge.notification.AppStoppedEvent;
+import org.rifidi.edge.notification.ReaderExceptionEvent;
 import org.rifidi.edge.notification.SensorClosedEvent;
 import org.rifidi.edge.notification.SensorConnectingEvent;
 import org.rifidi.edge.notification.SensorLoggingInEvent;
@@ -36,6 +37,7 @@ import org.rifidi.edge.tools.notification.AntennaDTO;
 import org.rifidi.edge.tools.notification.AppStartedDTO;
 import org.rifidi.edge.tools.notification.AppStoppedDTO;
 import org.rifidi.edge.tools.notification.KeepAliveDTO;
+import org.rifidi.edge.tools.notification.ReaderExceptionDTO;
 import org.rifidi.edge.tools.notification.SensorClosedDTO;
 import org.rifidi.edge.tools.notification.SensorConnectingDTO;
 import org.rifidi.edge.tools.notification.SensorLoggingInDTO;
@@ -72,6 +74,7 @@ public class MqttNotifierApp extends AbstractRifidiApp {
 	private Boolean appStartedDisable;
 	private Boolean appStoppedDisable;
 	private Boolean keepAliveDisable;
+	private Boolean readerExceptionDisable;
 	
 	private String keepAliveName;
 	private Integer keepAliveTimeout;
@@ -156,6 +159,7 @@ public class MqttNotifierApp extends AbstractRifidiApp {
 		this.appStartedDisable = Boolean.parseBoolean(getProperty("mqttnotifier.app.started.disable", "false"));
 		this.appStoppedDisable = Boolean.parseBoolean(getProperty("mqttnotifier.app.stopped.disable", "false"));
 		this.keepAliveDisable = Boolean.parseBoolean(getProperty("mqttnotifier.keepalive.disable", "false"));
+		this.readerExceptionDisable = Boolean.parseBoolean(getProperty("mqttnotifier.readerexception.disable","false"));
 		
 		//KeepAlive properties
 		this.keepAliveName = getProperty("mqttnotifier.keepalive.name", "");
@@ -172,7 +176,7 @@ public class MqttNotifierApp extends AbstractRifidiApp {
 			throw new RuntimeException(mEx);
 		}
 		
-		if(!keepAliveDisable) {
+		if(!keepAliveDisable && !mqttDisable) {
 			this.keepalive = new KeepAliveThread(keepAliveName, keepAliveTimeout);
 			keepAliveThread = new Thread(keepalive);
 			keepAliveThread.start();
@@ -332,6 +336,24 @@ public class MqttNotifierApp extends AbstractRifidiApp {
 
 			}
 		});
+		
+		addStatement("select * from ReaderExceptionEvent", new StatementAwareUpdateListener() {
+			@Override
+			public void update(EventBean[] arg0, EventBean[] arg1, EPStatement arg2, EPServiceProvider arg3) {
+				if (arg0 != null && !mqttDisable && !readerExceptionDisable) {
+					for (EventBean b : arg0) {
+						ReaderExceptionEvent re = (ReaderExceptionEvent) b.getUnderlying();
+						// send to mqtt
+						ReaderExceptionDTO dto = new ReaderExceptionDTO();
+						dto.setErrordescription(re.getErrordesc());
+						dto.setTimestamp(re.getTimestamp());
+						dto.setSensor(re.getSensorID());
+						dto.setStatuscode(re.getStatuscode());
+						postMqttMesssage(mqttClient, mqttTopic, mqttQos, dto);
+					}
+				}
+			}
+		});
 	}
 
 	public synchronized void postMqttMesssage(MqttClient mqttClient, String mqttTopic, int mqttQos, Object messageContent) {
@@ -349,6 +371,7 @@ public class MqttNotifierApp extends AbstractRifidiApp {
 			writer.close();
 
 			logger.debug("Publishing message: " + content);
+			
 			MqttMessage message = new MqttMessage(content.getBytes());
 			message.setQos(mqttQos);
 			synchronized (mqttClient) {
