@@ -17,7 +17,7 @@ Scenario: Change server display name
         | test   |
         | rifidi |
     Given we are on the homepage
-    When I click on the server
+    When I open the server
     And I change the server display name to <name>
     And I click save
     Then the server name should be <name>
