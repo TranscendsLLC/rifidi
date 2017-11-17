@@ -668,7 +668,7 @@ public class LLRPRestletHelper {
 
 						llrpEncodeMessageDto = session.llrpReadUserMemoryOperation();
 
-					} else if (operationCode.equals(LLRPReaderSession.LLRP_OPERATION_CODE.LLRPUserMemoryWrite)) {
+					} else if (operationCode.equals(LLRPReaderSession.LLRP_OPERATION_CODE.LLRPTidRead)) {
 
 						// check the required properties for user memory read
 						// operation, and overwrite the properties got from jvm
@@ -678,14 +678,65 @@ public class LLRPRestletHelper {
 						validatePassword(accesspwd, "Access");
 						session.setAccessPwd(accesspwd);
 
-						String strData = (String) getAttributeValue(attributes, "data");
-						checkBlockLengthReminder(strData, session.getWriteDataBlockLength(), "data");
+						// check for wordCount
+						String strWordCount = (String) getNonRequiredAttributeValue(attributes, "wordCount");
+						if (strWordCount != null && !strWordCount.isEmpty()) {
 
-						session.setUserMemoryData(strData);
+							session.setWordCount(Integer.parseInt(strWordCount));
 
-						llrpEncodeMessageDto = session.llrpWriteUserMemoryOperation();
+						} else {
 
-					} else {
+							// Set default user memory word count value
+							session.setWordCount(LLRPReaderSession.DEFAULT_USER_MEMORY_WORD_COUNT);
+						}
+
+						llrpEncodeMessageDto = session.llrpReadUserMemoryOperation();
+
+					} else if (operationCode.equals(LLRPReaderSession.LLRP_OPERATION_CODE.LLRPMemoryBankRead)) {
+
+						// check the required properties for user memory read
+						// operation, and overwrite the properties got from jvm
+
+						// check for accesspwd
+						String accesspwd = (String) getAttributeValue(attributes, "accesspwd");
+						validatePassword(accesspwd, "Access");
+						session.setAccessPwd(accesspwd);
+
+						// check for wordCount
+						String strWordCount = (String) getNonRequiredAttributeValue(attributes, "wordCount");
+						Integer membank1 = Integer.parseInt((String) getAttributeValue(attributes, "bank1"));
+						Integer membank2 = Integer.parseInt((String) getAttributeValue(attributes, "bank2"));
+						session.setMemBank1(membank1);
+						session.setMemBank1(membank2);
+						if (strWordCount != null && !strWordCount.isEmpty()) {
+							session.setWordCount(Integer.parseInt(strWordCount));
+						} else {
+							// Set default user memory word count value
+							session.setWordCount(LLRPReaderSession.DEFAULT_USER_MEMORY_WORD_COUNT);
+						}
+
+						llrpEncodeMessageDto = session.llrpReadMemoryBankOperation();
+
+					} 
+//					else if (operationCode.equals(LLRPReaderSession.LLRP_OPERATION_CODE.LLRPMemoryBlockRead)) {
+//
+//						// check the required properties for user memory read
+//						// operation, and overwrite the properties got from jvm
+//
+//						// check for accesspwd
+//						String accesspwd = (String) getAttributeValue(attributes, "accesspwd");
+//						validatePassword(accesspwd, "Access");
+//						session.setAccessPwd(accesspwd);
+//
+//						String strData = (String) getAttributeValue(attributes, "data");
+//						checkBlockLengthReminder(strData, session.getWriteDataBlockLength(), "data");
+//
+//						session.setUserMemoryData(strData);
+//
+//						llrpEncodeMessageDto = session.llrpWriteUserMemoryOperation();
+//
+//					} 
+					else {
 
 						throw new Exception("Operation with code " + operationCode + " is invalid. ");
 
@@ -923,6 +974,32 @@ public class LLRPRestletHelper {
 
 			}
 		};
+		
+		Restlet llrpTidRead = new Restlet() {
+			@Override
+			public void handle(Request request, Response response) {
+
+				logger.info("llrpTidRead requested");
+
+				restletHelper.setResponseHeaders(request, response);
+
+				executeLlrpOperation(request, response, LLRPReaderSession.LLRP_OPERATION_CODE.LLRPTidRead);
+
+			}
+		};
+		
+		Restlet llrpMemoryBlockRead = new Restlet() {
+			@Override
+			public void handle(Request request, Response response) {
+
+				logger.info("llrpMemoryBlockRead requested");
+
+				restletHelper.setResponseHeaders(request, response);
+
+				executeLlrpOperation(request, response, LLRPReaderSession.LLRP_OPERATION_CODE.LLRPMemoryBankRead);
+
+			}
+		};
 
 		Restlet llrpUserMemoryWrite = new Restlet() {
 			@Override
@@ -1048,9 +1125,16 @@ public class LLRPRestletHelper {
 
 		// LLRPUserMemoryRead single shot command with no properties
 		router.attach("/llrpencode/{readerID}/{sessionID}/LLRPUserMemoryRead", llrpUserMemoryRead);
-
 		// LLRPUserMemoryRead single shot command with properties
 		router.attach("/llrpencode/{readerID}/{sessionID}/LLRPUserMemoryRead/{properties}", llrpUserMemoryRead);
+
+		// LLRPUserMemoryRead single shot command with no properties
+		router.attach("/llrpencode/{readerID}/{sessionID}/LLRPMemoryBankRead/{properties}", llrpMemoryBlockRead);
+		
+		// LLRPUserMemoryRead single shot command with no properties
+		router.attach("/llrpencode/{readerID}/{sessionID}/LLRPTidRead", llrpTidRead);
+		// LLRPUserMemoryRead single shot command with properties
+		router.attach("/llrpencode/{readerID}/{sessionID}/LLRPTidRead/{properties}", llrpTidRead);
 
 		// LLRPUserMemoryWrite single shot command with no properties
 		router.attach("/llrpencode/{readerID}/{sessionID}/LLRPUserMemoryWrite", llrpUserMemoryWrite);

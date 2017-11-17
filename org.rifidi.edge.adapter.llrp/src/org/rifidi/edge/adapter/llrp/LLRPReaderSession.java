@@ -279,12 +279,16 @@ public class LLRPReaderSession extends AbstractSensorSession implements
 	
 	private static final int LOCK_USER_MEMORY_ACCESSSPEC_ID = 123;
 	private static final UnsignedShort LOCK_USER_MEMORY_OPSPEC_ID = new UnsignedShort(124);
+	
+	private static final int READ_MEMORY_BANK_ACCESSSPEC_ID = 125;
+	private static final UnsignedShort READ_MEMORY_BANK_OPSEC_ID = new UnsignedShort(126);
 
 	/** Operation names **/
 	public enum LLRP_OPERATION_CODE {
 		LLRPEPCWrite, LLRPEPCRead, LLRPAccessPasswordWrite, LLRPAccessPasswordValidate, 
 		LLRPKillPasswordRead, LLRPKillPasswordWrite, LLRPEPCLock, LLRPKillPasswordLock, 
-		LLRPAccessPasswordLock, LLRPUserMemoryLock, LLRPUserMemoryRead, LLRPUserMemoryWrite
+		LLRPAccessPasswordLock, LLRPUserMemoryLock, LLRPUserMemoryRead, LLRPUserMemoryWrite, 
+		LLRPTidRead, LLRPMemoryBankRead 
 	};
 
 	/** Object to keep track of the operations and responses on each one **/
@@ -317,6 +321,9 @@ public class LLRPReaderSession extends AbstractSensorSession implements
 	
 	/** number of blocks to be read, for EPC or user memory **/
 	private int wordCount;
+	/** memblock to read **/
+	private int membank1;
+	private int membank2;
 	
 	/** data to be set in user memory **/
 	private String userMemoryData;
@@ -373,6 +380,14 @@ public class LLRPReaderSession extends AbstractSensorSession implements
 	public void setWordCount(int wordCount) {
 		this.wordCount = wordCount;
 	}
+
+	public void setMemBank1(int membank1) {
+		this.membank1 = membank1;
+	}
+	public void setMemBank2(int membank2) {
+		this.membank2 = membank2;
+	}
+
 
 	/**
 	 * @return the executeOperationsInAsynchronousMode
@@ -1237,6 +1252,26 @@ public class LLRPReaderSession extends AbstractSensorSession implements
 
 	}
 	
+	public LLRPEncodeMessageDto llrpReadMemoryBankOperation()
+			throws InvalidLLRPMessageException, TimeoutException, Exception {
+
+		// Initialize operation tracker, to be able to receive asynchronous
+		// messages
+		llrpOperationTracker = new LLRPOperationTracker(this);
+
+		// Add the operations in the same order we want to be executed by this
+		// tracker
+
+		LLRPOperationDto epcReadOpDto = new LLRPOperationDto(
+				LLRP_OPERATION_CODE.LLRPMemoryBankRead.name(),
+				READ_MEMORY_BANK_ACCESSSPEC_ID, READ_MEMORY_BANK_OPSEC_ID,
+				null);
+		llrpOperationTracker.addOperationDto(epcReadOpDto);
+
+		return startRequestedOperations(llrpOperationTracker);
+
+	}
+	
 	public LLRPEncodeMessageDto llrpWriteUserMemoryOperation()
 			throws InvalidLLRPMessageException, TimeoutException, Exception {
 
@@ -1803,6 +1838,8 @@ public class LLRPReaderSession extends AbstractSensorSession implements
 
 			opSpecList.add(buildUserMemoryReadOpSpec());
 
+		} else if (accessSpecID == READ_MEMORY_BANK_ACCESSSPEC_ID) {
+			opSpecList.add(buildMemBankReadOpSpec());
 		} else if (accessSpecID == WRITE_USER_MEMORY_ACCESSSPEC_ID) {
 
 			opSpecList.add(buildUserMemoryWriteOpSpec());
@@ -2178,6 +2215,48 @@ public class LLRPReaderSession extends AbstractSensorSession implements
 		opMemBank.set(0);
 		opMemBank.set(1);
 
+		opSpec.setMB(opMemBank);
+
+		opSpec.setWordPointer(new UnsignedShort(0x00));
+
+		// Read 2 words. 
+		opSpec.setWordCount(new UnsignedShort(getWordCount()));
+		
+		return opSpec;
+	}
+	
+	// Create a OpSpec that reads from user memory public C1G2Read
+	//public C1G2Read buildEpcReadOpSpec(String epcId) {
+	public C1G2Read buildMemBankReadOpSpec() {
+		// Create a new OpSpec.
+		// This specifies what operation we want to perform on the
+		// tags that match the specifications above.
+		C1G2Read opSpec = new C1G2Read();
+
+		// Set the OpSpecID to a unique number.
+
+		opSpec.setOpSpecID(READ_MEMORY_BANK_OPSEC_ID);
+
+		UnsignedInteger unsignedIntAccesPass = new UnsignedInteger(getAccessPwd(), 16);
+		
+		opSpec.setAccessPassword(unsignedIntAccesPass);
+
+		// For this demo, we'll write to user memory (bank 3).
+		TwoBitField opMemBank = new TwoBitField();
+		
+		//opMemBank.set(1);
+		//opMemBank.set(0);
+		if(this.membank1==1) {
+			opMemBank.set(0);
+		} else {
+			opMemBank.clear(0);
+		}
+		if(this.membank2==1) {
+			opMemBank.set(1);
+		} else {
+			opMemBank.clear(1);
+		}
+		
 		opSpec.setMB(opMemBank);
 
 		opSpec.setWordPointer(new UnsignedShort(0x00));
