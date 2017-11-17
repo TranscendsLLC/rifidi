@@ -16,7 +16,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 
 import javax.management.MBeanInfo;
@@ -54,11 +53,9 @@ public class GenericSensor extends AbstractSensor<GenericSensorSession> {
 	 * 
 	 */
 	private Integer port = 4567;
-//this.mqttPort, this.mqttURI, this.mqttClientId, this.mqttTopic,
-//	private Integer mqttPort = 2883;	
-//	private String mqttURI="";
-//	private String mqttClientId="GenericReaderId";
-//	private String mqttTopic;
+	private String mqttURI="";
+	private String mqttClientId="GenericReaderId";
+	private String mqttTopic;
 	
 	private Integer restport=-1;
 	private Integer restsslport=-1;
@@ -67,7 +64,7 @@ public class GenericSensor extends AbstractSensor<GenericSensorSession> {
 	private GenericRestServer restserver = null;
 	
 	/** The ID of the session */
-	private Integer sessionID = new Integer(1);
+	//private Integer sessionID = new Integer(1);
 	/** The name of the reader that will be displayed */
 	private String displayName = "Generic";
 	/** Flag to check if this reader is destroyed. */
@@ -109,7 +106,7 @@ public class GenericSensor extends AbstractSensor<GenericSensorSession> {
 			if (session.compareAndSet(null, new GenericSensorSession(this,
 					Integer.toString(sessionID), notifierService,
 					super.getID(), this.port, this.restdebug,
-					new HashSet<AbstractCommandConfiguration<?>>()))) {
+					new HashSet<AbstractCommandConfiguration<?>>(), mqttURI, mqttClientId, mqttTopic))) {
 				// TODO: remove this once we get AspectJ in here!
 				notifierService.addSessionEvent(this.getID(), Integer.toString(sessionID));
 				restserver = new GenericRestServer(this.restport, this.restsslport, new GenericRestletApplication(session.get(), this.restdebug));
@@ -135,7 +132,7 @@ public class GenericSensor extends AbstractSensor<GenericSensorSession> {
 			if (session.compareAndSet(null, new GenericSensorSession(this,
 					Integer.toString(sessionID), notifierService,
 					super.getID(), this.port, this.restdebug,
-					new HashSet<AbstractCommandConfiguration<?>>()))) {
+					new HashSet<AbstractCommandConfiguration<?>>(), mqttURI, mqttClientId, mqttTopic))) {
 				// TODO: remove this once we get AspectJ in here!
 				notifierService.addSessionEvent(this.getID(), Integer.toString(sessionID));
 				restserver = new GenericRestServer(this.restport, this.restsslport, new GenericRestletApplication(session.get(), this.restdebug));
@@ -144,7 +141,7 @@ public class GenericSensor extends AbstractSensor<GenericSensorSession> {
 			}
 		}
 		throw new CannotCreateSessionException();
-	}
+	} 
 
 	/*
 	 * (non-Javadoc)
@@ -244,46 +241,37 @@ public class GenericSensor extends AbstractSensor<GenericSensorSession> {
 		this.port = port;
 	}
 	
+	@Property(displayName = "MqttURI", description = "The URI for incoming MQTT tags "
+			+ "", writable = true, type = PropertyType.PT_STRING, category = "connection"
+			+ "", defaultValue = "-1", orderValue = 2)
+	public String getMqttURI() {
+		return this.mqttURI;
+	}
+	public void setMqttURI(String mqttURI) {
+		this.mqttURI = mqttURI;
+	}
 	
-//	@Property(displayName = "MqttPort", description = "Sets a port for incoming mqtt connections, "
-//			+ "-1 to disable.", writable = true, type = PropertyType.PT_INTEGER, category = "connection"
-//			+ "", defaultValue = "-1", orderValue = 2)
-//	public Integer getMqttPort() {
-//		return this.mqttPort;
-//	}
-//	public void setMqttPort(Integer port) {
-//		this.mqttPort = port;
-//	}
-//	
-//	@Property(displayName = "MqttURI", description = "The URI for incoming MQTT tags "
-//			+ "", writable = true, type = PropertyType.PT_STRING, category = "connection"
-//			+ "", defaultValue = "-1", orderValue = 2)
-//	public String getMqttURI() {
-//		return this.mqttURI;
-//	}
-//	public void setMqttUri(String mqttURI) {
-//		this.mqttURI = mqttURI;
-//	}
-//	
-//	@Property(displayName = "MqttTopic", description = "The topic to listen to for MQTT tags"
-//			+ "", writable = true, type = PropertyType.PT_STRING, category = "connection"
-//			+ "", defaultValue = "GenericReader", orderValue = 2)
-//	public String getMqttTopic() {
-//		return this.mqttTopic;
-//	}
-//	public void getMqttTopic(String topic) {
-//		this.mqttTopic = topic;
-//	}
-//	
-//	@Property(displayName = "MqttClientID", description = "Sets the client ID for mqtt"
-//			+ "", writable = true, type = PropertyType.PT_INTEGER, category = "connection"
-//			+ "", defaultValue = "GenericReaderMqtt", orderValue = 2)
-//	public String getMqttClientID() {
-//		return this.mqttClientId;
-//	}
-//	public void setMqttClientID(String mqttClientID) {
-//		this.mqttClientId = mqttClientID;
-//	}
+	@Property(displayName = "MqttTopic", description = "The topic to listen to for MQTT tags"
+			+ "", writable = true, type = PropertyType.PT_STRING, category = "connection"
+			+ "", defaultValue = "GenericReader", orderValue = 2)
+	public String getMqttTopic() {
+		return this.mqttTopic;
+	}
+	public void setMqttTopic(String topic) {
+		this.mqttTopic = topic;
+	}
+	
+	@Property(displayName = "MqttClientID", description = "Sets the client ID for mqtt"
+			+ "", writable = true, type = PropertyType.PT_STRING, category = "connection"
+			+ "", defaultValue = "GenericReaderMqtt", orderValue = 2)
+	public String getMqttClientID() {
+		return this.mqttClientId;
+	}
+	public void setMqttClientID(String mqttClientID) {
+		this.mqttClientId = mqttClientID;
+	}
+	
+	
 	/**
 	 * The port to use for incoming rest connections
 	 * @return
