@@ -66,8 +66,8 @@ public class TagParsingStrategy {
 			} catch (Exception e) {
 				throw new RuntimeException("Cannot decode ID: " + val);
 			}
-			gen2event.setEPCMemory(epc, val, numbits);
-			TagReadEvent tag = new TagReadEvent(dto.getReader(), gen2event, dto.getAntenna(), dto.getTimestamp());
+			gen2event.setEPCMemory(epc, val, numbits);			
+			TagReadEvent tag = new TagReadEvent(dto.getReader(), gen2event, getAntenna(dto.getAntenna()), dto.getTimestamp());
 			if (dto.getRssi() != null && dto.getRssi()!="") {
 				tag.addExtraInformation("RSSI", dto.getRssi());
 			}
@@ -86,6 +86,13 @@ public class TagParsingStrategy {
 			retval.add(tag);
 		}
 		return retval;
+	}
+	
+	private static int getAntenna(Integer antenna) {
+		if(antenna==null || antenna < 0) {
+			return 0;
+		}
+		return antenna;
 	}
 	
 }
