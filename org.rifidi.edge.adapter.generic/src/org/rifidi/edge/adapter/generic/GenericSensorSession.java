@@ -39,6 +39,7 @@ import org.rifidi.edge.sensors.sessions.MessageProcessingStrategyFactory;
 public class GenericSensorSession extends AbstractServerSocketSensorSession {
 
 	/** Logger */
+	@SuppressWarnings("unused")
 	private final Log logger = LogFactory.getLog(getClass());
 
 	/** Service used to send out notifications */
@@ -63,8 +64,7 @@ public class GenericSensorSession extends AbstractServerSocketSensorSession {
 		
 		this.mqttSubscriber = new GenericMqttSubscriber(mqttURI, mqttTopic, mqttClientId, restdebug, this);
 		
-		if (mqttURI != null) {
-			logger.info("Connecting to MQTT: " + mqttURI);
+		if (mqttURI != null && mqttURI!="") {
 			this.mqttSubscriber.connect();
 		}
 	}	
@@ -94,8 +94,7 @@ public class GenericSensorSession extends AbstractServerSocketSensorSession {
 
 		Set<TagReadEvent> tres = new HashSet<TagReadEvent>();
 		tres.add(event);
-		ReadCycle cycle = new ReadCycle(tres, readerID, System
-				.currentTimeMillis());
+		ReadCycle cycle = new ReadCycle(tres, readerID, System.currentTimeMillis());
 
 		this.getSensor().send(cycle);
 		

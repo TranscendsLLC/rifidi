@@ -243,7 +243,7 @@ public class GenericSensor extends AbstractSensor<GenericSensorSession> {
 	
 	@Property(displayName = "MqttURI", description = "The URI for incoming MQTT tags "
 			+ "", writable = true, type = PropertyType.PT_STRING, category = "connection"
-			+ "", defaultValue = "-1", orderValue = 2)
+			+ "", defaultValue = "tcp://localhost:1883", orderValue = 2)
 	public String getMqttURI() {
 		return this.mqttURI;
 	}
