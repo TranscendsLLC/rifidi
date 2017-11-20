@@ -20,7 +20,6 @@ def step_impl(context, header):
 @when('i open the server')
 def step_impl(context):
     context.browser.find_element_by_xpath("/html/body/div/div[2]/div/div[1]/div/div[2]/div/ul[12]/li/div/ul[12]/li/span").click()
-    assert 1 == 1
 
 
 @when('I change the server display name to {name}')
