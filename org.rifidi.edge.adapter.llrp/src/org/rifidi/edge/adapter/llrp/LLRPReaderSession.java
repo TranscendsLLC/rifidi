@@ -933,7 +933,9 @@ public class LLRPReaderSession extends AbstractSensorSession implements
 	 */
 	@Override
 	public void errorOccured(String arg0) {
-		logger.error("LLRP Error Occurred: " + arg0);
+		if(!arg0.contains("IllegalStateException")) {
+			logger.error("LLRP Error Occurred: " + arg0);
+		}
 		// TODO: should we disconnect?
 //		try {
 //			this.disconnect();

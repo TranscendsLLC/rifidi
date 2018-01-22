@@ -17,6 +17,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.rifidi.edge.api.AbstractRifidiApp;
 import org.rifidi.edge.api.service.tagmonitor.ReadZone;
 import org.rifidi.edge.api.service.tagmonitor.ReadZoneMonitoringService;
@@ -43,6 +45,9 @@ import com.espertech.esper.client.StatementAwareUpdateListener;
  * @author Matthew Dean - matt@pramari.com
  */
 public class NorthwindApp extends AbstractRifidiApp {
+	
+	/** Logger for this class. */
+	private final Log logger = LogFactory.getLog(getClass());
 
 	// How long a tag can not be seen by a reader before the reader assumes the
 	// tag has left the field of view, in seconds.
