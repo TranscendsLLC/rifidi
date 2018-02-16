@@ -15,10 +15,13 @@ package org.rifidi.edge.init;
 import java.io.File;
 import java.net.URI;
 
+import org.apache.http.client.config.RequestConfig;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
 import org.apache.log4j.PropertyConfigurator;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
-import org.restlet.resource.ClientResource;
 
 /**
  * 
@@ -58,25 +61,39 @@ public class Activator implements BundleActivator {
 				Integer numFailsRequired = Integer.parseInt(System
 						.getProperty("org.rifidi.failover.failurecount"));
 				for (int numFails = 0; numFails < numFailsRequired;) {
+					CloseableHttpClient httpclient = null;
 					try {
 						Thread.sleep(failoverTrySeconds * 1000);
-						ClientResource client = new ClientResource("http://"
-								+ primary + "/ping");
-						client.get();
-						System.out.println("CLIENT: " + client.getResponse());
+						httpclient = HttpClients.createDefault();
+						int CONNECTION_TIMEOUT_MS = 5 * 1000; // Timeout in millis.
+						RequestConfig requestConfig = RequestConfig.custom()
+						    .setConnectionRequestTimeout(CONNECTION_TIMEOUT_MS)
+						    .setConnectTimeout(CONNECTION_TIMEOUT_MS)
+						    .setSocketTimeout(CONNECTION_TIMEOUT_MS)
+						    .build();
+
+						HttpGet httpGet = new HttpGet("http://" + primary + "/ping");
+						httpGet.setConfig(requestConfig);
+						httpclient.execute(httpGet);
+
+						System.out.println("Response received from " + primary + ", sleeping for " + failoverTrySeconds + " seconds");
 						// Got past the get()...reset the counter
 						if (numFails > 0) {
-							System.out.println("Request to primary " + primary
-									+ " succeeded after previous failure, resetting the counter");
+							System.out.println("Request to primary " + primary + " succeeded after previous failure, resetting the counter");
 							numFails = 0;
 						}
 					} catch (InterruptedException e) {
+						System.out.println("Interrupted Exception -- trying again");
 						// Do nothing...wasn't a network failure
 					} catch (Exception e) {
 						// Exception happened, could not connect to
 						numFails++;
 						System.out.println("Failed to connect to primary " + primary
 								+ ", incrementing counter: " + numFails + " number of fails required: " + numFailsRequired);
+					} finally {
+						if(httpclient!=null) {
+							httpclient.close();
+						}
 					}
 				}
 
