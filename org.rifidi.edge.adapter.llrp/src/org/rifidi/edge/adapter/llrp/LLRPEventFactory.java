@@ -67,11 +67,14 @@ public class LLRPEventFactory {
 		// If we have a GPIEvent Notification, return a GPIEvent
 		if (message instanceof READER_EVENT_NOTIFICATION) {
 			READER_EVENT_NOTIFICATION notification = (READER_EVENT_NOTIFICATION) message;
-			GPIEvent gpiEvent = notification.getReaderEventNotificationData()
-					.getGPIEvent();
+			GPIEvent gpiEvent = notification.getReaderEventNotificationData().getGPIEvent();
 			if (gpiEvent != null) {
 				return createGPIEvent(gpiEvent, readerID);
 			}
+//			antennaEvent = notification.getReaderEventNotificationData().getAntennaEvent();
+//			if(antennaEvent != null) {
+//				return createAntennaEvent(antennaEvent, readerID);
+//			}
 		}
 		return null;
 	}
@@ -286,10 +289,24 @@ public class LLRPEventFactory {
 	 * @param readerID
 	 * @return
 	 */
-	private static org.rifidi.edge.notification.GPIEvent createGPIEvent(
-			GPIEvent llrpGPIEvent, String readerID) {
+	private static org.rifidi.edge.notification.GPIEvent createGPIEvent(GPIEvent llrpGPIEvent, String readerID) {
 		int port = llrpGPIEvent.getGPIPortNumber().toInteger();
 		boolean state = llrpGPIEvent.getGPIEvent().toBoolean();
 		return new org.rifidi.edge.notification.GPIEvent(readerID, port, state);
 	}
+	
+	/**
+	 * This method parses a GPIEvent from LLRP and returns a Rifidi GPI event
+	 * that can be added to esper
+	 * 
+	 * @param llrpGPIEvent
+	 * @param readerID
+	 * @return
+	 */
+//	private static org.rifidi.edge.notification.AntennaEvent createAntennaEvent(AntennaEvent llrpAntennaEvent, String readerID) {
+//		int antenna = llrpAntennaEvent.getAntennaID().toInteger();
+//		//boolean up = llrpAntennaEvent.getEventType();
+//		AntennaEventType eventType = llrpAntennaEvent.getEventType();
+//		return new org.rifidi.edge.notification.AntennaEvent(readerID, antenna, System.currentTimeMillis(), true);
+//	}
 }

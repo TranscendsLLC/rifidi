@@ -1,0 +1,59 @@
+!SESSION 2018-01-10 22:13:42.788 -----------------------------------------------
+eclipse.buildId=unknown
+java.version=1.8.0_151
+java.vendor=Oracle Corporation
+BootLoader constants: OS=win32, ARCH=x86_64, WS=win32, NL=en_US
+
+!ENTRY org.rxtx 4 0 2018-01-10 22:13:43.687
+!MESSAGE FrameworkEvent ERROR
+!STACK 0
+org.osgi.framework.BundleException: Could not resolve module: org.rxtx [18]
+  Unresolved requirement: Require-Capability: osgi.native; native.paths.0:List<String>="lib/mac/librxtxSerial.jnilib"; native.paths.2:List<String>="lib/win64/rxtxSerial.dll"; native.paths.1:List<String>="lib/linux64/librxtxSerial.so"; native.paths.4:List<String>="lib/win32/rxtxSerial.dll"; native.paths.3:List<String>="lib/linux32/librxtxParallel.so,lib/linux32/librxtxSerial.so"; native.paths.5:List<String>="lib/arm/librxtxSerial.so"; filter:="(|(&(|(osgi.native.osname~=macos)(osgi.native.osname~=MacOSX)))(&(osgi.native.osname~=Linux)(osgi.native.processor~=x86-64))(&(|(osgi.native.osname~=WinXP)(osgi.native.osname~=WinVista)(osgi.native.osname~=Win7)(osgi.native.osname~=Windows 8.1)(osgi.native.osname~=Windows 8))(osgi.native.processor~=x86-64))(&(osgi.native.osname~=Linux)(osgi.native.processor~=x86))(&(|(osgi.native.osname~=Win32)(osgi.native.osname~=WinVista)(osgi.native.osname~=Win7)(osgi.native.osname~=Windows 8.1)(osgi.native.osname~=Windows 8))(osgi.native.processor~=x86))(&(osgi.native.osname~=Linux)(|(osgi.native.processor~=arm)(osgi.native.processor~=armel)(osgi.native.processor~=armhf)(osgi.native.processor~=armv61))))"
+
+	at org.eclipse.osgi.container.Module.start(Module.java:434)
+	at org.eclipse.osgi.container.ModuleContainer$ContainerStartLevel.incStartLevel(ModuleContainer.java:1582)
+	at org.eclipse.osgi.container.ModuleContainer$ContainerStartLevel.incStartLevel(ModuleContainer.java:1562)
+	at org.eclipse.osgi.container.ModuleContainer$ContainerStartLevel.doContainerStartLevel(ModuleContainer.java:1533)
+	at org.eclipse.osgi.container.ModuleContainer$ContainerStartLevel.dispatchEvent(ModuleContainer.java:1476)
+	at org.eclipse.osgi.container.ModuleContainer$ContainerStartLevel.dispatchEvent(ModuleContainer.java:1)
+	at org.eclipse.osgi.framework.eventmgr.EventManager.dispatchEvent(EventManager.java:230)
+	at org.eclipse.osgi.framework.eventmgr.EventManager$EventThread.run(EventManager.java:340)
+
+!ENTRY com.thinkify 4 0 2018-01-10 22:13:43.884
+!MESSAGE FrameworkEvent ERROR
+!STACK 0
+org.osgi.framework.BundleException: Could not resolve module: com.thinkify [16]
+  Unresolved requirement: Import-Package: gnu.io; version="2.2.0.pre2"
+    -> Export-Package: gnu.io; bundle-symbolic-name="org.rxtx"; bundle-version="2.2.0.pre2"; version="2.2.0.pre2"
+       org.rxtx [18]
+         Unresolved requirement: Require-Capability: osgi.native; native.paths.0:List<String>="lib/mac/librxtxSerial.jnilib"; native.paths.2:List<String>="lib/win64/rxtxSerial.dll"; native.paths.1:List<String>="lib/linux64/librxtxSerial.so"; native.paths.4:List<String>="lib/win32/rxtxSerial.dll"; native.paths.3:List<String>="lib/linux32/librxtxParallel.so,lib/linux32/librxtxSerial.so"; native.paths.5:List<String>="lib/arm/librxtxSerial.so"; filter:="(|(&(|(osgi.native.osname~=macos)(osgi.native.osname~=MacOSX)))(&(osgi.native.osname~=Linux)(osgi.native.processor~=x86-64))(&(|(osgi.native.osname~=WinXP)(osgi.native.osname~=WinVista)(osgi.native.osname~=Win7)(osgi.native.osname~=Windows 8.1)(osgi.native.osname~=Windows 8))(osgi.native.processor~=x86-64))(&(osgi.native.osname~=Linux)(osgi.native.processor~=x86))(&(|(osgi.native.osname~=Win32)(osgi.native.osname~=WinVista)(osgi.native.osname~=Win7)(osgi.native.osname~=Windows 8.1)(osgi.native.osname~=Windows 8))(osgi.native.processor~=x86))(&(osgi.native.osname~=Linux)(|(osgi.native.processor~=arm)(osgi.native.processor~=armel)(osgi.native.processor~=armhf)(osgi.native.processor~=armv61))))"
+
+	at org.eclipse.osgi.container.Module.start(Module.java:434)
+	at org.eclipse.osgi.container.ModuleContainer$ContainerStartLevel.incStartLevel(ModuleContainer.java:1582)
+	at org.eclipse.osgi.container.ModuleContainer$ContainerStartLevel.incStartLevel(ModuleContainer.java:1562)
+	at org.eclipse.osgi.container.ModuleContainer$ContainerStartLevel.doContainerStartLevel(ModuleContainer.java:1533)
+	at org.eclipse.osgi.container.ModuleContainer$ContainerStartLevel.dispatchEvent(ModuleContainer.java:1476)
+	at org.eclipse.osgi.container.ModuleContainer$ContainerStartLevel.dispatchEvent(ModuleContainer.java:1)
+	at org.eclipse.osgi.framework.eventmgr.EventManager.dispatchEvent(EventManager.java:230)
+	at org.eclipse.osgi.framework.eventmgr.EventManager$EventThread.run(EventManager.java:340)
+
+!ENTRY org.rifidi.edge.adapter.thinkifyusb 4 0 2018-01-10 22:13:44.936
+!MESSAGE FrameworkEvent ERROR
+!STACK 0
+org.osgi.framework.BundleException: Could not resolve module: org.rifidi.edge.adapter.thinkifyusb [88]
+  Unresolved requirement: Import-Package: com.thinkify.rfid
+    -> Export-Package: com.thinkify.rfid; bundle-symbolic-name="com.thinkify"; bundle-version="0.8.4"; version="0.0.0"
+       com.thinkify [16]
+         Unresolved requirement: Import-Package: gnu.io; version="2.2.0.pre2"
+           -> Export-Package: gnu.io; bundle-symbolic-name="org.rxtx"; bundle-version="2.2.0.pre2"; version="2.2.0.pre2"
+              org.rxtx [18]
+                Unresolved requirement: Require-Capability: osgi.native; native.paths.0:List<String>="lib/mac/librxtxSerial.jnilib"; native.paths.2:List<String>="lib/win64/rxtxSerial.dll"; native.paths.1:List<String>="lib/linux64/librxtxSerial.so"; native.paths.4:List<String>="lib/win32/rxtxSerial.dll"; native.paths.3:List<String>="lib/linux32/librxtxParallel.so,lib/linux32/librxtxSerial.so"; native.paths.5:List<String>="lib/arm/librxtxSerial.so"; filter:="(|(&(|(osgi.native.osname~=macos)(osgi.native.osname~=MacOSX)))(&(osgi.native.osname~=Linux)(osgi.native.processor~=x86-64))(&(|(osgi.native.osname~=WinXP)(osgi.native.osname~=WinVista)(osgi.native.osname~=Win7)(osgi.native.osname~=Windows 8.1)(osgi.native.osname~=Windows 8))(osgi.native.processor~=x86-64))(&(osgi.native.osname~=Linux)(osgi.native.processor~=x86))(&(|(osgi.native.osname~=Win32)(osgi.native.osname~=WinVista)(osgi.native.osname~=Win7)(osgi.native.osname~=Windows 8.1)(osgi.native.osname~=Windows 8))(osgi.native.processor~=x86))(&(osgi.native.osname~=Linux)(|(osgi.native.processor~=arm)(osgi.native.processor~=armel)(osgi.native.processor~=armhf)(osgi.native.processor~=armv61))))"
+
+	at org.eclipse.osgi.container.Module.start(Module.java:434)
+	at org.eclipse.osgi.container.ModuleContainer$ContainerStartLevel.incStartLevel(ModuleContainer.java:1582)
+	at org.eclipse.osgi.container.ModuleContainer$ContainerStartLevel.incStartLevel(ModuleContainer.java:1562)
+	at org.eclipse.osgi.container.ModuleContainer$ContainerStartLevel.doContainerStartLevel(ModuleContainer.java:1533)
+	at org.eclipse.osgi.container.ModuleContainer$ContainerStartLevel.dispatchEvent(ModuleContainer.java:1476)
+	at org.eclipse.osgi.container.ModuleContainer$ContainerStartLevel.dispatchEvent(ModuleContainer.java:1)
+	at org.eclipse.osgi.framework.eventmgr.EventManager.dispatchEvent(EventManager.java:230)
+	at org.eclipse.osgi.framework.eventmgr.EventManager$EventThread.run(EventManager.java:340)

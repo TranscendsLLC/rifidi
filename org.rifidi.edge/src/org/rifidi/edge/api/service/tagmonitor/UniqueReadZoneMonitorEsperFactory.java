@@ -39,6 +39,7 @@ public class UniqueReadZoneMonitorEsperFactory implements RifidiAppEsperFactory 
 	private final Float departureWaitTime;
 	/** The time unit used for the departure wait time */
 	private final TimeUnit timeUnit;
+	private boolean useregex;
 	/** The logger for this class */
 	private final static Log logger = LogFactory
 			.getLog(ReadZoneMonitorEsperFactory.class);
@@ -55,20 +56,12 @@ public class UniqueReadZoneMonitorEsperFactory implements RifidiAppEsperFactory 
 	 *            The amount of time to wait before deciding a tag has departed.
 	 * @param timeUnit
 	 *            the timeUnit used for the departure time.
-	 * @param uniquereader
-	 *            If this value is set to true, a new arrival event will be
-	 *            generated for each reader within the given readzones that a
-	 *            tag shows up on. For instance, suppose the subscriber is
-	 *            monitoring readers LLRP_1 and LLRP_2. If a tag is already
-	 *            visible on LLRP_1, and it suddenly becomes visible on LLRP_2,
-	 *            a new arrival event will be triggered. If the value is set to
-	 *            false, no arrival event will be triggered
-	 * @param uniqueantenna
-	 *            If this value is set to true, a new unique antenna
+	 * @param useregex
+	 * 			  Use a regular expression for the readzone name
 	 */
 	public UniqueReadZoneMonitorEsperFactory(List<ReadZone> readzones,
 			Integer windowID, Float departureWaitTime, TimeUnit timeUnit,
-			boolean uniquereader, boolean uniqueantenna) {
+			boolean useregex) {
 		this.readzones = new ArrayList<ReadZone>();
 		if (readzones != null) {
 			this.readzones.addAll(readzones);
@@ -78,7 +71,7 @@ public class UniqueReadZoneMonitorEsperFactory implements RifidiAppEsperFactory 
 		statements = new LinkedList<String>();
 		this.departureWaitTime = departureWaitTime;
 		this.timeUnit = timeUnit;
-
+		this.useregex = useregex;
 	}
 
 	/*
@@ -104,7 +97,7 @@ public class UniqueReadZoneMonitorEsperFactory implements RifidiAppEsperFactory 
 		statements.add("create window " + windowName
 				+ ".std:firstunique(tag.ID, readerID"
 				+ ", antennaID) as TagReadEvent");
-		statements.add(EsperUtil.buildInsertStatement(windowName, readzones, false));
+		statements.add(EsperUtil.buildInsertStatement(windowName, readzones, useregex));
 		statements.add("create window " + uniqueWindowName + ".std:firstunique(tag.ID) as TagReadEvent");
 		statements.add("insert into " + uniqueWindowName + " select * from " + windowName);
 		statements.add("on pattern [every tag1="+ windowName+ " ->"

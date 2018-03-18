@@ -59,6 +59,8 @@ public class ReadZoneMonitorEsperFactory implements RifidiAppEsperFactory{
 	 *            The amount of time to wait before deciding a tag has departed.
 	 * @param timeUnit
 	 *            the timeUnit used for the departure time.
+	 * @param useregex
+	 * 			  Use a regular expression for the readzone name
 	 */
 	public ReadZoneMonitorEsperFactory(List<ReadZone> readzones,
 			Integer windowID, Float departureWaitTime, TimeUnit timeUnit, Boolean useRegex) {

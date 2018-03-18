@@ -21,6 +21,7 @@ import org.restlet.routing.Router;
 import org.restlet.util.Series;
 import org.rifidi.edge.adapter.generic.dtos.PingDTO;
 import org.rifidi.edge.adapter.generic.dtos.RestResponseMessageDTO;
+import org.rifidi.edge.adapter.generic.strategy.TagParsingStrategy;
 
 
 public class GenericRestletApplication extends Application {
@@ -80,7 +81,7 @@ public class GenericRestletApplication extends Application {
 				
 				if (items != null && items != "") {
 					try {
-						self.session.sendTags(self.session.processTags(items));
+						self.session.sendTags(TagParsingStrategy.processTags(items, debugmode));
 					} catch (Exception e) {
 						response.setEntity(self.generateReturnString(self.generateErrorMessage(e.getMessage(), null)), MediaType.TEXT_XML);
 						if(self.debugmode) {
@@ -116,6 +117,7 @@ public class GenericRestletApplication extends Application {
 		return message;
 	}
 
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	private void setResponseHeaders(Request request, Response response) {
 
 		Series<Header> responseHeaders = (Series<Header>) response.getAttributes().get("org.restlet.http.headers");
@@ -151,6 +153,7 @@ public class GenericRestletApplication extends Application {
 	 * @param response
 	 *            the response to allow CORS
 	 */
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	private void setCorsHeaders(Response response) {
 
 		Series<Header> responseHeaders = (Series<Header>) response.getAttributes().get("org.restlet.http.headers");

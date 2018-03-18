@@ -6,6 +6,10 @@
       <llrp:EventType>GPI_Event</llrp:EventType>
       <llrp:NotificationState>1</llrp:NotificationState>
     </llrp:EventNotificationState>
+    <llrp:EventNotificationState>
+      <llrp:EventType>Antenna_Event</llrp:EventType>
+      <llrp:NotificationState>1</llrp:NotificationState>
+    </llrp:EventNotificationState>
   </llrp:ReaderEventNotificationSpec>
   <llrp:ROReportSpec>
     <llrp:ROReportTrigger>None</llrp:ROReportTrigger>

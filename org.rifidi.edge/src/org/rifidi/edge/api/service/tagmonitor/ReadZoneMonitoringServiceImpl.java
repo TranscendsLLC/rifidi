@@ -85,11 +85,9 @@ public class ReadZoneMonitoringServiceImpl extends
 			boolean wholereader, boolean useRegex) {
 		RifidiAppEsperFactory esperFactory;
 		if (wholereader) {
-			esperFactory = new UniqueReadZoneMonitorEsperFactory(
-					readZones, getCounter(), departureTime, timeUnit, true, true);
+			esperFactory = new UniqueReadZoneMonitorEsperFactory(readZones, getCounter(), departureTime, timeUnit, useRegex);
 		} else {
-			esperFactory = new ReadZoneMonitorEsperFactory(
-					readZones, getCounter(), departureTime, timeUnit, useRegex);
+			esperFactory = new ReadZoneMonitorEsperFactory(readZones, getCounter(), departureTime, timeUnit, useRegex);
 		}
 		subscribe(subscriber, esperFactory);
 	}

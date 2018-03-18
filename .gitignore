@@ -77,3 +77,8 @@ moquette_store.mapdb*
 
 # deb
 *.deb
+com.sendgrid/
+com.amazon.ion/
+com.amazonaws.jmespath/
+org.apache.poi/
+Rifidi-SDK/rifidi/Debian-packages/*

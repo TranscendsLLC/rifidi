@@ -35,10 +35,14 @@ import javax.management.openmbean.OpenMBeanAttributeInfoSupport;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Marshaller;
 
+import org.apache.commons.lang3.SystemUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jdom.Document;
 import org.jdom.input.SAXBuilder;
+import org.osgi.framework.Bundle;
+import org.osgi.framework.BundleContext;
+import org.osgi.framework.FrameworkUtil;
 import org.restlet.Application;
 import org.restlet.Message;
 import org.restlet.Request;
@@ -48,6 +52,8 @@ import org.restlet.data.Header;
 import org.restlet.data.MediaType;
 import org.restlet.data.Reference;
 import org.restlet.resource.Directory;
+import org.restlet.resource.Get;
+import org.restlet.resource.Post;
 import org.restlet.routing.Router;
 import org.restlet.util.Series;
 import org.rifidi.edge.adapter.llrp.LLRPEncodeMessageDto;
@@ -116,7 +122,7 @@ public class SensorManagerServiceRestletImpl extends Application {
 
 	/** The command manager service for command commands */
 	public CommandManagerService commandManagerService;
-
+	
 	/** The Provisioning Service */
 	private volatile ProvisioningService provisioningService;
 
@@ -276,6 +282,11 @@ public class SensorManagerServiceRestletImpl extends Application {
 			if (sessionMap.containsKey(objSessionId)) {
 
 				session = (LLRPReaderSession) sessionMap.get(objSessionId);
+				
+				//Check if session is processing or not
+		        if(!session.getStatus().equals(SessionStatus.PROCESSING)) {
+		            throw new Exception("Session with id " + objSessionId + " of reader with id " + strReaderId + " is not in the processing state.");
+		        }
 
 				// Validate no current operations on session are
 				// running, and response to user if so
@@ -556,7 +567,9 @@ public class SensorManagerServiceRestletImpl extends Application {
 						throw new Exception("Operation with code " + operationCode + " is invalid. ");
 
 					}
+					
 
+					
 				}
 
 				/*
@@ -575,7 +588,7 @@ public class SensorManagerServiceRestletImpl extends Application {
 			// .generateSuccessMessage()), MediaType.TEXT_XML);
 
 			response.setEntity(this.generateReturnString(llrpEncodeMessageDto), MediaType.TEXT_XML);
-
+			
 		} catch (Exception e) {
 
 			// test ini
@@ -596,7 +609,22 @@ public class SensorManagerServiceRestletImpl extends Application {
 			if (session != null) {
 
 				session.cleanupSession();
-
+				
+				//*****RESET READER*******
+				String readerID = (String) request.getAttributes().get("readerID");
+				String sessionID = (String) request.getAttributes().get("sessionID");
+				//Reset the reader -- TODO pull this out into a 
+				List<CommandDTO> commands = sensorManagerService.getSession(readerID, sessionID).getCommands();
+				sensorManagerService.deleteSession(readerID, sessionID);
+				sensorManagerService.createSession(readerID);
+				for(CommandDTO command:commands) {
+					try {
+						sensorManagerService.submitCommand(readerID, sessionID, command.getCommandID(), command.getInterval(), command.getTimeUnit());
+					} catch (CommandSubmissionException e) {
+						logger.error("Exception when attempting to execute command while resetting LLRP reader");
+					}
+				}
+				sensorManagerService.startSession(readerID, sessionID);
 			}
 
 		}
@@ -805,11 +833,44 @@ public class SensorManagerServiceRestletImpl extends Application {
 					sensorManagerService.deleteSession((String) request.getAttributes().get("readerID"), (String) request.getAttributes().get("sessionID"));
 					response.setEntity(self.generateReturnString(self.generateSuccessMessage()), MediaType.TEXT_XML);
 				} catch (Exception e) {
-
 					response.setEntity(self.generateReturnString(self.generateErrorMessage(e.toString(), null)), MediaType.TEXT_XML);
 				}
 			}
 		};
+		Restlet resetSession = new Restlet() {
+			@Override
+			public void handle(Request request, Response response) {
+				try {
+					logger.info("resetSession requested");
+					String readerID = (String) request.getAttributes().get("readerID");
+					String sessionID = (String) request.getAttributes().get("sessionID");
+					
+					setResponseHeaders(request, response);
+
+					//Get the current commands
+					List<CommandDTO> commands = sensorManagerService.getSession(readerID, sessionID).getCommands();
+					
+					//Delete the session
+					sensorManagerService.deleteSession(readerID, sessionID);
+					
+					//Recreate the session
+					sensorManagerService.createSession(readerID);
+					
+					//Re-execute commands
+					for(CommandDTO command:commands) {
+						sensorManagerService.submitCommand(readerID, sessionID, command.getCommandID(), command.getInterval(), command.getTimeUnit());
+					}
+					
+					//Start the session
+					sensorManagerService.startSession(readerID, sessionID);
+										
+					response.setEntity(self.generateReturnString(self.generateSuccessMessage()), MediaType.TEXT_XML);
+				} catch (Exception e) {
+					response.setEntity(self.generateReturnString(self.generateErrorMessage(e.toString(), null)), MediaType.TEXT_XML);
+				}
+			}
+		};
+		
 
 		Restlet deleteReader = new Restlet() {
 			@Override
@@ -2150,37 +2211,152 @@ public class SensorManagerServiceRestletImpl extends Application {
 
 			}
 		};
-		
-//		Restlet rcs = new Restlet() {
-//			@Override
-//			public void handle(Request request, Response response) {
-//				try {
-//
-//					logger.info("rcs requested");
-//
-//					setResponseHeaders(request, response);
-//
-//					AbstractSensor<?> sensor = readerDAO.getReaderByID((String) request.getAttributes().get("readerID"));
-//
-//					if (sensor == null) {
-//						throw new Exception("ReaderID is missing or invalid");
-//					}
-//
-//					Map<String, SensorSession> sessionMap = sensor.getSensorSessions();
-//					if (sessionMap != null && sessionMap.containsKey(request.getAttributes().get("sessionID"))) {
-//						ThinkifyUSBSensorSession session = (ThinkifyUSBSensorSession) sessionMap.get(request.getAttributes().get("sessionID"));
-//						session.sendRCS();
-//						response.setEntity(self.generateReturnString(self.generateSuccessMessage()), MediaType.TEXT_XML);
-//					} else {
-//						throw new Exception("SessionID is missing or invalid");
-//					}
-//				} catch (Exception e) {
-//					response.setEntity(self.generateReturnString(self.generateErrorMessage(e.getMessage(), null)), MediaType.TEXT_XML);
-//				}
-//			}
-//		};
 
+		Restlet shutdown = new Restlet() {
+			@Override @Post
+			public void handle(Request request, Response response) {
+				try {
+					setResponseHeaders(request, response);
+					response.setEntity(self.generateReturnString(self.generateSuccessMessage()), MediaType.TEXT_XML);
+					Thread thread = new Thread(new RestletShutdown());
+					thread.start();					
+				} catch (Exception e) {
+					response.setEntity(self.generateReturnString(self.generateErrorMessage(e.toString(), null)), MediaType.TEXT_XML);
+				}
+			}
+		};
+		
+		Restlet restart = new Restlet() {
+			@Override @Post
+			public void handle(Request request, Response response) {
+				try {
+					setResponseHeaders(request, response);
+					response.setEntity(self.generateReturnString(self.generateSuccessMessage()), MediaType.TEXT_XML);
+					if(SystemUtils.IS_OS_LINUX) {
+						Thread thread = new Thread(new RestletRestart());
+						thread.start();
+					} else {
+						throw new Exception("Restart will only work on Linux");
+					}
+				} catch (Exception e) {
+					response.setEntity(self.generateReturnString(self.generateErrorMessage(e.toString(), null)), MediaType.TEXT_XML);
+				}
+			}
+		};
+		
+		Restlet bundles = new Restlet() {
+			@Override @Post @Get
+			public void handle(Request request, Response response) {
+				try {
+					Map<Integer,String> states = new HashMap<Integer,String>();
+					states.put(1, "UNINSTALLED");
+					states.put(2, "INSTALLED");
+					states.put(4, "RESOLVED");
+					states.put(8, "STARTING");
+					states.put(16, "STOPPING");
+					states.put(32, "ACTIVE");
+					
+					
+					final BundleContext bundleContext = FrameworkUtil.getBundle(this.getClass()).getBundleContext();
+					BundleResponseMessageDTO bundleResponse = new BundleResponseMessageDTO();
+					List<BundleDTO> bundleDTOs = new LinkedList<BundleDTO>();
+					for(Bundle bundle:bundleContext.getBundles()) {
+						BundleDTO bundleDTO = new BundleDTO();
+						bundleDTO.setName(bundle.getSymbolicName());
+						bundleDTO.setId(bundle.getBundleId());
+						bundleDTO.setState(states.get(bundle.getState()));
+						bundleDTOs.add(bundleDTO);
+					}
+					bundleResponse.setBundles(bundleDTOs);
+					
+					setResponseHeaders(request, response);
+					response.setEntity(self.generateReturnString(bundleResponse), MediaType.TEXT_XML);	
+				} catch (Exception e) {
+					response.setEntity(self.generateReturnString(self.generateErrorMessage(e.toString(), null)), MediaType.TEXT_XML);
+				}
+			}
+		};
+		
+		Restlet startBundle = new Restlet() {
+			@Override @Post
+			public void handle(Request request, Response response) {
+				try {
+					String bundleID = (String) request.getAttributes().get("bundleID");
+					
+					final BundleContext bundleContext = FrameworkUtil.getBundle(this.getClass()).getBundleContext();
+					logger.info("Starting a bundle: " + bundleContext.getBundle(Long.parseLong(bundleID)).getSymbolicName());		
+					bundleContext.getBundle(Long.parseLong(bundleID)).start();;
+					
+					setResponseHeaders(request, response);
+					response.setEntity(self.generateReturnString(self.generateSuccessMessage()), MediaType.TEXT_XML);
+				} catch (Exception e) {
+					response.setEntity(self.generateReturnString(self.generateErrorMessage(e.toString(), null)), MediaType.TEXT_XML);
+				}
+			}
+		};
+		
+		Restlet stopBundle = new Restlet() {
+			@Override @Post
+			public void handle(Request request, Response response) {
+				try {
+					String bundleID = (String) request.getAttributes().get("bundleID");
+					
+					final BundleContext bundleContext = FrameworkUtil.getBundle(this.getClass()).getBundleContext();
+					logger.info("Stopping a bundle: " + bundleContext.getBundle(Long.parseLong(bundleID)).getSymbolicName());		
+					bundleContext.getBundle(Long.parseLong(bundleID)).stop();
+					
+					setResponseHeaders(request, response);
+					response.setEntity(self.generateReturnString(self.generateSuccessMessage()), MediaType.TEXT_XML);
+				} catch (Exception e) {
+					response.setEntity(self.generateReturnString(self.generateErrorMessage(e.toString(), null)), MediaType.TEXT_XML);
+				}
+			}
+		};
+		
+		Restlet installBundle = new Restlet() {
+			@Override @Post
+			public void handle(Request request, Response response) {
+				try {
+					String bundlePath = (String) request.getEntityAsText();
+					logger.info("Installing a bundle: " + bundlePath);
+					final BundleContext bundleContext = FrameworkUtil.getBundle(this.getClass()).getBundleContext();
+					bundleContext.installBundle(bundlePath);
+					
+					setResponseHeaders(request, response);
+					response.setEntity(self.generateReturnString(self.generateSuccessMessage()), MediaType.TEXT_XML);
+				} catch (Exception e) {
+					response.setEntity(self.generateReturnString(self.generateErrorMessage(e.toString(), null)), MediaType.TEXT_XML);
+				}
+			}
+		};
+		
+		Restlet uninstallBundle = new Restlet() {
+			@Override @Post
+			public void handle(Request request, Response response) {
+				try {
+					String bundleID = (String) request.getAttributes().get("bundleID");
+
+					final BundleContext bundleContext = FrameworkUtil.getBundle(this.getClass()).getBundleContext();
+					logger.info("Uninstalling a bundle: " + bundleContext.getBundle(Long.parseLong(bundleID)).getSymbolicName());					
+					bundleContext.getBundle(Long.parseLong(bundleID)).uninstall();
+					
+					setResponseHeaders(request, response);
+					response.setEntity(self.generateReturnString(self.generateSuccessMessage()), MediaType.TEXT_XML);
+				} catch (Exception e) {
+					response.setEntity(self.generateReturnString(self.generateErrorMessage(e.toString(), null)), MediaType.TEXT_XML);
+				}
+			}
+		};
+		
 		Router router = new Router(getContext().createChildContext());
+		
+		router.attach("/shutdown", shutdown);
+		router.attach("/restart", restart);
+		router.attach("/ss", bundles);
+		router.attach("/startbundle/{bundleID}", startBundle);
+		router.attach("/stopbundle/{bundleID}", stopBundle);
+		router.attach("/installbundle", installBundle);
+		router.attach("/uninstallbundle/{bundleID}", uninstallBundle);
 		router.attach("/readers", readers);
 		router.attach("/commands", commands);
 		router.attach("/readerstatus/{readerID}", readerStatus);
@@ -2188,6 +2364,7 @@ public class SensorManagerServiceRestletImpl extends Application {
 		router.attach("/stopsession/{readerID}/{sessionID}", stopSession);
 		router.attach("/createsession/{readerID}", createSession);
 		router.attach("/deletesession/{readerID}/{sessionID}", deleteSession);
+		router.attach("/resetsession/{readerID}/{sessionID}", resetSession);
 		router.attach("/deletereader/{readerID}", deleteReader);
 		router.attach("/deletecommand/{commandID}", deleteCommand);
 		router.attach("/executecommand/{readerID}/{sessionID}/{commandID}/{repeatInterval}", executeCommand);
