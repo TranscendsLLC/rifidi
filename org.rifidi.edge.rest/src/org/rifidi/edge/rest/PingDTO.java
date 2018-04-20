@@ -18,6 +18,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement(name = "response")
 public class PingDTO implements Serializable {
 	
+	private static final long serialVersionUID = 6056406917308831021L;
 	
 	@XmlElement(name = "timestamp")
 	private String timestamp;

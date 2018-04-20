@@ -25,14 +25,19 @@ import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
 import org.rifidi.edge.api.AbstractRifidiApp;
+import org.rifidi.edge.notification.AntennaEvent;
 import org.rifidi.edge.notification.AppStartedEvent;
 import org.rifidi.edge.notification.AppStoppedEvent;
+import org.rifidi.edge.notification.ReaderExceptionEvent;
 import org.rifidi.edge.notification.SensorClosedEvent;
 import org.rifidi.edge.notification.SensorConnectingEvent;
 import org.rifidi.edge.notification.SensorLoggingInEvent;
 import org.rifidi.edge.notification.SensorProcessingEvent;
+import org.rifidi.edge.tools.notification.AntennaDTO;
 import org.rifidi.edge.tools.notification.AppStartedDTO;
 import org.rifidi.edge.tools.notification.AppStoppedDTO;
+import org.rifidi.edge.tools.notification.KeepAliveDTO;
+import org.rifidi.edge.tools.notification.ReaderExceptionDTO;
 import org.rifidi.edge.tools.notification.SensorClosedDTO;
 import org.rifidi.edge.tools.notification.SensorConnectingDTO;
 import org.rifidi.edge.tools.notification.SensorLoggingInDTO;
@@ -68,6 +73,14 @@ public class MqttNotifierApp extends AbstractRifidiApp {
 	private Boolean closedDisable;
 	private Boolean appStartedDisable;
 	private Boolean appStoppedDisable;
+	private Boolean keepAliveDisable;
+	private Boolean readerExceptionDisable;
+	
+	private String keepAliveName;
+	private Integer keepAliveTimeout;
+	
+	private KeepAliveThread keepalive;
+	private Thread keepAliveThread;
 	
 
 
@@ -145,6 +158,12 @@ public class MqttNotifierApp extends AbstractRifidiApp {
 		this.closedDisable = Boolean.parseBoolean(getProperty("mqttnotifier.closed.disable", "false"));
 		this.appStartedDisable = Boolean.parseBoolean(getProperty("mqttnotifier.app.started.disable", "false"));
 		this.appStoppedDisable = Boolean.parseBoolean(getProperty("mqttnotifier.app.stopped.disable", "false"));
+		this.keepAliveDisable = Boolean.parseBoolean(getProperty("mqttnotifier.keepalive.disable", "false"));
+		this.readerExceptionDisable = Boolean.parseBoolean(getProperty("mqttnotifier.readerexception.disable","false"));
+		
+		//KeepAlive properties
+		this.keepAliveName = getProperty("mqttnotifier.keepalive.name", "");
+		this.keepAliveTimeout = Integer.parseInt(getProperty("mqttnotifier.keepalive.timeout", "20000"));
 		
 		MemoryPersistence persistence = new MemoryPersistence();
 
@@ -155,6 +174,12 @@ public class MqttNotifierApp extends AbstractRifidiApp {
 		} catch (MqttException mEx) {
 			logger.error("Error creating mqttClient instance to broker", mEx);
 			throw new RuntimeException(mEx);
+		}
+		
+		if(!keepAliveDisable && !mqttDisable) {
+			this.keepalive = new KeepAliveThread(keepAliveName, keepAliveTimeout);
+			keepAliveThread = new Thread(keepalive);
+			keepAliveThread.start();
 		}
 	}
 
@@ -255,6 +280,25 @@ public class MqttNotifierApp extends AbstractRifidiApp {
 			}
 		});
 		
+		addStatement("select * from AntennaEvent", new StatementAwareUpdateListener() {
+			@Override
+			public void update(EventBean[] arg0, EventBean[] arg1, EPStatement arg2, EPServiceProvider arg3) {
+				if (arg0 != null && !mqttDisable && !logginginDisable) {
+					for (EventBean b : arg0) {
+						AntennaEvent event = (AntennaEvent) b.getUnderlying();
+						// send to mqtt
+						AntennaDTO dto = new AntennaDTO();
+						dto.setUp(event.isUp());
+						dto.setAntenna(event.getAntennaID());
+						dto.setSensor(event.getSensorID());
+						dto.setTimestamp(System.currentTimeMillis());						
+						postMqttMesssage(mqttClient, mqttTopic, mqttQos, dto);						
+					}
+				}
+
+			}
+		});
+		
 		addStatement("select * from AppStartedEvent", new StatementAwareUpdateListener() {
 			@Override
 			public void update(EventBean[] arg0, EventBean[] arg1, EPStatement arg2, EPServiceProvider arg3) {
@@ -292,9 +336,27 @@ public class MqttNotifierApp extends AbstractRifidiApp {
 
 			}
 		});
+		
+		addStatement("select * from ReaderExceptionEvent", new StatementAwareUpdateListener() {
+			@Override
+			public void update(EventBean[] arg0, EventBean[] arg1, EPStatement arg2, EPServiceProvider arg3) {
+				if (arg0 != null && !mqttDisable && !readerExceptionDisable) {
+					for (EventBean b : arg0) {
+						ReaderExceptionEvent re = (ReaderExceptionEvent) b.getUnderlying();
+						// send to mqtt
+						ReaderExceptionDTO dto = new ReaderExceptionDTO();
+						dto.setErrordescription(re.getErrordesc());
+						dto.setTimestamp(re.getTimestamp());
+						dto.setSensor(re.getSensorID());
+						dto.setStatuscode(re.getStatuscode());
+						postMqttMesssage(mqttClient, mqttTopic, mqttQos, dto);
+					}
+				}
+			}
+		});
 	}
 
-	public void postMqttMesssage(MqttClient mqttClient, String mqttTopic, int mqttQos, Object messageContent) {
+	public synchronized void postMqttMesssage(MqttClient mqttClient, String mqttTopic, int mqttQos, Object messageContent) {
 		try {
 			JAXBContext jaxbContext = JAXBContext.newInstance(messageContent.getClass());
 			Marshaller jaxbMarshaller = jaxbContext.createMarshaller();
@@ -309,6 +371,7 @@ public class MqttNotifierApp extends AbstractRifidiApp {
 			writer.close();
 
 			logger.debug("Publishing message: " + content);
+			
 			MqttMessage message = new MqttMessage(content.getBytes());
 			message.setQos(mqttQos);
 			synchronized (mqttClient) {
@@ -341,6 +404,67 @@ public class MqttNotifierApp extends AbstractRifidiApp {
 			throw new RuntimeException(jEx);
 		} catch (IOException ioEx) {
 			logger.error("Error publishing to queue", ioEx);
+		}
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.rifidi.edge.core.app.api.AbstractRifidiApp#_stop()
+	 */
+	@Override
+	public void _stop() {
+		if (this.keepalive != null) {
+			this.keepalive.stop = true;
+		}
+	}
+	
+	/**
+	 * Keep alive thread -- will call postMqttMessage with a keepalive payload at set intervals.  
+	 * 
+	 * @author Matthew Dean - matt@transcends.co
+	 */
+	private class KeepAliveThread implements Runnable {
+		
+		volatile boolean stop = false;
+		Long starttime = null;
+		Integer timeout = null;
+		String name;
+		
+		/**
+		 * @param name 	The name of the server
+		 * @param ip   	The ip of the server
+		 */
+		public KeepAliveThread(String name, Integer timeout) {
+			this.name = name;
+			this.timeout = timeout;
+			starttime = System.currentTimeMillis();
+		}
+
+		/*
+		 * (non-Javadoc)
+		 * @see java.lang.Runnable#run()
+		 */
+		@Override
+		public void run() {
+			while (!stop) {
+				// Create the keepalive payload
+				KeepAliveDTO dto = new KeepAliveDTO();
+				// Set the IP
+				dto.setIp(ip);
+				dto.setName(name);
+				Long currenttime = System.currentTimeMillis();
+				dto.setTimestamp(currenttime);
+				dto.setUptime(currenttime - starttime);
+
+				// Post the message to Mqtt
+				postMqttMesssage(mqttClient, mqttTopic, mqttQos, dto);
+				
+				try {
+					Thread.sleep(timeout);
+				} catch (InterruptedException e) {
+				}
+			}
 		}
 	}
 

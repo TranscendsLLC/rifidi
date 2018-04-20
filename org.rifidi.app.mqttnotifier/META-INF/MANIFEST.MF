@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: MqttNotifier
 Bundle-SymbolicName: org.rifidi.app.mqttnotifier
-Bundle-Version: 1.0.0
+Bundle-Version: 1.1.0
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Require-Bundle: org.rifidi.edge;bundle-version="6.1.0",
  com.espertech.esper;bundle-version="5.3.0"

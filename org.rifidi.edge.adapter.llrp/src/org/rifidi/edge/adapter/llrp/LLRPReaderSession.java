@@ -14,7 +14,6 @@ package org.rifidi.edge.adapter.llrp;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -32,7 +31,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.mina.common.RuntimeIOException;
 import org.jdom.Document;
-import org.jdom.input.SAXBuilder;
 import org.llrp.ltk.exceptions.InvalidLLRPMessageException;
 import org.llrp.ltk.generated.LLRPMessageFactory;
 import org.llrp.ltk.generated.enumerations.AccessReportTriggerType;
@@ -49,9 +47,7 @@ import org.llrp.ltk.generated.interfaces.AccessCommandOpSpecResult;
 import org.llrp.ltk.generated.messages.ADD_ACCESSSPEC;
 import org.llrp.ltk.generated.messages.ADD_ACCESSSPEC_RESPONSE;
 import org.llrp.ltk.generated.messages.DELETE_ACCESSSPEC;
-import org.llrp.ltk.generated.messages.DELETE_ROSPEC;
 import org.llrp.ltk.generated.messages.ENABLE_ACCESSSPEC;
-import org.llrp.ltk.generated.messages.ENABLE_ROSPEC;
 import org.llrp.ltk.generated.messages.GET_READER_CAPABILITIES;
 import org.llrp.ltk.generated.messages.GET_READER_CONFIG;
 import org.llrp.ltk.generated.messages.GET_ROSPECS;
@@ -88,7 +84,6 @@ import org.rifidi.edge.adapter.llrp.commands.internal.LLRPReset;
 import org.rifidi.edge.api.SessionStatus;
 import org.rifidi.edge.notification.NotifierService;
 import org.rifidi.edge.notification.ReadCycle;
-import org.rifidi.edge.notification.TagReadEvent;
 import org.rifidi.edge.sensors.AbstractCommandConfiguration;
 import org.rifidi.edge.sensors.AbstractSensor;
 import org.rifidi.edge.sensors.Command;
@@ -284,12 +279,16 @@ public class LLRPReaderSession extends AbstractSensorSession implements
 	
 	private static final int LOCK_USER_MEMORY_ACCESSSPEC_ID = 123;
 	private static final UnsignedShort LOCK_USER_MEMORY_OPSPEC_ID = new UnsignedShort(124);
+	
+	private static final int READ_MEMORY_BANK_ACCESSSPEC_ID = 125;
+	private static final UnsignedShort READ_MEMORY_BANK_OPSEC_ID = new UnsignedShort(126);
 
 	/** Operation names **/
 	public enum LLRP_OPERATION_CODE {
 		LLRPEPCWrite, LLRPEPCRead, LLRPAccessPasswordWrite, LLRPAccessPasswordValidate, 
 		LLRPKillPasswordRead, LLRPKillPasswordWrite, LLRPEPCLock, LLRPKillPasswordLock, 
-		LLRPAccessPasswordLock, LLRPUserMemoryLock, LLRPUserMemoryRead, LLRPUserMemoryWrite
+		LLRPAccessPasswordLock, LLRPUserMemoryLock, LLRPUserMemoryRead, LLRPUserMemoryWrite, 
+		LLRPTidRead, LLRPMemoryBankRead 
 	};
 
 	/** Object to keep track of the operations and responses on each one **/
@@ -322,6 +321,9 @@ public class LLRPReaderSession extends AbstractSensorSession implements
 	
 	/** number of blocks to be read, for EPC or user memory **/
 	private int wordCount;
+	/** memblock to read **/
+	private int membank1;
+	private int membank2;
 	
 	/** data to be set in user memory **/
 	private String userMemoryData;
@@ -346,8 +348,8 @@ public class LLRPReaderSession extends AbstractSensorSession implements
 			}
 		} catch (Exception e) {
 			// Any problems and we disable the filter
-			rssiFilterMap = null;
-		}
+			rssiFilterMap = null;   
+		} 
 	}
 	
 
@@ -378,6 +380,14 @@ public class LLRPReaderSession extends AbstractSensorSession implements
 	public void setWordCount(int wordCount) {
 		this.wordCount = wordCount;
 	}
+
+	public void setMemBank1(int membank1) {
+		this.membank1 = membank1;
+	}
+	public void setMemBank2(int membank2) {
+		this.membank2 = membank2;
+	}
+
 
 	/**
 	 * @return the executeOperationsInAsynchronousMode
@@ -883,23 +893,22 @@ public class LLRPReaderSession extends AbstractSensorSession implements
 		synchronized (connection) {
 			try {
 				if (timingOut.get()) {
-					throw new IllegalStateException(
-							"Cannot execute while timing out: "
-									+ message.getName());
+					throw new IllegalStateException("Cannot execute while timing out: " + message.getName());
 				}
 				LLRPMessage response = this.connection.transact(message, 20000);
-				if (response != null) {
-					return response;
-				} else {
-					logger.error("Response for message: " + message.getName()
-							+ " was null");
-					throw new TimeoutException();
-				}
+				// Determine if the response has an error
+//				try {
+				LLRPExceptionHandler handler = new LLRPExceptionHandler(this.readerID, this.sensor);
+				handler.checkForErrors(response);
+				
+//				} catch (InvalidLLRPMessageException e) {
+//					e.printStackTrace();
+//				}
+				return response;
 			} catch (TimeoutException e) {
 				timingOut.set(true);
-				logger.error("Timeout when sending an LLRP Message: "
-						+ message.getName());
-				//Disconnect and possibly reconnect
+				logger.error("Timeout when sending an LLRP Message: " + message.getName());
+				// Disconnect and possibly reconnect
 				logger.info("Attempting to reconnect to reader " + this.readerID + " after a timeout");
 				this.disconnect();
 				throw e;
@@ -924,7 +933,9 @@ public class LLRPReaderSession extends AbstractSensorSession implements
 	 */
 	@Override
 	public void errorOccured(String arg0) {
-		logger.error("LLRP Error Occurred: " + arg0);
+		if(!arg0.contains("IllegalStateException")) {
+			logger.error("LLRP Error Occurred: " + arg0);
+		}
 		// TODO: should we disconnect?
 //		try {
 //			this.disconnect();
@@ -1243,6 +1254,26 @@ public class LLRPReaderSession extends AbstractSensorSession implements
 
 	}
 	
+	public LLRPEncodeMessageDto llrpReadMemoryBankOperation()
+			throws InvalidLLRPMessageException, TimeoutException, Exception {
+
+		// Initialize operation tracker, to be able to receive asynchronous
+		// messages
+		llrpOperationTracker = new LLRPOperationTracker(this);
+
+		// Add the operations in the same order we want to be executed by this
+		// tracker
+
+		LLRPOperationDto epcReadOpDto = new LLRPOperationDto(
+				LLRP_OPERATION_CODE.LLRPMemoryBankRead.name(),
+				READ_MEMORY_BANK_ACCESSSPEC_ID, READ_MEMORY_BANK_OPSEC_ID,
+				null);
+		llrpOperationTracker.addOperationDto(epcReadOpDto);
+
+		return startRequestedOperations(llrpOperationTracker);
+
+	}
+	
 	public LLRPEncodeMessageDto llrpWriteUserMemoryOperation()
 			throws InvalidLLRPMessageException, TimeoutException, Exception {
 
@@ -1490,6 +1521,16 @@ public class LLRPReaderSession extends AbstractSensorSession implements
 	 */
 	@Override
 	public void messageReceived(LLRPMessage arg0) {
+		LLRPExceptionHandler handler = new LLRPExceptionHandler(this.readerID, this.sensor);
+		try {
+			handler.checkForErrors(arg0);
+			if(logger.isDebugEnabled()) {
+				logger.debug(arg0.getResponseType());
+				logger.debug(arg0.toXMLString());
+			}
+		} catch (InvalidLLRPMessageException e) {
+			e.printStackTrace();
+		}
 		if (arg0.getTypeNum() == RO_ACCESS_REPORT.TYPENUM) {
 			this.lastTagTimestamp = System.currentTimeMillis();
 			// The message received is an Access Report.
@@ -1500,8 +1541,7 @@ public class LLRPReaderSession extends AbstractSensorSession implements
 			for (TagReportData tag : tags) {
 				// System.out.println(tag.getEPCParameter());
 				// System.out.println(tag.getLastSeenTimestampUTC());
-				List<AccessCommandOpSpecResult> ops = tag
-						.getAccessCommandOpSpecResultList();
+				List<AccessCommandOpSpecResult> ops = tag.getAccessCommandOpSpecResultList();
 				// See if any operations were performed on
 				// this tag (read, write, kill).
 				// If so, print out the details.
@@ -1800,6 +1840,8 @@ public class LLRPReaderSession extends AbstractSensorSession implements
 
 			opSpecList.add(buildUserMemoryReadOpSpec());
 
+		} else if (accessSpecID == READ_MEMORY_BANK_ACCESSSPEC_ID) {
+			opSpecList.add(buildMemBankReadOpSpec());
 		} else if (accessSpecID == WRITE_USER_MEMORY_ACCESSSPEC_ID) {
 
 			opSpecList.add(buildUserMemoryWriteOpSpec());
@@ -2175,6 +2217,48 @@ public class LLRPReaderSession extends AbstractSensorSession implements
 		opMemBank.set(0);
 		opMemBank.set(1);
 
+		opSpec.setMB(opMemBank);
+
+		opSpec.setWordPointer(new UnsignedShort(0x00));
+
+		// Read 2 words. 
+		opSpec.setWordCount(new UnsignedShort(getWordCount()));
+		
+		return opSpec;
+	}
+	
+	// Create a OpSpec that reads from user memory public C1G2Read
+	//public C1G2Read buildEpcReadOpSpec(String epcId) {
+	public C1G2Read buildMemBankReadOpSpec() {
+		// Create a new OpSpec.
+		// This specifies what operation we want to perform on the
+		// tags that match the specifications above.
+		C1G2Read opSpec = new C1G2Read();
+
+		// Set the OpSpecID to a unique number.
+
+		opSpec.setOpSpecID(READ_MEMORY_BANK_OPSEC_ID);
+
+		UnsignedInteger unsignedIntAccesPass = new UnsignedInteger(getAccessPwd(), 16);
+		
+		opSpec.setAccessPassword(unsignedIntAccesPass);
+
+		// For this demo, we'll write to user memory (bank 3).
+		TwoBitField opMemBank = new TwoBitField();
+		
+		//opMemBank.set(1);
+		//opMemBank.set(0);
+		if(this.membank1==1) {
+			opMemBank.set(0);
+		} else {
+			opMemBank.clear(0);
+		}
+		if(this.membank2==1) {
+			opMemBank.set(1);
+		} else {
+			opMemBank.clear(1);
+		}
+		
 		opSpec.setMB(opMemBank);
 
 		opSpec.setWordPointer(new UnsignedShort(0x00));

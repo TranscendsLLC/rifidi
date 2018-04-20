@@ -1,9 +1,9 @@
 Package: rifidi
-Version: 3.6
-Installed-Size: 109000
+Version: 3.7.0
+Installed-Size: 153272
 Section: web 
 Depends: 
-Suggests: python, openjdk-7-jre
+Suggests: python, openjdk-8-jre, curl
 Maintainer: [matt@transcends.co]
 Architecture: i386
 Replaces: 
