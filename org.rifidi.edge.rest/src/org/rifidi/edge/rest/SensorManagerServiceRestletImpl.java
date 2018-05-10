@@ -229,7 +229,7 @@ public class SensorManagerServiceRestletImpl extends Application {
 		}
 	}
 
-	private void executeLlrpOperation(Request request, Response response, LLRPReaderSession.LLRP_OPERATION_CODE operationCode) {
+	private void executeLlrpOperation(Request request, Response response, LLRPReaderSession.LLRP_OPERATION_CODE operationCode, boolean restart) {
 
 		LLRPReaderSession session = null;
 
@@ -563,32 +563,14 @@ public class SensorManagerServiceRestletImpl extends Application {
 						llrpEncodeMessageDto = session.llrpWriteUserMemoryOperation();
 
 					} else {
-
 						throw new Exception("Operation with code " + operationCode + " is invalid. ");
-
 					}
-					
-
-					
 				}
-
-				/*
-				 * TODO delete session.addAccessSpec((String)
-				 * request.getAttributes() .get("password"), (String) request
-				 * .getAttributes().get("tag"));
-				 */
-
 			} else {
-
 				// Session id does not exist
 				throw new Exception("Session with id " + objSessionId + " does not exist for reader with id " + strReaderId);
 			}
-
-			// response.setEntity(self.generateReturnString(self
-			// .generateSuccessMessage()), MediaType.TEXT_XML);
-
 			response.setEntity(this.generateReturnString(llrpEncodeMessageDto), MediaType.TEXT_XML);
-			
 		} catch (Exception e) {
 
 			// test ini
@@ -604,27 +586,30 @@ public class SensorManagerServiceRestletImpl extends Application {
 			response.setEntity(this.generateReturnString(this.generateErrorMessage(e.getMessage(), null)), MediaType.TEXT_XML);
 
 		} finally {
-
 			// cleanup session
 			if (session != null) {
 
 				session.cleanupSession();
-				
-				//*****RESET READER*******
-				String readerID = (String) request.getAttributes().get("readerID");
-				String sessionID = (String) request.getAttributes().get("sessionID");
-				//Reset the reader -- TODO pull this out into a 
-				List<CommandDTO> commands = sensorManagerService.getSession(readerID, sessionID).getCommands();
-				sensorManagerService.deleteSession(readerID, sessionID);
-				sensorManagerService.createSession(readerID);
-				for(CommandDTO command:commands) {
-					try {
-						sensorManagerService.submitCommand(readerID, sessionID, command.getCommandID(), command.getInterval(), command.getTimeUnit());
-					} catch (CommandSubmissionException e) {
-						logger.error("Exception when attempting to execute command while resetting LLRP reader");
+
+				System.out.println("BEFORE THE RESTART RESET READER");
+				if (restart) {
+					System.out.println("RESETTING THE READER");
+					// *****RESET READER*******
+					String readerID = (String) request.getAttributes().get("readerID");
+					String sessionID = (String) request.getAttributes().get("sessionID");
+					// Reset the reader -- TODO pull this out into a thread
+					List<CommandDTO> commands = sensorManagerService.getSession(readerID, sessionID).getCommands();
+					sensorManagerService.deleteSession(readerID, sessionID);
+					sensorManagerService.createSession(readerID);
+					for (CommandDTO command : commands) {
+						try {
+							sensorManagerService.submitCommand(readerID, sessionID, command.getCommandID(),	command.getInterval(), command.getTimeUnit());
+						} catch (CommandSubmissionException e) {
+							logger.error("Exception when attempting to execute command while resetting LLRP reader");
+						}
 					}
+					sensorManagerService.startSession(readerID, sessionID);
 				}
-				sensorManagerService.startSession(readerID, sessionID);
 			}
 
 		}
@@ -632,9 +617,7 @@ public class SensorManagerServiceRestletImpl extends Application {
 	}
 
 	public Router initRestlet() {
-
 		final SensorManagerServiceRestletImpl self = this;
-
 		Restlet readers = new Restlet() {
 			@Override
 			public void handle(Request request, Response response) {
@@ -1476,169 +1459,170 @@ public class SensorManagerServiceRestletImpl extends Application {
 		Restlet llrpEncode = new Restlet() {
 			@Override
 			public void handle(Request request, Response response) {
-
 				logger.info("llrpEncode requested");
-
+				Boolean restart = false;
+				if(request.getAttributes().get("restart") != null) {
+					restart = Boolean.parseBoolean((String) request.getAttributes().get("restart"));
+				}
 				setResponseHeaders(request, response);
-
-				executeLlrpOperation(request, response, null);
-
+				executeLlrpOperation(request, response, null, restart);
 			}
 		};
 
 		Restlet llrpEpcWrite = new Restlet() {
 			@Override
 			public void handle(Request request, Response response) {
-
 				logger.info("llrpEpcWrite requested");
-
+				Boolean restart = false;
+				System.out.println(request.getAttributes());
+				if(request.getAttributes().get("restart") != null) {
+					restart = Boolean.parseBoolean((String) request.getAttributes().get("restart"));
+				}
 				setResponseHeaders(request, response);
-
-				executeLlrpOperation(request, response, LLRPReaderSession.LLRP_OPERATION_CODE.LLRPEPCWrite);
-
+				executeLlrpOperation(request, response, LLRPReaderSession.LLRP_OPERATION_CODE.LLRPEPCWrite, restart);
 			}
 		};
 
 		Restlet llrpAccessPasswordWrite = new Restlet() {
 			@Override
 			public void handle(Request request, Response response) {
-
 				logger.info("llrpAccessPasswordWrite requested");
-
+				Boolean restart = false;
+				if(request.getAttributes().get("restart") != null) {
+					restart = Boolean.parseBoolean((String) request.getAttributes().get("restart"));
+				}
 				setResponseHeaders(request, response);
-
-				executeLlrpOperation(request, response, LLRPReaderSession.LLRP_OPERATION_CODE.LLRPAccessPasswordWrite);
-
+				executeLlrpOperation(request, response, LLRPReaderSession.LLRP_OPERATION_CODE.LLRPAccessPasswordWrite, restart);
 			}
 		};
 
 		Restlet llrpKillPasswordWrite = new Restlet() {
 			@Override
 			public void handle(Request request, Response response) {
-
 				logger.info("llrpKillPasswordWrite requested");
-
+				Boolean restart = false;
+				if(request.getAttributes().get("restart") != null) {
+					restart = Boolean.parseBoolean((String) request.getAttributes().get("restart"));
+				}
 				setResponseHeaders(request, response);
-
-				executeLlrpOperation(request, response, LLRPReaderSession.LLRP_OPERATION_CODE.LLRPKillPasswordWrite);
-
+				executeLlrpOperation(request, response, LLRPReaderSession.LLRP_OPERATION_CODE.LLRPKillPasswordWrite, restart);
 			}
 		};
 
 		Restlet llrpEPCLock = new Restlet() {
 			@Override
 			public void handle(Request request, Response response) {
-
 				logger.info("llrpEPCLock requested");
-
+				Boolean restart = false;
+				if(request.getAttributes().get("restart") != null) {
+					restart = Boolean.parseBoolean((String) request.getAttributes().get("restart"));
+				}
 				setResponseHeaders(request, response);
-
-				executeLlrpOperation(request, response, LLRPReaderSession.LLRP_OPERATION_CODE.LLRPEPCLock);
-
+				executeLlrpOperation(request, response, LLRPReaderSession.LLRP_OPERATION_CODE.LLRPEPCLock, restart);
 			}
 		};
 
 		Restlet llrpAccessPasswordLock = new Restlet() {
 			@Override
 			public void handle(Request request, Response response) {
-
 				logger.info("llrpAccessPasswordLock requested");
-
+				Boolean restart = false;
+				if(request.getAttributes().get("restart") != null) {
+					restart = Boolean.parseBoolean((String) request.getAttributes().get("restart"));
+				}
 				setResponseHeaders(request, response);
-
-				executeLlrpOperation(request, response, LLRPReaderSession.LLRP_OPERATION_CODE.LLRPAccessPasswordLock);
-
+				executeLlrpOperation(request, response, LLRPReaderSession.LLRP_OPERATION_CODE.LLRPAccessPasswordLock, restart);
 			}
 		};
 
 		Restlet llrpKillPasswordLock = new Restlet() {
 			@Override
 			public void handle(Request request, Response response) {
-
 				logger.info("llrpKillPasswordLock requested");
-
+				Boolean restart = false;
+				if(request.getAttributes().get("restart") != null) {
+					restart = Boolean.parseBoolean((String) request.getAttributes().get("restart"));
+				}
 				setResponseHeaders(request, response);
-
-				executeLlrpOperation(request, response, LLRPReaderSession.LLRP_OPERATION_CODE.LLRPKillPasswordLock);
-
+				executeLlrpOperation(request, response, LLRPReaderSession.LLRP_OPERATION_CODE.LLRPKillPasswordLock, restart);
 			}
 		};
 
 		Restlet llrpUserMemoryLock = new Restlet() {
 			@Override
 			public void handle(Request request, Response response) {
-
 				logger.info("llrpUserMemoryLock requested");
-
+				Boolean restart = false;
+				if(request.getAttributes().get("restart") != null) {
+					restart = Boolean.parseBoolean((String) request.getAttributes().get("restart"));
+				}
 				setResponseHeaders(request, response);
-
-				executeLlrpOperation(request, response, LLRPReaderSession.LLRP_OPERATION_CODE.LLRPUserMemoryLock);
-
+				executeLlrpOperation(request, response, LLRPReaderSession.LLRP_OPERATION_CODE.LLRPUserMemoryLock, restart);
 			}
 		};
 
 		Restlet llrpEpcRead = new Restlet() {
 			@Override
 			public void handle(Request request, Response response) {
-
 				logger.info("llrpEpcRead requested");
-
+				Boolean restart = false;
+				if(request.getAttributes().get("restart") != null) {
+					restart = Boolean.parseBoolean((String) request.getAttributes().get("restart"));
+				}
 				setResponseHeaders(request, response);
-
-				executeLlrpOperation(request, response, LLRPReaderSession.LLRP_OPERATION_CODE.LLRPEPCRead);
-
+				executeLlrpOperation(request, response, LLRPReaderSession.LLRP_OPERATION_CODE.LLRPEPCRead, restart);
 			}
 		};
 
 		Restlet llrpAccessPwdValidate = new Restlet() {
 			@Override
 			public void handle(Request request, Response response) {
-
 				logger.info("llrpAccessPwdValidate requested");
-
+				Boolean restart = false;
+				if(request.getAttributes().get("restart") != null) {
+					restart = Boolean.parseBoolean((String) request.getAttributes().get("restart"));
+				}
 				setResponseHeaders(request, response);
-
-				executeLlrpOperation(request, response, LLRPReaderSession.LLRP_OPERATION_CODE.LLRPAccessPasswordValidate);
-
+				executeLlrpOperation(request, response, LLRPReaderSession.LLRP_OPERATION_CODE.LLRPAccessPasswordValidate, restart);
 			}
 		};
 
 		Restlet llrpKillPwdRead = new Restlet() {
 			@Override
 			public void handle(Request request, Response response) {
-
 				logger.info("llrpKillPwdRead requested");
-
+				Boolean restart = false;
+				if(request.getAttributes().get("restart") != null) {
+					restart = Boolean.parseBoolean((String) request.getAttributes().get("restart"));
+				}
 				setResponseHeaders(request, response);
-
-				executeLlrpOperation(request, response, LLRPReaderSession.LLRP_OPERATION_CODE.LLRPKillPasswordRead);
-
+				executeLlrpOperation(request, response, LLRPReaderSession.LLRP_OPERATION_CODE.LLRPKillPasswordRead, restart);
 			}
 		};
 
 		Restlet llrpUserMemoryRead = new Restlet() {
 			@Override
 			public void handle(Request request, Response response) {
-
 				logger.info("llrpUserMemoryRead requested");
-
+				Boolean restart = false;
+				if(request.getAttributes().get("restart") != null) {
+					restart = Boolean.parseBoolean((String) request.getAttributes().get("restart"));
+				}
 				setResponseHeaders(request, response);
-
-				executeLlrpOperation(request, response, LLRPReaderSession.LLRP_OPERATION_CODE.LLRPUserMemoryRead);
-
+				executeLlrpOperation(request, response, LLRPReaderSession.LLRP_OPERATION_CODE.LLRPUserMemoryRead, restart);
 			}
 		};
 
 		Restlet llrpUserMemoryWrite = new Restlet() {
 			@Override
 			public void handle(Request request, Response response) {
-
 				logger.info("llrpUserMemoryWrite requested");
-
+				Boolean restart = false;
+				if(request.getAttributes().get("restart") != null) {
+					restart = Boolean.parseBoolean((String) request.getAttributes().get("restart"));
+				}
 				setResponseHeaders(request, response);
-
-				executeLlrpOperation(request, response, LLRPReaderSession.LLRP_OPERATION_CODE.LLRPUserMemoryWrite);
-
+				executeLlrpOperation(request, response, LLRPReaderSession.LLRP_OPERATION_CODE.LLRPUserMemoryWrite, restart);
 			}
 		};
 
@@ -1646,18 +1630,12 @@ public class SensorManagerServiceRestletImpl extends Application {
 			@Override
 			public void handle(Request request, Response response) {
 				try {
-
 					logger.info("llrpMessage requested");
-
 					setResponseHeaders(request, response);
-
 					AbstractSensor<?> sensor = readerDAO.getReaderByID((String) request.getAttributes().get("readerID"));
-					
-
 					if (sensor == null) {
 						throw new Exception("ReaderID is missing or invalid");
 					}
-
 					Map<String, SensorSession> sessionMap = sensor.getSensorSessions();
 					String llrpResponse = "";
 					if (sessionMap != null && sessionMap.containsKey(request.getAttributes().get("sessionID"))) {
@@ -2431,82 +2409,56 @@ public class SensorManagerServiceRestletImpl extends Application {
 		router.attach("/llrpgetrospecs/{readerID}/{sessionID}", llrpGetRospecs);
 		router.attach("/llrpgetreaderconfig/{readerID}/{sessionID}", llrpGetReaderConfig);
 		router.attach("/llrpgetreadercapabilities/{readerID}/{sessionID}", llrpGetReaderCapabilities);
-
 		// LLRPEPCWrite single shot command with no properties
 		router.attach("/llrpencode/{readerID}/{sessionID}/LLRPEPCWrite", llrpEpcWrite);
-
 		// LLRPEPCWrite single shot command with properties
 		router.attach("/llrpencode/{readerID}/{sessionID}/LLRPEPCWrite/{properties}", llrpEpcWrite);
-
 		// llrpAccessPasswordWrite single shot command with no properties
 		router.attach("/llrpencode/{readerID}/{sessionID}/LLRPAccessPasswordWrite", llrpAccessPasswordWrite);
-
 		// llrpAccessPasswordWrite single shot command with properties
 		router.attach("/llrpencode/{readerID}/{sessionID}/LLRPAccessPasswordWrite/{properties}", llrpAccessPasswordWrite);
-
 		// llrpKillPasswordWrite single shot command with no properties
 		router.attach("/llrpencode/{readerID}/{sessionID}/LLRPKillPasswordWrite", llrpKillPasswordWrite);
-
 		// llrpKillPasswordWrite single shot command with properties
 		router.attach("/llrpencode/{readerID}/{sessionID}/LLRPKillPasswordWrite/{properties}", llrpKillPasswordWrite);
-
 		// llrpEPCLock single shot command with no properties
 		router.attach("/llrpencode/{readerID}/{sessionID}/LLRPEPCLock", llrpEPCLock);
-
 		// llrpEPCLock single shot command with properties
 		router.attach("/llrpencode/{readerID}/{sessionID}/LLRPEPCLock/{properties}", llrpEPCLock);
-
 		// llrpAccessPasswordLock single shot command with no properties
 		router.attach("/llrpencode/{readerID}/{sessionID}/LLRPAccessPasswordLock", llrpAccessPasswordLock);
-
 		// llrpAccessPasswordLock single shot command with properties
 		router.attach("/llrpencode/{readerID}/{sessionID}/LLRPAccessPasswordLock/{properties}", llrpAccessPasswordLock);
-
 		// llrpKillPasswordLock single shot command with no properties
 		router.attach("/llrpencode/{readerID}/{sessionID}/LLRPKillPasswordLock", llrpKillPasswordLock);
-
 		// llrpKillPasswordLock single shot command with properties
 		router.attach("/llrpencode/{readerID}/{sessionID}/LLRPKillPasswordLock/{properties}", llrpKillPasswordLock);
-
 		// llrpUserMemoryLock single shot command with no properties
 		router.attach("/llrpencode/{readerID}/{sessionID}/LLRPUserMemoryLock", llrpUserMemoryLock);
-
 		// llrpUserMemoryLock single shot command with properties
 		router.attach("/llrpencode/{readerID}/{sessionID}/LLRPUserMemoryLock/{properties}", llrpUserMemoryLock);
-
 		// LLRPEPCRead single shot command with no properties
 		router.attach("/llrpencode/{readerID}/{sessionID}/LLRPEPCRead", llrpEpcRead);
-
 		// LLRPEPCRead single shot command with properties
 		router.attach("/llrpencode/{readerID}/{sessionID}/LLRPEPCRead/{properties}", llrpEpcRead);
-
 		// LLRPAccessPasswordValidate single shot command with no properties
 		router.attach("/llrpencode/{readerID}/{sessionID}/LLRPAccessPasswordValidate", llrpAccessPwdValidate);
-
 		// LLRPAccessPasswordValidate single shot command with properties
 		router.attach("/llrpencode/{readerID}/{sessionID}/LLRPAccessPasswordValidate/{properties}", llrpAccessPwdValidate);
-
 		// LLRPKillPasswordRead single shot command with no properties
 		router.attach("/llrpencode/{readerID}/{sessionID}/LLRPKillPasswordRead", llrpKillPwdRead);
-
 		// LLRPKillPasswordRead single shot command with properties
 		router.attach("/llrpencode/{readerID}/{sessionID}/LLRPKillPasswordRead/{properties}", llrpKillPwdRead);
-
 		// LLRPUserMemoryRead single shot command with no properties
 		router.attach("/llrpencode/{readerID}/{sessionID}/LLRPUserMemoryRead", llrpUserMemoryRead);
-
 		// LLRPUserMemoryRead single shot command with properties
 		router.attach("/llrpencode/{readerID}/{sessionID}/LLRPUserMemoryRead/{properties}", llrpUserMemoryRead);
-
 		// LLRPUserMemoryWrite single shot command with no properties
 		router.attach("/llrpencode/{readerID}/{sessionID}/LLRPUserMemoryWrite", llrpUserMemoryWrite);
-
 		// LLRPUserMemoryWrite single shot command with properties
 		router.attach("/llrpencode/{readerID}/{sessionID}/LLRPUserMemoryWrite/{properties}", llrpUserMemoryWrite);
-
 		// llrp encode
 		router.attach("/llrpencode/{readerID}/{sessionID}/{tag}", llrpEncode);
-
 		router.attach("/llrpmessage/{readerID}/{sessionID}", llrpMessage);
 		router.attach("/llrpmessage/{readerID}/{sessionID}/{sendonly}", llrpMessage);
 
