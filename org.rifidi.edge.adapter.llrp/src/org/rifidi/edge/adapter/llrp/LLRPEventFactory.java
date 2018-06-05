@@ -168,8 +168,10 @@ public class LLRPEventFactory {
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
-				tag.addExtraInformation(StandardTagReadEventFieldNames.RSSI, rssi.toString());
-			}
+				// Add an offset to the RSSI value (128, the lowest negative number this value could be) so that the number is no longer negative.  
+				// Subtract this number on the other end if you want the true RSSI value.  
+				tag.addExtraInformation(StandardTagReadEventFieldNames.RSSI, rssi + LLRPConstants.RSSI_OFFSET);
+			}			
 
 			if (t.getSpecIndex() != null) {
 				String specindex = t.getSpecIndex().getSpecIndex().toInteger()
