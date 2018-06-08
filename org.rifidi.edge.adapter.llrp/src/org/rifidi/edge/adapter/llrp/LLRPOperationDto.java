@@ -7,8 +7,9 @@ import org.llrp.ltk.generated.messages.ADD_ACCESSSPEC_RESPONSE;
 import org.llrp.ltk.types.UnsignedShort;
 import org.llrp.ltk.types.UnsignedShortArray_HEX;
 
-public class LLRPOperationDto 
-		implements Serializable {
+public class LLRPOperationDto implements Serializable {
+	
+	private static final long serialVersionUID = 1770072110407411261L;
 	
 	private int accessSpecId;
 	private UnsignedShort opSpecId;

@@ -328,6 +328,8 @@ public class LLRPReaderSession extends AbstractSensorSession implements
 	/** data to be set in user memory **/
 	private String userMemoryData;
 	
+	private Boolean rssioffset;
+	
 	private Map<Integer, Integer> rssiFilterMap = null;
 	private void setRSSIFilterMap(String rssiFilter) {
 		try {
@@ -648,7 +650,7 @@ public class LLRPReaderSession extends AbstractSensorSession implements
 	public LLRPReaderSession(AbstractSensor<?> sensor, String id, String host,
 			int port, int reconnectionInterval, int maxConAttempts,
 			String readerConfigPath, String rssiFilter, NotifierService notifierService,
-			String readerID, Set<AbstractCommandConfiguration<?>> commands) {
+			String readerID, Boolean rssioffset, Set<AbstractCommandConfiguration<?>> commands) {
 		super(sensor, id, commands);
 		this.host = host;
 		this.port = port;
@@ -660,6 +662,7 @@ public class LLRPReaderSession extends AbstractSensorSession implements
 		this.readerID = readerID;
 		this.setStatus(SessionStatus.CLOSED);
 		this.setRSSIFilterMap(rssiFilter);
+		this.rssioffset = rssioffset;
 	}
 
 	/*
@@ -1577,18 +1580,11 @@ public class LLRPReaderSession extends AbstractSensorSession implements
 			return;
 		}
 		try {
-			Object event = LLRPEventFactory.createEvent(arg0, readerID, rssiFilterMap);
+			Object event = LLRPEventFactory.createEvent(arg0, readerID, rssiFilterMap, rssioffset);
 			if (event != null) {
 				if (event instanceof ReadCycle) {
 					ReadCycle cycle = (ReadCycle) event;
 					sensor.send(cycle);
-					
-
-					// TODO: get rid of this for performance reasons. Need to
-					// have a better way to figure out if we need to send tag
-					// read to JMS
-					// this.getTemplate().send(this.getDestination(),
-					// new ObjectMessageCreator(cycle));
 				} else {
 					sensor.sendEvent(event);
 				}
