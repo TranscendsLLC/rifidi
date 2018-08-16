@@ -33,6 +33,7 @@ import org.apache.mina.common.RuntimeIOException;
 import org.jdom.Document;
 import org.llrp.ltk.exceptions.InvalidLLRPMessageException;
 import org.llrp.ltk.generated.LLRPMessageFactory;
+import org.llrp.ltk.generated.enumerations.AISpecStopTriggerType;
 import org.llrp.ltk.generated.enumerations.AccessReportTriggerType;
 import org.llrp.ltk.generated.enumerations.AccessSpecState;
 import org.llrp.ltk.generated.enumerations.AccessSpecStopTriggerType;
@@ -44,8 +45,10 @@ import org.llrp.ltk.generated.enumerations.GetReaderConfigRequestedData;
 import org.llrp.ltk.generated.enumerations.StatusCode;
 import org.llrp.ltk.generated.interfaces.AccessCommandOpSpec;
 import org.llrp.ltk.generated.interfaces.AccessCommandOpSpecResult;
+import org.llrp.ltk.generated.interfaces.SpecParameter;
 import org.llrp.ltk.generated.messages.ADD_ACCESSSPEC;
 import org.llrp.ltk.generated.messages.ADD_ACCESSSPEC_RESPONSE;
+import org.llrp.ltk.generated.messages.ADD_ROSPEC;
 import org.llrp.ltk.generated.messages.DELETE_ACCESSSPEC;
 import org.llrp.ltk.generated.messages.ENABLE_ACCESSSPEC;
 import org.llrp.ltk.generated.messages.GET_READER_CAPABILITIES;
@@ -54,10 +57,13 @@ import org.llrp.ltk.generated.messages.GET_ROSPECS;
 import org.llrp.ltk.generated.messages.RO_ACCESS_REPORT;
 import org.llrp.ltk.generated.messages.SET_READER_CONFIG;
 import org.llrp.ltk.generated.messages.SET_READER_CONFIG_RESPONSE;
+import org.llrp.ltk.generated.parameters.AISpec;
+import org.llrp.ltk.generated.parameters.AISpecStopTrigger;
 import org.llrp.ltk.generated.parameters.AccessCommand;
 import org.llrp.ltk.generated.parameters.AccessReportSpec;
 import org.llrp.ltk.generated.parameters.AccessSpec;
 import org.llrp.ltk.generated.parameters.AccessSpecStopTrigger;
+import org.llrp.ltk.generated.parameters.AntennaConfiguration;
 import org.llrp.ltk.generated.parameters.C1G2BlockWrite;
 import org.llrp.ltk.generated.parameters.C1G2Lock;
 import org.llrp.ltk.generated.parameters.C1G2LockPayload;
@@ -67,6 +73,8 @@ import org.llrp.ltk.generated.parameters.C1G2TargetTag;
 import org.llrp.ltk.generated.parameters.C1G2Write;
 import org.llrp.ltk.generated.parameters.EPCData;
 import org.llrp.ltk.generated.parameters.EPC_96;
+import org.llrp.ltk.generated.parameters.InventoryParameterSpec;
+import org.llrp.ltk.generated.parameters.RFTransmitter;
 import org.llrp.ltk.generated.parameters.TagReportData;
 import org.llrp.ltk.net.LLRPConnection;
 import org.llrp.ltk.net.LLRPConnectionAttemptFailedException;
@@ -342,7 +350,7 @@ public class LLRPReaderSession extends AbstractSensorSession implements
 			if (rssiFilterMap.size() == 0) {
 				rssiFilterMap = null;
 			} else if (rssiFilterMap.size() == 1) {
-				if(rssiFilterMap.containsKey(0) && rssiFilterMap.get(0).equals(0.0f)) {
+				if(rssiFilterMap.containsKey(0) && rssiFilterMap.get(0).equals(0)) {
 					rssiFilterMap = null;
 				}
 			}
@@ -350,6 +358,33 @@ public class LLRPReaderSession extends AbstractSensorSession implements
 			// Any problems and we disable the filter
 			rssiFilterMap = null;   
 		} 
+	}
+	
+	private Map<Integer, UnsignedShort> transmitPowerMap = null;
+	private void setTransmitPowerMap(String transmitPower) {
+		if(transmitPower.equals("0:0")) {
+			return;
+		}
+		try {
+			transmitPowerMap = new HashMap<Integer, UnsignedShort>();
+			String[] pairs = transmitPower.split("\\|");
+			for (String pair : pairs) {
+				String[] s = pair.split(":");
+				Integer ant = Integer.parseInt(s[0]);
+				Integer power = Integer.parseInt(s[1]);
+				transmitPowerMap.put(ant, new UnsignedShort(power));
+			}
+			if (transmitPowerMap.size() == 0) {
+				transmitPowerMap = null;
+			} else if (transmitPowerMap.size() == 1) {
+				if(transmitPowerMap.containsKey(0) && transmitPowerMap.get(0).equals(0.0F)) {
+					transmitPowerMap = null;
+				}
+			}
+		} catch(Exception e) {
+			//Any problems and we disable the power map
+			this.transmitPowerMap = null;
+		}
 	}
 	
 
@@ -647,7 +682,7 @@ public class LLRPReaderSession extends AbstractSensorSession implements
 	 */
 	public LLRPReaderSession(AbstractSensor<?> sensor, String id, String host,
 			int port, int reconnectionInterval, int maxConAttempts,
-			String readerConfigPath, String rssiFilter, NotifierService notifierService,
+			String readerConfigPath, String rssiFilter, String transmitPower, NotifierService notifierService,
 			String readerID, Set<AbstractCommandConfiguration<?>> commands) {
 		super(sensor, id, commands);
 		this.host = host;
@@ -660,6 +695,8 @@ public class LLRPReaderSession extends AbstractSensorSession implements
 		this.readerID = readerID;
 		this.setStatus(SessionStatus.CLOSED);
 		this.setRSSIFilterMap(rssiFilter);
+		System.out.println("Setting the TransmitPower in the constructor: " + transmitPower);
+		this.setTransmitPowerMap(transmitPower);
 	}
 
 	/*
@@ -693,16 +730,14 @@ public class LLRPReaderSession extends AbstractSensorSession implements
 						((LLRPConnector) connection).disconnect();
 					} catch (Exception ex) {
 					}
-					logger.debug("Attempt to connect to LLRP reader failed: "
-							+ connCount);
+					logger.debug("Attempt to connect to LLRP reader failed: " + connCount);
 				} catch (RuntimeIOException e) {
 					// fix for abandoned connection
 					try {
 						((LLRPConnector) connection).disconnect();
 					} catch (Exception ex) {
 					}
-					logger.debug("Attempt to connect to LLRP reader failed: "
-							+ connCount);
+					logger.debug("Attempt to connect to LLRP reader failed: " + connCount);
 				}
 
 				// wait for a specified number of ms or until someone calls
@@ -890,20 +925,15 @@ public class LLRPReaderSession extends AbstractSensorSession implements
 	 *             If there was a timeout when processing this command.
 	 */
 	public LLRPMessage transact(LLRPMessage message) throws TimeoutException {
+		message = this.transmitPowerIntecept(message);
 		synchronized (connection) {
 			try {
 				if (timingOut.get()) {
 					throw new IllegalStateException("Cannot execute while timing out: " + message.getName());
 				}
 				LLRPMessage response = this.connection.transact(message, 20000);
-				// Determine if the response has an error
-//				try {
 				LLRPExceptionHandler handler = new LLRPExceptionHandler(this.readerID, this.sensor);
 				handler.checkForErrors(response);
-				
-//				} catch (InvalidLLRPMessageException e) {
-//					e.printStackTrace();
-//				}
 				return response;
 			} catch (TimeoutException e) {
 				timingOut.set(true);
@@ -924,8 +954,76 @@ public class LLRPReaderSession extends AbstractSensorSession implements
 	 */
 	public void send(LLRPMessage message) {
 		synchronized (connection) {
+			message = transmitPowerIntecept(message);
 			connection.send(message);
 		}
+	}
+	
+	public LLRPMessage transmitPowerIntecept(LLRPMessage message) {				
+		System.out.println("In the TransmitPower Intercept : " + this.transmitPowerMap);
+		
+		//If the message insn't an ADD_ROSPEC or there isn't a transmit power to set
+		if(!(message instanceof ADD_ROSPEC) || this.transmitPowerMap==null || this.transmitPowerMap.isEmpty()) {
+			return message;
+		}
+		
+		//Otherwise, replace whatever was in the ADD_Rospec antenna section with what is in the transmit power map
+		ADD_ROSPEC add_rospec = (ADD_ROSPEC) message;
+		//Is there an existing AISPec
+		AISpec aispec = null;
+		for(SpecParameter spec:add_rospec.getROSpec().getSpecParameterList()) {
+			if(spec instanceof AISpec) {
+				aispec = (AISpec)spec;
+			}
+		}
+		//If there isn't, create one and add it to the spec paramter list
+		if(aispec == null) {
+			aispec = new AISpec();
+			AISpecStopTrigger trigger = new AISpecStopTrigger();
+			trigger.setAISpecStopTriggerType(new AISpecStopTriggerType(AISpecStopTriggerType.Null));
+			aispec.setAISpecStopTrigger(trigger);
+			add_rospec.getROSpec().addToSpecParameterList(aispec);
+		}
+		
+		//Check and see if there are any InventoryParamterSpec
+		if(aispec.getInventoryParameterSpecList().isEmpty()) {
+			InventoryParameterSpec inv = new InventoryParameterSpec();
+			inv.setInventoryParameterSpecID(new UnsignedShort(1));
+			inv.setProtocolID(new AirProtocols(AirProtocols.EPCGlobalClass1Gen2));
+		}
+		
+		//Get the first spec in the list -- this should be safe as we created one if it didn't already exist
+		InventoryParameterSpec inv = aispec.getInventoryParameterSpecList().get(0);
+		
+		HashSet<Integer> exists = new HashSet<Integer>();
+		//Loop through any existing antennas and set the TransmitPower
+		for(AntennaConfiguration ant:inv.getAntennaConfigurationList()) {
+			if(transmitPowerMap.containsKey(ant.getAntennaID().intValue())) {
+				ant.getRFTransmitter().setTransmitPower(transmitPowerMap.get(ant.getAntennaID().intValue()));
+			}
+		}
+		
+		//Loop through any antennas that don't exist yet and create and add AntennaConfigurations for them
+		for(Integer key:this.transmitPowerMap.keySet()) {
+			//If the key doesn't exist
+			if(!exists.contains(key)) {
+				AntennaConfiguration ant = new AntennaConfiguration();
+				ant.setAntennaID(new UnsignedShort(key));
+				RFTransmitter transmitter = new RFTransmitter();
+				transmitter.setTransmitPower(transmitPowerMap.get(key));
+				transmitter.setChannelIndex(new UnsignedShort(0));
+				transmitter.setHopTableID(new UnsignedShort(1));
+				ant.setRFTransmitter(transmitter);
+				inv.addToAntennaConfigurationList(ant);
+			}
+		}
+		
+		try {
+			System.out.println("Finished adding TransmitPower, returning ADD_ROSPEC" + add_rospec.toXMLString());
+		} catch (InvalidLLRPMessageException e) {
+			e.printStackTrace();
+		}
+		return add_rospec;
 	}
 
 	/**
@@ -936,27 +1034,7 @@ public class LLRPReaderSession extends AbstractSensorSession implements
 		if(!arg0.contains("IllegalStateException")) {
 			logger.error("LLRP Error Occurred: " + arg0);
 		}
-		// TODO: should we disconnect?
-//		try {
-//			this.disconnect();
-//		} catch (Exception e) {
-//			logger.error("Exception occurred trying to disconnect from reader " + this.readerID);
-//		}
-//		final LLRPReaderSession self = this;
-//		final String finalReaderID = this.readerID;
-//		Timer connectTimer = new Timer();
-//		connectTimer.schedule(new TimerTask() {			
-//			@Override
-//			public void run() {
-//				try {
-//					//Disconnect and possibly reconnect
-//					logger.info("Attempting to reconnect to reader " + finalReaderID + " after a timeout");
-//					self._connect();
-//				} catch (IOException e) {
-//					logger.error("Unable to reconnect to reader " + finalReaderID);
-//				}
-//			}
-//		}, 500);
+		//TODO: Should we disconnect
 	}
 
 	/**
@@ -971,8 +1049,7 @@ public class LLRPReaderSession extends AbstractSensorSession implements
 			LLRPMessage message = Util.loadXMLLLRPMessage(new File(file));
 			return (SET_READER_CONFIG) message;
 		} catch (Exception e) {
-			logger.warn("No SET_READER_CONFIG message found at "
-					+ readerConfigPath + " Using default SET_READER_CONFIG");
+			logger.warn("No SET_READER_CONFIG message found at " + readerConfigPath + " Using default SET_READER_CONFIG");
 		}
 
 		return LLRPConstants.createDefaultConfig();

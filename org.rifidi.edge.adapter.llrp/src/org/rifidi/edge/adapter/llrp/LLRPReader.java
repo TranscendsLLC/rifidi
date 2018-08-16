@@ -65,6 +65,8 @@ public class LLRPReader extends AbstractSensor<LLRPReaderSession> {
 	private Boolean disableAutoStart = false;
 	/** */
 	private String rssiFilter = "0:0";
+	/** The optional Transmit Power override */
+	private String transmitPower = "0:0";
 	/** Flag to check if this reader is destroyed. */
 	private AtomicBoolean destroied = new AtomicBoolean(false);
 	
@@ -96,15 +98,12 @@ public class LLRPReader extends AbstractSensor<LLRPReaderSession> {
 			throws CannotCreateSessionException {
 		if (!destroied.get() && session.get() == null) {
 			Integer sessionID = Integer.parseInt(sessionDTO.getID());
-			if (session.compareAndSet(null, new LLRPReaderSession(this,
-					sessionID.toString(), ipAddress, port,
-					reconnectionInterval, maxNumConnectionAttempts,
-					readerConfigPath, this.rssiFilter, notifierService, super.getID(),
+			if (session.compareAndSet(null, new LLRPReaderSession(this, sessionID.toString(), ipAddress, port, reconnectionInterval, 
+					maxNumConnectionAttempts, readerConfigPath, this.rssiFilter, this.transmitPower, notifierService, super.getID(),
 					commands))) {
 				session.get().restoreCommands(sessionDTO);
 				// TODO: remove this once we get AspectJ in here!
-				notifierService.addSessionEvent(this.getID(), Integer
-						.toString(sessionID));
+				notifierService.addSessionEvent(this.getID(), Integer.toString(sessionID));
 				return sessionID.toString();
 			}
 
@@ -124,12 +123,11 @@ public class LLRPReader extends AbstractSensor<LLRPReaderSession> {
 			if (session.compareAndSet(null, new LLRPReaderSession(this,
 					sessionID.toString(), ipAddress, port,
 					reconnectionInterval, maxNumConnectionAttempts,
-					readerConfigPath, this.rssiFilter, notifierService, super.getID(),
+					readerConfigPath, this.rssiFilter, this.transmitPower, notifierService, super.getID(),
 					commands))) {
 
 				// TODO: remove this once we get AspectJ in here!
-				notifierService.addSessionEvent(this.getID(), Integer
-						.toString(sessionID));
+				notifierService.addSessionEvent(this.getID(), Integer.toString(sessionID));
 				return sessionID.toString();
 			}
 		}
@@ -307,6 +305,17 @@ public class LLRPReader extends AbstractSensor<LLRPReaderSession> {
 	}
 	public void setRSSIFilter(String rssiFilter) {
 		this.rssiFilter = rssiFilter;
+	}
+	
+	@Property(displayName = "TransmitPower", description = "Set to '0:0' to disable.  You can override Transmit Power values for individual antennas like this: '1:31|2:25|3:43'.  "
+			+ "This will provision antennas 1, 2, and 3 and give them a Transmit Power of their respective values.", writable = true, type = PropertyType.PT_STRING, 
+			category = "reading", orderValue = 10, defaultValue = "0:0")
+	public String getTransmitPower() {
+		return this.transmitPower;
+	}
+	public void setTransmitPower(String transmitPower) {
+		this.transmitPower = transmitPower;
+		//Perform a reader reset here
 	}
 
 	/**
