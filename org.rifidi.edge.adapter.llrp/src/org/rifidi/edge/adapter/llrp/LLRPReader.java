@@ -24,6 +24,7 @@ import javax.management.MBeanInfo;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.rifidi.edge.api.SessionDTO;
+import org.rifidi.edge.api.SessionStatus;
 import org.rifidi.edge.configuration.AnnotationMBeanInfoStrategy;
 import org.rifidi.edge.configuration.JMXMBean;
 import org.rifidi.edge.configuration.Property;
@@ -69,10 +70,10 @@ public class LLRPReader extends AbstractSensor<LLRPReaderSession> {
 	private String transmitPower = "0:0";
 	/** Flag to check if this reader is destroyed. */
 	private AtomicBoolean destroied = new AtomicBoolean(false);
-	
+
 	/** Mbeaninfo for this class. */
 	public static final MBeanInfo mbeaninfo;
-	private String displayName="LLRP";
+	private String displayName = "LLRP";
 	static {
 		AnnotationMBeanInfoStrategy strategy = new AnnotationMBeanInfoStrategy();
 		mbeaninfo = strategy.getMBeanInfo(LLRPReader.class);
@@ -89,18 +90,17 @@ public class LLRPReader extends AbstractSensor<LLRPReaderSession> {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * org.rifidi.edge.sensors.base.AbstractSensor#createReaderSession(
+	 * @see org.rifidi.edge.sensors.base.AbstractSensor#createReaderSession(
 	 * org.rifidi.edge.api.rmi.dto.SessionDTO)
 	 */
 	@Override
-	public String createSensorSession(SessionDTO sessionDTO)
-			throws CannotCreateSessionException {
+	public String createSensorSession(SessionDTO sessionDTO) throws CannotCreateSessionException {
 		if (!destroied.get() && session.get() == null) {
 			Integer sessionID = Integer.parseInt(sessionDTO.getID());
-			if (session.compareAndSet(null, new LLRPReaderSession(this, sessionID.toString(), ipAddress, port, reconnectionInterval, 
-					maxNumConnectionAttempts, readerConfigPath, this.rssiFilter, this.transmitPower, notifierService, super.getID(),
-					commands))) {
+			if (session.compareAndSet(null,
+					new LLRPReaderSession(this, sessionID.toString(), ipAddress, port, reconnectionInterval,
+							maxNumConnectionAttempts, readerConfigPath, this.rssiFilter, this.transmitPower,
+							notifierService, super.getID(), commands))) {
 				session.get().restoreCommands(sessionDTO);
 				// TODO: remove this once we get AspectJ in here!
 				notifierService.addSessionEvent(this.getID(), Integer.toString(sessionID));
@@ -120,11 +120,10 @@ public class LLRPReader extends AbstractSensor<LLRPReaderSession> {
 	public String createSensorSession() throws CannotCreateSessionException {
 		if (!destroied.get() && session.get() == null) {
 			Integer sessionID = this.sessionIDcounter;
-			if (session.compareAndSet(null, new LLRPReaderSession(this,
-					sessionID.toString(), ipAddress, port,
-					reconnectionInterval, maxNumConnectionAttempts,
-					readerConfigPath, this.rssiFilter, this.transmitPower, notifierService, super.getID(),
-					commands))) {
+			if (session.compareAndSet(null,
+					new LLRPReaderSession(this, sessionID.toString(), ipAddress, port, reconnectionInterval,
+							maxNumConnectionAttempts, readerConfigPath, this.rssiFilter, this.transmitPower,
+							notifierService, super.getID(), commands))) {
 
 				// TODO: remove this once we get AspectJ in here!
 				notifierService.addSessionEvent(this.getID(), Integer.toString(sessionID));
@@ -137,8 +136,7 @@ public class LLRPReader extends AbstractSensor<LLRPReaderSession> {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * org.rifidi.edge.sensors.base.AbstractSensor#destroySensorSession
+	 * @see org.rifidi.edge.sensors.base.AbstractSensor#destroySensorSession
 	 * (java.lang.String)
 	 */
 	@Override
@@ -175,15 +173,12 @@ public class LLRPReader extends AbstractSensor<LLRPReaderSession> {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * org.rifidi.edge.sensors.base.AbstractSensor#unbindCommandConfiguration
+	 * @see org.rifidi.edge.sensors.base.AbstractSensor#unbindCommandConfiguration
 	 * (org.rifidi.edge.sensors.commands.AbstractCommandConfiguration,
 	 * java.util.Map)
 	 */
 	@Override
-	public void unbindCommandConfiguration(
-			AbstractCommandConfiguration<?> commandConfiguration,
-			Map<?, ?> properties) {
+	public void unbindCommandConfiguration(AbstractCommandConfiguration<?> commandConfiguration, Map<?, ?> properties) {
 		// TODO Auto-generated method stub
 
 	}
@@ -211,24 +206,20 @@ public class LLRPReader extends AbstractSensor<LLRPReaderSession> {
 	@Override
 	public void applyPropertyChanges() {
 		/*
-		 * This method could send a SET_READER_CONFIG message with update
-		 * properties. However, at the moment, we don't allow any changes to the
-		 * reader that would affect the SET_READER_CONFIG message, so this just
-		 * sends a repeat.
+		 * This method could send a SET_READER_CONFIG message with update properties.
+		 * However, at the moment, we don't allow any changes to the reader that would
+		 * affect the SET_READER_CONFIG message, so this just sends a repeat.
 		 */
 
 		/*
-		 * LLRPReaderSession readerSession = session.get(); if (readerSession !=
-		 * null) { try { SET_READER_CONFIG_RESPONSE response =
-		 * (SET_READER_CONFIG_RESPONSE) readerSession
-		 * .transact(readerSession.createSetReaderConfig()); StatusCode sc =
-		 * response.getLLRPStatus().getStatusCode(); if (sc.intValue() !=
-		 * StatusCode.M_Success) {
-		 * logger.error("Problem with SET_READER_CONFIG: \n" +
+		 * LLRPReaderSession readerSession = session.get(); if (readerSession != null) {
+		 * try { SET_READER_CONFIG_RESPONSE response = (SET_READER_CONFIG_RESPONSE)
+		 * readerSession .transact(readerSession.createSetReaderConfig()); StatusCode sc
+		 * = response.getLLRPStatus().getStatusCode(); if (sc.intValue() !=
+		 * StatusCode.M_Success) { logger.error("Problem with SET_READER_CONFIG: \n" +
 		 * response.toXMLString()); } } catch (TimeoutException e) {
-		 * readerSession.handleTimeout(); } catch (InvalidLLRPMessageException
-		 * e) { logger
-		 * .warn("Cannot print the XML for SET_READER_CONFIG_RESPONSE"); } }
+		 * readerSession.handleTimeout(); } catch (InvalidLLRPMessageException e) {
+		 * logger .warn("Cannot print the XML for SET_READER_CONFIG_RESPONSE"); } }
 		 */
 	}
 
@@ -260,8 +251,7 @@ public class LLRPReader extends AbstractSensor<LLRPReaderSession> {
 	/**
 	 * Sets the IP address of the reader.
 	 * 
-	 * @param ipAddress
-	 *            the ipAddress to set
+	 * @param ipAddress the ipAddress to set
 	 */
 	public void setIpAddress(String ipAddress) {
 		this.ipAddress = ipAddress;
@@ -280,42 +270,55 @@ public class LLRPReader extends AbstractSensor<LLRPReaderSession> {
 	/**
 	 * Sets the port.
 	 * 
-	 * @param port
-	 *            the port to set
+	 * @param port the port to set
 	 */
 	public void setPort(Integer port) {
 		this.port = port;
 	}
-	
-	@Property(displayName = "DisableAutoStart", description = "Set to true to disable autostart", writable = true, type = PropertyType.PT_BOOLEAN, 
-			category = "connection", orderValue = 8, defaultValue = "false")
+
+	@Property(displayName = "DisableAutoStart", description = "Set to true to disable autostart", writable = true, type = PropertyType.PT_BOOLEAN, category = "connection", orderValue = 8, defaultValue = "false")
 	public Boolean getDisableAutoStart() {
 		return disableAutoStart;
 	}
+
 	public void setDisableAutoStart(Boolean disableAutoStart) {
 		this.disableAutoStart = disableAutoStart;
 	}
-	
+
 	@Property(displayName = "RSSIFilter", description = "Set to '0:0' to disable.  Any other value will filter any value below (note: an RSSI -5 is a 'stronger signal' than -10) the given RSSI value.  "
 			+ "You can override values for individual antennas like this: '0:-5|1:-25|3:-55'.  This will set the filter from antenna 1 to -25, antenna 3 to -55, "
-			+ "and all other antennas to -5.", writable = true, type = PropertyType.PT_STRING, 
-			category = "reading", orderValue = 9, defaultValue = "0:0")
+			+ "and all other antennas to -5.", writable = true, type = PropertyType.PT_STRING, category = "reading", orderValue = 9, defaultValue = "0:0")
 	public String getRSSIFilter() {
 		return this.rssiFilter;
 	}
+
 	public void setRSSIFilter(String rssiFilter) {
 		this.rssiFilter = rssiFilter;
 	}
-	
+
 	@Property(displayName = "TransmitPower", description = "Set to '0:0' to disable.  You can override Transmit Power values for individual antennas like this: '1:31|2:25|3:43'.  "
-			+ "This will provision antennas 1, 2, and 3 and give them a Transmit Power of their respective values.", writable = true, type = PropertyType.PT_STRING, 
-			category = "reading", orderValue = 10, defaultValue = "0:0")
+			+ "This will provision antennas 1, 2, and 3 and give them a Transmit Power of their respective values.", writable = true, type = PropertyType.PT_STRING, category = "reading", orderValue = 10, defaultValue = "0:0")
 	public String getTransmitPower() {
 		return this.transmitPower;
 	}
+
 	public void setTransmitPower(String transmitPower) {
 		this.transmitPower = transmitPower;
-		//Perform a reader reset here
+		// Perform a reader reset here
+		try {
+			if (this.session.get() == null) {
+				return;
+			}
+			SessionStatus status = this.session.get().getStatus();
+			Boolean proceed = status.equals(SessionStatus.PROCESSING) || status.equals(SessionStatus.CONNECTING)
+					|| status.equals(SessionStatus.LOGGINGIN);
+			proceed = false;
+			if (proceed) {
+				this.resetSensor();
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 	/**
@@ -331,8 +334,7 @@ public class LLRPReader extends AbstractSensor<LLRPReaderSession> {
 	/**
 	 * Sets the reconnect interval.
 	 * 
-	 * @param reconnectionInterval
-	 *            the reconnectionInterval to set
+	 * @param reconnectionInterval the reconnectionInterval to set
 	 */
 	public void setReconnectionInterval(Integer reconnectionInterval) {
 		this.reconnectionInterval = reconnectionInterval;
@@ -351,8 +353,7 @@ public class LLRPReader extends AbstractSensor<LLRPReaderSession> {
 	/**
 	 * Sets the number of connection attempts to try before giving up.
 	 * 
-	 * @param maxNumConnectionAttempts
-	 *            the maxNumConnectionAttempts to set
+	 * @param maxNumConnectionAttempts the maxNumConnectionAttempts to set
 	 */
 	public void setMaxNumConnectionAttempts(Integer maxNumConnectionAttempts) {
 		this.maxNumConnectionAttempts = maxNumConnectionAttempts;
@@ -371,13 +372,11 @@ public class LLRPReader extends AbstractSensor<LLRPReaderSession> {
 	/**
 	 * Sets the IP address of the reader.
 	 * 
-	 * @param ipAddress
-	 *            the ipAddress to set
+	 * @param ipAddress the ipAddress to set
 	 */
 	public void setReaderConfigPath(String readerConfigPath) {
 		this.readerConfigPath = readerConfigPath;
 	}
-
 
 	/**
 	 * Gets the properties for the reader.

@@ -15,6 +15,7 @@
  */
 package org.rifidi.edge.sensors;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -30,6 +31,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import javax.management.AttributeList;
 
 import org.osgi.framework.BundleContext;
+import org.rifidi.edge.api.CommandDTO;
 import org.rifidi.edge.api.ReaderDTO;
 import org.rifidi.edge.api.SessionDTO;
 import org.rifidi.edge.configuration.Configuration;
@@ -51,13 +53,13 @@ import org.rifidi.edge.services.EsperEventContainer;
  * @author Jochen Mader - jochen@pramari.com
  * 
  */
-public abstract class AbstractSensor<T extends SensorSession> extends
-		RifidiService implements SensorUpdate, CompositeSensor {
+public abstract class AbstractSensor<T extends SensorSession> extends RifidiService
+		implements SensorUpdate, CompositeSensor {
 	/** Sensors connected to this connectedSensors. */
 	protected final Set<Sensor> receivers = new CopyOnWriteArraySet<Sensor>();
 	/** True if the sensor is currently in use. */
 	protected AtomicBoolean inUse = new AtomicBoolean(false);
-	/**The notifier Service*/
+	/** The notifier Service */
 	protected NotifierService notifierService;
 
 	/**
@@ -68,14 +70,14 @@ public abstract class AbstractSensor<T extends SensorSession> extends
 	}
 
 	/**
-	 * Receivers are objects that need to gather tag reads. The tag reads are
-	 * stored in a queue.
+	 * Receivers are objects that need to gather tag reads. The tag reads are stored
+	 * in a queue.
 	 */
 	protected final Map<Object, LinkedBlockingQueue<ReadCycle>> tagSubscriberToQueueMap = new ConcurrentHashMap<Object, LinkedBlockingQueue<ReadCycle>>();
 
 	/**
-	 * This queue is just like the tag subscriber queue, except that it stores
-	 * all events which are not Tag Read Events.
+	 * This queue is just like the tag subscriber queue, except that it stores all
+	 * events which are not Tag Read Events.
 	 */
 	protected final Map<Object, LinkedBlockingQueue<Object>> eventSubscriberToQueueMap = new ConcurrentHashMap<Object, LinkedBlockingQueue<Object>>();
 
@@ -83,27 +85,23 @@ public abstract class AbstractSensor<T extends SensorSession> extends
 	 * Create a new sensor session.
 	 * 
 	 * @return id of the created session
-	 * @exception CannotCreateSessionException
-	 *                - if the session cannot be created
+	 * @exception CannotCreateSessionException - if the session cannot be created
 	 */
-	abstract public String createSensorSession()
-			throws CannotCreateSessionException;
+	abstract public String createSensorSession() throws CannotCreateSessionException;
 
 	/**
-	 * This method is called when a sensor session is being created from a DTO,
-	 * such as restoring the session from persistance.
+	 * This method is called when a sensor session is being created from a DTO, such
+	 * as restoring the session from persistance.
 	 * 
 	 * @param sessionDTO
 	 * @return the ID of the session
-	 * @exception CannotCreateSessionException
-	 *                if the session cannot be created
+	 * @exception CannotCreateSessionException if the session cannot be created
 	 */
-	abstract public String createSensorSession(SessionDTO sessionDTO)
-			throws CannotCreateSessionException;
+	abstract public String createSensorSession(SessionDTO sessionDTO) throws CannotCreateSessionException;
 
 	/**
-	 * Get all currently created reader sessions. The Key is the ID of the
-	 * session, and the value is the actual session
+	 * Get all currently created reader sessions. The Key is the ID of the session,
+	 * and the value is the actual session
 	 * 
 	 * @return
 	 */
@@ -114,8 +112,7 @@ public abstract class AbstractSensor<T extends SensorSession> extends
 	 * 
 	 * @param session
 	 */
-	abstract public void destroySensorSession(String id)
-			throws CannotDestroySensorException;
+	abstract public void destroySensorSession(String id) throws CannotDestroySensorException;
 
 	/**
 	 * Send properties that have been modified to the physical reader
@@ -123,8 +120,8 @@ public abstract class AbstractSensor<T extends SensorSession> extends
 	abstract public void applyPropertyChanges();
 
 	/**
-	 * This method returns a display name for clients to use. This way readers
-	 * can have user-friendly names (such as "Dock Door") in a client.
+	 * This method returns a display name for clients to use. This way readers can
+	 * have user-friendly names (such as "Dock Door") in a client.
 	 * 
 	 * @return The display name of the Sensor
 	 */
@@ -136,23 +133,18 @@ public abstract class AbstractSensor<T extends SensorSession> extends
 	 * @param commandConfiguration
 	 * @param properties
 	 */
-	abstract public void unbindCommandConfiguration(
-			AbstractCommandConfiguration<?> commandConfiguration,
+	abstract public void unbindCommandConfiguration(AbstractCommandConfiguration<?> commandConfiguration,
 			Map<?, ?> properties);
 
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * org.rifidi.edge.sensors.PollableSensor#receive(java.lang.Object)
+	 * @see org.rifidi.edge.sensors.PollableSensor#receive(java.lang.Object)
 	 */
 	@Override
-	public EsperEventContainer receive(final Object receiver)
-			throws NotSubscribedException {
-		LinkedBlockingQueue<ReadCycle> tagQueue = tagSubscriberToQueueMap
-				.get(receiver);
-		LinkedBlockingQueue<Object> eventQueue = eventSubscriberToQueueMap
-				.get(receiver);
+	public EsperEventContainer receive(final Object receiver) throws NotSubscribedException {
+		LinkedBlockingQueue<ReadCycle> tagQueue = tagSubscriberToQueueMap.get(receiver);
+		LinkedBlockingQueue<Object> eventQueue = eventSubscriberToQueueMap.get(receiver);
 		if (tagQueue == null || eventQueue == null) {
 			throw new NotSubscribedException(receiver + " is not subscribed.");
 		}
@@ -185,20 +177,15 @@ public abstract class AbstractSensor<T extends SensorSession> extends
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * org.rifidi.edge.sensors.SensorUpdate#subscribe(java.lang.Object)
+	 * @see org.rifidi.edge.sensors.SensorUpdate#subscribe(java.lang.Object)
 	 */
 	@Override
-	public void subscribe(final Object receiver)
-			throws DuplicateSubscriptionException {
+	public void subscribe(final Object receiver) throws DuplicateSubscriptionException {
 		if (tagSubscriberToQueueMap.containsKey(receiver)) {
-			throw new DuplicateSubscriptionException(receiver
-					+ " is already subscribed.");
+			throw new DuplicateSubscriptionException(receiver + " is already subscribed.");
 		}
-		tagSubscriberToQueueMap.put(receiver,
-				new LinkedBlockingQueue<ReadCycle>());
-		eventSubscriberToQueueMap.put(receiver,
-				new LinkedBlockingQueue<Object>());
+		tagSubscriberToQueueMap.put(receiver, new LinkedBlockingQueue<ReadCycle>());
+		eventSubscriberToQueueMap.put(receiver, new LinkedBlockingQueue<Object>());
 		inUse.compareAndSet(false, true);
 	}
 
@@ -215,12 +202,10 @@ public abstract class AbstractSensor<T extends SensorSession> extends
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * org.rifidi.edge.sensors.SensorUpdate#unsubscribe(java.lang.Object)
+	 * @see org.rifidi.edge.sensors.SensorUpdate#unsubscribe(java.lang.Object)
 	 */
 	@Override
-	public synchronized void unsubscribe(final Object receiver)
-			throws NotSubscribedException {
+	public synchronized void unsubscribe(final Object receiver) throws NotSubscribedException {
 		if (!tagSubscriberToQueueMap.containsKey(receiver)) {
 			throw new NotSubscribedException(receiver + " is not subscribed.");
 		}
@@ -234,8 +219,7 @@ public abstract class AbstractSensor<T extends SensorSession> extends
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * org.rifidi.edge.sensors.SensorUpdate#removeReceiver(org.rifidi.edge
+	 * @see org.rifidi.edge.sensors.SensorUpdate#removeReceiver(org.rifidi.edge
 	 * .core.sensors.Sensor)
 	 */
 	@Override
@@ -249,8 +233,7 @@ public abstract class AbstractSensor<T extends SensorSession> extends
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * org.rifidi.edge.sensors.SensorUpdate#addReceiver(org.rifidi.edge
+	 * @see org.rifidi.edge.sensors.SensorUpdate#addReceiver(org.rifidi.edge
 	 * .core.sensors.Sensor)
 	 */
 	@Override
@@ -265,19 +248,16 @@ public abstract class AbstractSensor<T extends SensorSession> extends
 	 * @see org.rifidi.edge.sensors.SensorUpdate#setName(java.lang.String)
 	 */
 	@Override
-	public void setName(final String name) throws ImmutableException,
-			InUseException {
+	public void setName(final String name) throws ImmutableException, InUseException {
 		// TODO: should be possible when we merged the readers with the logical
 		// readers
 		throw new ImmutableException(getName() + " is immutable.");
 	}
-	
 
 	/***
 	 * Set the wrapper for the Notify Service.
 	 * 
-	 * @param wrapper
-	 *            The JMS Notifier to set
+	 * @param wrapper The JMS Notifier to set
 	 */
 	public void setNotifiyService(NotifierService notifierService) {
 		this.notifierService = notifierService;
@@ -286,8 +266,7 @@ public abstract class AbstractSensor<T extends SensorSession> extends
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * org.rifidi.edge.sensors.PollableSensor#send(org.rifidi.edge.core
+	 * @see org.rifidi.edge.sensors.PollableSensor#send(org.rifidi.edge.core
 	 * .services.notification.data.ReadCycle)
 	 */
 	@Override
@@ -295,14 +274,13 @@ public abstract class AbstractSensor<T extends SensorSession> extends
 		for (Sensor receiver : receivers) {
 			receiver.send(cycle);
 		}
-		for (LinkedBlockingQueue<ReadCycle> queue : tagSubscriberToQueueMap
-				.values()) {
+		for (LinkedBlockingQueue<ReadCycle> queue : tagSubscriberToQueueMap.values()) {
 			queue.add(cycle);
 		}
 		String shouldNotify = System.getProperty("org.rifidi.ui.notify");
-		if(notifierService!=null){
-			if(shouldNotify==null || shouldNotify.equalsIgnoreCase("true")){
-				notifierService.tagSeen(cycle);				
+		if (notifierService != null) {
+			if (shouldNotify == null || shouldNotify.equalsIgnoreCase("true")) {
+				notifierService.tagSeen(cycle);
 			}
 		}
 	}
@@ -317,8 +295,7 @@ public abstract class AbstractSensor<T extends SensorSession> extends
 		for (Sensor receiver : receivers) {
 			receiver.sendEvent(event);
 		}
-		for (LinkedBlockingQueue<Object> queue : eventSubscriberToQueueMap
-				.values()) {
+		for (LinkedBlockingQueue<Object> queue : eventSubscriberToQueueMap.values()) {
 			queue.add(event);
 		}
 
@@ -357,8 +334,7 @@ public abstract class AbstractSensor<T extends SensorSession> extends
 	/***
 	 * This method returns the Data Transfer Object for this Reader
 	 * 
-	 * @param config
-	 *            The Configuration Object for this AbstractSensor
+	 * @param config The Configuration Object for this AbstractSensor
 	 * @return A data transfer object for this reader
 	 */
 	public ReaderDTO getDTO(final Configuration config) {
@@ -369,8 +345,7 @@ public abstract class AbstractSensor<T extends SensorSession> extends
 		for (SensorSession s : this.getSensorSessions().values()) {
 			sessionDTOs.add(s.getDTO());
 		}
-		ReaderDTO dto = new ReaderDTO(readerID, factoryID, attrs, sessionDTOs,
-				getDisplayName());
+		ReaderDTO dto = new ReaderDTO(readerID, factoryID, attrs, sessionDTOs, getDisplayName());
 		return dto;
 	}
 
@@ -385,10 +360,8 @@ public abstract class AbstractSensor<T extends SensorSession> extends
 	 * serviceid - the service ID of the reader
 	 * </pre>
 	 * 
-	 * @param context
-	 *            The Bundlecontext to use
-	 * @param readerType
-	 *            The Type of reader to register it as
+	 * @param context    The Bundlecontext to use
+	 * @param readerType The Type of reader to register it as
 	 */
 	public void register(BundleContext context, String readerType) {
 		register(context, readerType, new HashMap<String, String>());
@@ -405,22 +378,19 @@ public abstract class AbstractSensor<T extends SensorSession> extends
 	 * serviceid - the service ID of the reader
 	 * </pre>
 	 * 
-	 * @param context
-	 *            The Bundlecontext to use
-	 * @param readerType
-	 *            The Type of reader to register it as
-	 * @param filterParams
-	 *            Any additional OSGi filter params to use when registering the
-	 *            service
+	 * @param context      The Bundlecontext to use
+	 * @param readerType   The Type of reader to register it as
+	 * @param filterParams Any additional OSGi filter params to use when registering
+	 *                     the service
 	 */
-	public void register(BundleContext context, String readerType,
-			Map<String, String> filterParams) {
+	public void register(BundleContext context, String readerType, Map<String, String> filterParams) {
 		Map<String, String> parms = new HashMap<String, String>();
 		parms.put("type", ConfigurationType.READER.toString());
 		parms.put("reader", readerType);
 		parms.put("serviceid", getID());
-		if (filterParams != null)
+		if (filterParams != null) {
 			parms.putAll(filterParams);
+		}
 		Set<String> interfaces = new HashSet<String>();
 		interfaces.add(AbstractSensor.class.getName());
 		register(context, interfaces, parms);
@@ -436,6 +406,35 @@ public abstract class AbstractSensor<T extends SensorSession> extends
 	protected void destroy() {
 		unregister();
 		receivers.clear();
+	}
+
+	/**
+	 * Resets the sensor session
+	 * 
+	 * @throws CannotDestroySensorException
+	 * @throws CannotCreateSessionException 
+	 * @throws IOException 
+	 */
+	public void resetSensor() throws CannotDestroySensorException, CannotCreateSessionException, IOException {
+		// If there are no sessions, just return.  
+		if (!this.getSensorSessions().keySet().isEmpty()) {
+			//If there is a session, delete and recreate it along with recreating any commands
+			String sessionID = this.getSensorSessions().keySet().iterator().next();
+			
+			//Get the list of commands from the current session
+			List<CommandDTO> commands = this.getSensorSessions().get(sessionID).getCommands();
+			//Destroy the current session
+			this.destroySensorSession(sessionID);
+			
+			//Create a new session
+			String newSessionID = this.createSensorSession();
+			SensorSession newSession = this.getSensorSessions().get(newSessionID);
+			//Resubmit all the commands
+			for(CommandDTO command:commands) {
+				newSession.submit(command.getCommandID(), command.getInterval(), command.getTimeUnit());
+			}
+			newSession.connect();
+		}
 	}
 
 	/*

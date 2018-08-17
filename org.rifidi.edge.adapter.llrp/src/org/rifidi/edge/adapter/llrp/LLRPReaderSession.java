@@ -695,7 +695,6 @@ public class LLRPReaderSession extends AbstractSensorSession implements
 		this.readerID = readerID;
 		this.setStatus(SessionStatus.CLOSED);
 		this.setRSSIFilterMap(rssiFilter);
-		System.out.println("Setting the TransmitPower in the constructor: " + transmitPower);
 		this.setTransmitPowerMap(transmitPower);
 	}
 
@@ -959,9 +958,7 @@ public class LLRPReaderSession extends AbstractSensorSession implements
 		}
 	}
 	
-	public LLRPMessage transmitPowerIntecept(LLRPMessage message) {				
-		System.out.println("In the TransmitPower Intercept : " + this.transmitPowerMap);
-		
+	public LLRPMessage transmitPowerIntecept(LLRPMessage message) {		
 		//If the message insn't an ADD_ROSPEC or there isn't a transmit power to set
 		if(!(message instanceof ADD_ROSPEC) || this.transmitPowerMap==null || this.transmitPowerMap.isEmpty()) {
 			return message;
@@ -1018,11 +1015,6 @@ public class LLRPReaderSession extends AbstractSensorSession implements
 			}
 		}
 		
-		try {
-			System.out.println("Finished adding TransmitPower, returning ADD_ROSPEC" + add_rospec.toXMLString());
-		} catch (InvalidLLRPMessageException e) {
-			e.printStackTrace();
-		}
 		return add_rospec;
 	}
 
