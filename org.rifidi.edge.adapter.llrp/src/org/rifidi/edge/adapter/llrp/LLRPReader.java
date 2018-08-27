@@ -310,9 +310,7 @@ public class LLRPReader extends AbstractSensor<LLRPReaderSession> {
 				return;
 			}
 			SessionStatus status = this.session.get().getStatus();
-			Boolean proceed = status.equals(SessionStatus.PROCESSING) || status.equals(SessionStatus.CONNECTING)
-					|| status.equals(SessionStatus.LOGGINGIN);
-			proceed = false;
+			Boolean proceed = status.equals(SessionStatus.PROCESSING) || status.equals(SessionStatus.CONNECTING) || status.equals(SessionStatus.LOGGINGIN);
 			if (proceed) {
 				this.resetSensor();
 			}
