@@ -14,6 +14,7 @@ package org.rifidi.edge.adapter.llrp;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.channels.UnresolvedAddressException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -48,6 +49,7 @@ import org.llrp.ltk.generated.messages.ADD_ACCESSSPEC;
 import org.llrp.ltk.generated.messages.ADD_ACCESSSPEC_RESPONSE;
 import org.llrp.ltk.generated.messages.DELETE_ACCESSSPEC;
 import org.llrp.ltk.generated.messages.ENABLE_ACCESSSPEC;
+import org.llrp.ltk.generated.messages.ENABLE_EVENTS_AND_REPORTS;
 import org.llrp.ltk.generated.messages.GET_READER_CAPABILITIES;
 import org.llrp.ltk.generated.messages.GET_READER_CONFIG;
 import org.llrp.ltk.generated.messages.GET_ROSPECS;
@@ -693,16 +695,22 @@ public class LLRPReaderSession extends AbstractSensorSession implements
 						((LLRPConnector) connection).disconnect();
 					} catch (Exception ex) {
 					}
-					logger.debug("Attempt to connect to LLRP reader failed: "
-							+ connCount);
+					logger.warn("Attempt to connect to LLRP reader failed: " + connCount);
 				} catch (RuntimeIOException e) {
 					// fix for abandoned connection
 					try {
 						((LLRPConnector) connection).disconnect();
 					} catch (Exception ex) {
 					}
-					logger.debug("Attempt to connect to LLRP reader failed: "
-							+ connCount);
+					logger.warn("Attempt to connect to LLRP reader failed: " + connCount);
+				} catch(UnresolvedAddressException e) {
+					try {
+						((LLRPConnector) connection).disconnect();
+					} catch (Exception ex) {
+					}
+					logger.warn("Attempt to connect to reader " + this.readerID + " failed: " + e.getMessage() + ", count " + connCount);
+				} catch(Exception e) {
+					
 				}
 
 				// wait for a specified number of ms or until someone calls
@@ -755,8 +763,10 @@ public class LLRPReaderSession extends AbstractSensorSession implements
 			SET_READER_CONFIG config = createSetReaderConfig();
 			config.setMessageID(new UnsignedInteger(messageID++));
 
-			SET_READER_CONFIG_RESPONSE config_response = (SET_READER_CONFIG_RESPONSE) connection
-					.transact(config);
+			SET_READER_CONFIG_RESPONSE config_response = (SET_READER_CONFIG_RESPONSE) connection.transact(config);
+			
+			ENABLE_EVENTS_AND_REPORTS report_enable = new ENABLE_EVENTS_AND_REPORTS();
+			connection.send(report_enable);
 
 			StatusCode sc = config_response.getLLRPStatus().getStatusCode();
 			if (sc.intValue() != StatusCode.M_Success) {
