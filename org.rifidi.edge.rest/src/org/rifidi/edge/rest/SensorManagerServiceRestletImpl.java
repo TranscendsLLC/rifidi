@@ -590,7 +590,6 @@ public class SensorManagerServiceRestletImpl extends Application {
 			response.setEntity(this.generateReturnString(llrpEncodeMessageDto), MediaType.TEXT_XML);
 			
 		} catch (Exception e) {
-
 			// test ini
 			// LLRPEncodeMessageDto llrpEncodeMessageDto = new
 			// LLRPEncodeMessageDto();
@@ -602,31 +601,11 @@ public class SensorManagerServiceRestletImpl extends Application {
 			e.printStackTrace();
 
 			response.setEntity(this.generateReturnString(this.generateErrorMessage(e.getMessage(), null)), MediaType.TEXT_XML);
-
 		} finally {
-
 			// cleanup session
 			if (session != null) {
-
 				session.cleanupSession();
-				
-				//*****RESET READER*******
-				String readerID = (String) request.getAttributes().get("readerID");
-				String sessionID = (String) request.getAttributes().get("sessionID");
-				//Reset the reader -- TODO pull this out into a 
-				List<CommandDTO> commands = sensorManagerService.getSession(readerID, sessionID).getCommands();
-				sensorManagerService.deleteSession(readerID, sessionID);
-				sensorManagerService.createSession(readerID);
-				for(CommandDTO command:commands) {
-					try {
-						sensorManagerService.submitCommand(readerID, sessionID, command.getCommandID(), command.getInterval(), command.getTimeUnit());
-					} catch (CommandSubmissionException e) {
-						logger.error("Exception when attempting to execute command while resetting LLRP reader");
-					}
-				}
-				sensorManagerService.startSession(readerID, sessionID);
 			}
-
 		}
 
 	}
