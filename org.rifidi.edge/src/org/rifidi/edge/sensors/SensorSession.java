@@ -60,8 +60,7 @@ public abstract class SensorSession {
 	public SensorSession(String ID, AbstractSensor<?> sensor) {
 		this.ID = ID;
 		this.sensor = sensor;
-		this.commands = Collections
-				.synchronizedList(new LinkedList<CommandDTO>());
+		this.commands = Collections.synchronizedList(new LinkedList<CommandDTO>());
 	}
 
 	/**

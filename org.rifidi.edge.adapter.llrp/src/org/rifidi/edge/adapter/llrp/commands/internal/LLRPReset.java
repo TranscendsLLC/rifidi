@@ -68,17 +68,14 @@ public class LLRPReset extends TimeoutCommand {
 					DELETE_ROSPEC_RESPONSE drsr = (DELETE_ROSPEC_RESPONSE) m;
 					if (!drsr.getLLRPStatus().getStatusCode().isValidValue(
 							StatusCode.M_Success)) {
-						logger.warn("Could not delete ROSpec with ID "
-								+ drs.getROSpecID());
+						logger.warn("Could not delete ROSpec with ID " + drs.getROSpecID());
 					}
 				} else {
-					logger.warn("Expecting DELETE_ROSPEC_RESPONSE"
-							+ ",  but got message of type " + m.getName());
+					logger.warn("Expecting DELETE_ROSPEC_RESPONSE, but got message of type " + m.getName());
 				}
 			}
 		} else {
-			logger.warn("Expecting GET_ROSPECS_RESPONSE"
-					+ ", but got message of type " + ret.getName());
+			logger.warn("Expecting GET_ROSPECS_RESPONSE, but got message of type " + ret.getName());
 		}
 
 		// Get a list of all AccessSpecs on the reader
@@ -95,17 +92,14 @@ public class LLRPReset extends TimeoutCommand {
 					DELETE_ACCESSSPEC_RESPONSE dasr = (DELETE_ACCESSSPEC_RESPONSE) m;
 					if (!dasr.getLLRPStatus().getStatusCode().isValidValue(
 							StatusCode.M_Success)) {
-						logger.warn("Could not delete AccessSpec with ID "
-								+ das.getAccessSpecID());
+						logger.warn("Could not delete AccessSpec with ID " + das.getAccessSpecID());
 					}
 				} else {
-					logger.warn("Expecting DELETE_ACCESSSPEC_RESPONSE"
-							+ ",  but got message of type " + m.getName());
+					logger.warn("Expecting DELETE_ACCESSSPEC_RESPONSE, but got message of type " + m.getName());
 				}
 			}
 		} else {
-			logger.warn("Expecting GET_ACCESSSPEC_RESPONSE"
-					+ ", but got message of type " + ret.getName());
+			logger.warn("Expecting GET_ACCESSSPEC_RESPONSE but got message of type " + ret.getName());
 		}
 		
 	}
