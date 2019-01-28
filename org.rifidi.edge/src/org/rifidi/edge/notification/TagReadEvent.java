@@ -16,6 +16,7 @@
 package org.rifidi.edge.notification;
 
 import java.io.Serializable;
+import java.math.BigInteger;
 import java.util.HashMap;
 
 import org.rifidi.edge.api.TagDTO;
@@ -66,9 +67,37 @@ public class TagReadEvent implements Serializable,
 	 * @param timestamp
 	 *            When the tag was seen.
 	 */
-	public TagReadEvent(String readerID, DatacontainerEvent tag, int antennaID,
-			long timestamp) {
+	public TagReadEvent(String readerID, DatacontainerEvent tag, int antennaID,	long timestamp) {
 		this.tag = tag;
+		this.antennaID = antennaID;
+		this.timestamp = timestamp;
+		this.readerID = readerID;
+		this.extraInformation = new HashMap<String, Serializable>();
+	}
+	
+	/**
+	 * Constructor
+	 * 
+	 * @param readerID
+	 *            The ID of the reader that saw the tag
+	 * @param tag
+	 *            The tag data
+	 * @param antennaID
+	 *            The antenna the Tag was seen on
+	 * @param timestamp
+	 *            When the tag was seen.
+	 */
+	public TagReadEvent(String readerID, String tagID, int antennaID, long timestamp) {
+		EPCGeneration2Event gen2event = new EPCGeneration2Event();
+		int numbits = tagID.length() * 4;
+		BigInteger epc;
+		try {
+			epc = new BigInteger(tagID, 16);
+		} catch (Exception e) {
+			throw new RuntimeException("Cannot decode ID: "	+ tagID);
+		}
+		this.tag = gen2event;
+		gen2event.setEPCMemory(epc, tagID, numbits);		
 		this.antennaID = antennaID;
 		this.timestamp = timestamp;
 		this.readerID = readerID;
