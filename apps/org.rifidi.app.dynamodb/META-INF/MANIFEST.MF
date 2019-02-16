@@ -22,9 +22,5 @@ Import-Package: com.amazonaws;version="1.11.78",
  org.apache.http.impl.client;version="4.2.1",
  org.apache.http.impl.conn.tsccm;version="4.2.1",
  org.apache.http.params;version="4.2.1",
- org.osgi.framework;version="1.5.0",
- org.springframework.beans.factory;version="3.0.5.RELEASE",
- org.springframework.beans.factory.config;version="3.0.5.RELEASE",
- org.springframework.core;version="3.0.5.RELEASE",
- org.springframework.dao;version="3.0.5.RELEASE"
+ org.osgi.framework;version="1.5.0"
 Bundle-ClassPath: .

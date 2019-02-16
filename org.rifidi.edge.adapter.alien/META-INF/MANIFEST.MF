@@ -7,9 +7,7 @@ Bundle-Vendor: Pramari, LLC
 Import-Package: org.apache.commons.codec,
  org.apache.commons.codec.binary,
  org.apache.commons.logging;version="1.0.4",
- org.osgi.framework;version="1.3.0",
- org.springframework.core;version="3.0.5.RELEASE",
- org.springframework.jms.core;version="3.0.5.RELEASE"
+ org.osgi.framework;version="1.3.0"
 Export-Package: org.rifidi.edge.adapter.alien,
  org.rifidi.edge.adapter.alien.commandobject,
  org.rifidi.edge.adapter.alien.messages

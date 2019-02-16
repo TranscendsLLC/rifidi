@@ -11,10 +11,7 @@ Import-Package: com.thingworx.communications.client,
  com.thingworx.metadata,
  com.thingworx.types,
  net.sf.cglib.reflect;version="2.1.3",
- org.osgi.framework;version="1.5.0",
- org.springframework.beans.factory;version="3.0.5.RELEASE",
- org.springframework.beans.factory.config;version="3.0.5.RELEASE",
- org.springframework.core;version="3.0.5.RELEASE"
+ org.osgi.framework;version="1.5.0"
 Require-Bundle: com.espertech.esper;bundle-version="4.2.0",
  org.rifidi.edge;bundle-version="5.4.0",
  org.rifidi.edge.adapter.llrp;bundle-version="2.0.7"

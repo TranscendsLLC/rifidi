@@ -28,7 +28,6 @@ import org.rifidi.edge.notification.AppStartedEvent;
 import org.rifidi.edge.notification.AppStoppedEvent;
 import org.rifidi.edge.services.EsperManagementService;
 import org.rifidi.edge.util.RifidiEdgeHelper;
-import org.springframework.osgi.context.BundleContextAware;
 
 import com.espertech.esper.client.EPAdministrator;
 import com.espertech.esper.client.EPOnDemandQueryResult;
@@ -42,7 +41,7 @@ import com.espertech.esper.client.StatementAwareUpdateListener;
  * @author Kyle Neumeier - kyle@pramari.com
  * 
  */
-public abstract class AbstractRifidiApp implements RifidiApp, BundleContextAware {
+public abstract class AbstractRifidiApp implements RifidiApp {
 
 	/** All the esper statements that have been defined so far */
 	private final Set<EPStatement> statements = new CopyOnWriteArraySet<EPStatement>();
@@ -153,10 +152,10 @@ public abstract class AbstractRifidiApp implements RifidiApp, BundleContextAware
 	 * org.springframework.osgi.context.BundleContextAware#setBundleContext(
 	 * org.osgi.framework.BundleContext)
 	 */
-	@Override
-	public void setBundleContext(BundleContext arg0) {
-		this.bundleContext = arg0;
-	}
+//	@Override
+//	public void setBundleContext(BundleContext arg0) {
+//		this.bundleContext = arg0;
+//	}
 
 	/**
 	 * Subclasses should override this method if they want to automatically

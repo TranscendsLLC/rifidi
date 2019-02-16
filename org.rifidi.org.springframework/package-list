@@ -1,0 +1,11 @@
+org.springframework.cache.caffeine
+org.springframework.cache.ehcache
+org.springframework.cache.jcache
+org.springframework.cache.jcache.config
+org.springframework.cache.jcache.interceptor
+org.springframework.cache.transaction
+org.springframework.mail
+org.springframework.mail.javamail
+org.springframework.scheduling.commonj
+org.springframework.scheduling.quartz
+org.springframework.ui.freemarker
