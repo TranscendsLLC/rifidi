@@ -17,7 +17,6 @@ local.properties
 LLRP_CMDR/
 
 # Eclipse Core
-.project
 
 # External tool builders
 .externalToolBuilders/
