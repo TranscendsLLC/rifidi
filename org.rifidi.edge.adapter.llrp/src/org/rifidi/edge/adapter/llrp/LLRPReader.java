@@ -61,7 +61,7 @@ public class LLRPReader extends AbstractSensor<LLRPReaderSession> {
 	/** The path to the SET_READER_CONFIG path to use */
 	private Boolean rssioffset = false;
 	/** The ID of the session */
-	private final Integer sessionIDcounter = new Integer(1);
+	private final Integer sessionIDcounter = 1;
 	/** Provided by spring. */
 	private final Set<AbstractCommandConfiguration<?>> commands;
 	/** Set to true to disable autostart */
@@ -99,16 +99,10 @@ public class LLRPReader extends AbstractSensor<LLRPReaderSession> {
 	public String createSensorSession(SessionDTO sessionDTO) throws CannotCreateSessionException {
 		if (!destroied.get() && session.get() == null) {
 			Integer sessionID = Integer.parseInt(sessionDTO.getID());
-			if (session.compareAndSet(null, new LLRPReaderSession(this,
-					sessionID.toString(), ipAddress, port,
-					reconnectionInterval, maxNumConnectionAttempts,
-					readerConfigPath, this.rssiFilter, notifierService, super.getID(),
-					this.rssioffset, commands))) {
-			if (session.compareAndSet(null, new LLRPReaderSession(this,
-					sessionID.toString(), ipAddress, port,
-					reconnectionInterval, maxNumConnectionAttempts,
-					readerConfigPath, this.rssiFilter, notifierService, super.getID(), 
-					this.rssioffset, commands))) {
+			if (session.compareAndSet(null,
+					new LLRPReaderSession(this, sessionID.toString(), ipAddress, port, reconnectionInterval,
+							maxNumConnectionAttempts, readerConfigPath, this.rssiFilter, this.transmitPower,
+							notifierService, super.getID(), this.rssioffset, commands))) {
 				session.get().restoreCommands(sessionDTO);
 				// TODO: remove this once we get AspectJ in here!
 				notifierService.addSessionEvent(this.getID(), Integer.toString(sessionID));
@@ -128,17 +122,10 @@ public class LLRPReader extends AbstractSensor<LLRPReaderSession> {
 	public String createSensorSession() throws CannotCreateSessionException {
 		if (!destroied.get() && session.get() == null) {
 			Integer sessionID = this.sessionIDcounter;
-			if (session.compareAndSet(null, new LLRPReaderSession(this,
-					sessionID.toString(), ipAddress, port,
-					reconnectionInterval, maxNumConnectionAttempts,
-					readerConfigPath, this.rssiFilter, notifierService, super.getID(),
-					this.rssioffset, commands))) {
-			if (session.compareAndSet(null, new LLRPReaderSession(this,
-					sessionID.toString(), ipAddress, port,
-					reconnectionInterval, maxNumConnectionAttempts,
-					this.rssioffset, commands))) {
-					readerConfigPath, this.rssiFilter, notifierService, super.getID(), 
-
+			if (session.compareAndSet(null,
+					new LLRPReaderSession(this, sessionID.toString(), ipAddress, port, reconnectionInterval,
+							maxNumConnectionAttempts, readerConfigPath, this.rssiFilter, this.transmitPower,
+							notifierService, super.getID(), this.rssioffset, commands))) {
 				// TODO: remove this once we get AspectJ in here!
 				notifierService.addSessionEvent(this.getID(), Integer.toString(sessionID));
 				return sessionID.toString();
@@ -289,7 +276,7 @@ public class LLRPReader extends AbstractSensor<LLRPReaderSession> {
 	public void setPort(Integer port) {
 		this.port = port;
 	}
-	
+
 	@Property(displayName = "DisableAutoStart", description = "Set to true to disable autostart", writable = true, type = PropertyType.PT_BOOLEAN, category = "connection", orderValue = 8, defaultValue = "false")
 	public Boolean getDisableAutoStart() {
 		return disableAutoStart;
@@ -324,7 +311,8 @@ public class LLRPReader extends AbstractSensor<LLRPReaderSession> {
 				return;
 			}
 			SessionStatus status = this.session.get().getStatus();
-			Boolean proceed = status.equals(SessionStatus.PROCESSING) || status.equals(SessionStatus.CONNECTING) || status.equals(SessionStatus.LOGGINGIN);
+			Boolean proceed = status.equals(SessionStatus.PROCESSING) || status.equals(SessionStatus.CONNECTING)
+					|| status.equals(SessionStatus.LOGGINGIN);
 			if (proceed) {
 				this.resetSensor();
 			}
@@ -389,7 +377,7 @@ public class LLRPReader extends AbstractSensor<LLRPReaderSession> {
 	public void setReaderConfigPath(String readerConfigPath) {
 		this.readerConfigPath = readerConfigPath;
 	}
-	
+
 	/**
 	 * Returns the IP address of the reader.
 	 * 
@@ -403,13 +391,11 @@ public class LLRPReader extends AbstractSensor<LLRPReaderSession> {
 	/**
 	 * Sets the IP address of the reader.
 	 * 
-	 * @param ipAddress
-	 *            the ipAddress to set
+	 * @param ipAddress the ipAddress to set
 	 */
 	public void setRssiOffset(Boolean rssioffset) {
 		this.rssioffset = rssioffset;
 	}
-
 
 	/**
 	 * Gets the properties for the reader.
