@@ -33,6 +33,7 @@ import org.llrp.ltk.types.UnsignedShort;
  * @author Matthew Dean
  */
 public class LLRPConstants {
+		
 	/**
 	 * Default IP for the reader.
 	 */
@@ -65,6 +66,9 @@ public class LLRPConstants {
 
 	/** The default path to the SET_READER_CONFIG XML */
 	public final static String SET_READER_CONFIG_PATH = "config/SET_READER_CONFIG.llrp";
+
+	/** LLRP RSSI offset -- this value will be added to LLRP RSSI values to make them not negative.  Subtract it to get the true value */
+	public static final Integer RSSI_OFFSET = 128;
 	
 	/**
 	 * A default SET_READER_CONFIG message to use in case the one from the file

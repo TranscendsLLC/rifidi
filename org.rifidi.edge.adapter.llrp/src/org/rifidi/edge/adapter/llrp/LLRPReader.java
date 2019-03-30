@@ -58,6 +58,8 @@ public class LLRPReader extends AbstractSensor<LLRPReaderSession> {
 	private volatile Integer maxNumConnectionAttempts = 10;
 	/** The path to the SET_READER_CONFIG path to use */
 	private String readerConfigPath = LLRPConstants.SET_READER_CONFIG_PATH;
+	/** The path to the SET_READER_CONFIG path to use */
+	private Boolean rssioffset = false;
 	/** The ID of the session */
 	private final Integer sessionIDcounter = new Integer(1);
 	/** Provided by spring. */
@@ -97,10 +99,16 @@ public class LLRPReader extends AbstractSensor<LLRPReaderSession> {
 	public String createSensorSession(SessionDTO sessionDTO) throws CannotCreateSessionException {
 		if (!destroied.get() && session.get() == null) {
 			Integer sessionID = Integer.parseInt(sessionDTO.getID());
-			if (session.compareAndSet(null,
-					new LLRPReaderSession(this, sessionID.toString(), ipAddress, port, reconnectionInterval,
-							maxNumConnectionAttempts, readerConfigPath, this.rssiFilter, this.transmitPower,
-							notifierService, super.getID(), commands))) {
+			if (session.compareAndSet(null, new LLRPReaderSession(this,
+					sessionID.toString(), ipAddress, port,
+					reconnectionInterval, maxNumConnectionAttempts,
+					readerConfigPath, this.rssiFilter, notifierService, super.getID(),
+					this.rssioffset, commands))) {
+			if (session.compareAndSet(null, new LLRPReaderSession(this,
+					sessionID.toString(), ipAddress, port,
+					reconnectionInterval, maxNumConnectionAttempts,
+					readerConfigPath, this.rssiFilter, notifierService, super.getID(), 
+					this.rssioffset, commands))) {
 				session.get().restoreCommands(sessionDTO);
 				// TODO: remove this once we get AspectJ in here!
 				notifierService.addSessionEvent(this.getID(), Integer.toString(sessionID));
@@ -120,10 +128,16 @@ public class LLRPReader extends AbstractSensor<LLRPReaderSession> {
 	public String createSensorSession() throws CannotCreateSessionException {
 		if (!destroied.get() && session.get() == null) {
 			Integer sessionID = this.sessionIDcounter;
-			if (session.compareAndSet(null,
-					new LLRPReaderSession(this, sessionID.toString(), ipAddress, port, reconnectionInterval,
-							maxNumConnectionAttempts, readerConfigPath, this.rssiFilter, this.transmitPower,
-							notifierService, super.getID(), commands))) {
+			if (session.compareAndSet(null, new LLRPReaderSession(this,
+					sessionID.toString(), ipAddress, port,
+					reconnectionInterval, maxNumConnectionAttempts,
+					readerConfigPath, this.rssiFilter, notifierService, super.getID(),
+					this.rssioffset, commands))) {
+			if (session.compareAndSet(null, new LLRPReaderSession(this,
+					sessionID.toString(), ipAddress, port,
+					reconnectionInterval, maxNumConnectionAttempts,
+					this.rssioffset, commands))) {
+					readerConfigPath, this.rssiFilter, notifierService, super.getID(), 
 
 				// TODO: remove this once we get AspectJ in here!
 				notifierService.addSessionEvent(this.getID(), Integer.toString(sessionID));
@@ -275,7 +289,7 @@ public class LLRPReader extends AbstractSensor<LLRPReaderSession> {
 	public void setPort(Integer port) {
 		this.port = port;
 	}
-
+	
 	@Property(displayName = "DisableAutoStart", description = "Set to true to disable autostart", writable = true, type = PropertyType.PT_BOOLEAN, category = "connection", orderValue = 8, defaultValue = "false")
 	public Boolean getDisableAutoStart() {
 		return disableAutoStart;
@@ -375,6 +389,27 @@ public class LLRPReader extends AbstractSensor<LLRPReaderSession> {
 	public void setReaderConfigPath(String readerConfigPath) {
 		this.readerConfigPath = readerConfigPath;
 	}
+	
+	/**
+	 * Returns the IP address of the reader.
+	 * 
+	 * @return the ipAddress
+	 */
+	@Property(displayName = "RSSI Offset", description = "Offset the RSSI values for tags coming in to the reader so they are always positive", writable = true, type = PropertyType.PT_BOOLEAN, category = "reading", defaultValue = "false", orderValue = 1)
+	public Boolean getRssiOffset() {
+		return rssioffset;
+	}
+
+	/**
+	 * Sets the IP address of the reader.
+	 * 
+	 * @param ipAddress
+	 *            the ipAddress to set
+	 */
+	public void setRssiOffset(Boolean rssioffset) {
+		this.rssioffset = rssioffset;
+	}
+
 
 	/**
 	 * Gets the properties for the reader.

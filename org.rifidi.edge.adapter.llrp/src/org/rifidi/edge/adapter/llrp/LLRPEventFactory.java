@@ -59,10 +59,10 @@ public class LLRPEventFactory {
 	 *            The ID of the reader that recieved the message
 	 * @return the Rifidi Event or null if no relavent can be created
 	 */
-	public static Object createEvent(LLRPMessage message, String readerID, Map<Integer,Integer> rssiFilter) {
+	public static Object createEvent(LLRPMessage message, String readerID, Map<Integer,Integer> rssiFilter, Boolean rssiOffset) {
 		// If we have A RO_ACCESS_REPORT, return a ReadCycle
 		if (message instanceof RO_ACCESS_REPORT) {
-			return createReadCycle((RO_ACCESS_REPORT) message, readerID, rssiFilter);
+			return createReadCycle((RO_ACCESS_REPORT) message, readerID, rssiFilter, rssiOffset);
 		}
 		// If we have a GPIEvent Notification, return a GPIEvent
 		if (message instanceof READER_EVENT_NOTIFICATION) {
@@ -89,7 +89,7 @@ public class LLRPEventFactory {
 	 * @return
 	 */
 	private static ReadCycle createReadCycle(RO_ACCESS_REPORT rar,
-			String readerID, Map<Integer,Integer> rssiFilterMap) {
+			String readerID, Map<Integer,Integer> rssiFilterMap, boolean rssiOffset) {
 		List<TagReportData> trdl = rar.getTagReportDataList();
 		Set<TagReadEvent> tagreaderevents = new HashSet<TagReadEvent>();
 		for (TagReportData t : trdl) {
@@ -168,8 +168,10 @@ public class LLRPEventFactory {
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
-				tag.addExtraInformation(StandardTagReadEventFieldNames.RSSI, rssi.toString());
-			}
+				// Add an offset to the RSSI value (128, the lowest negative number this value could be) so that the number is no longer negative.  
+				// Subtract this number on the other end if you want the true RSSI value.
+				tag.addExtraInformation(StandardTagReadEventFieldNames.RSSI, rssi + ((rssiOffset) ? LLRPConstants.RSSI_OFFSET : 0));
+			}			
 
 			if (t.getSpecIndex() != null) {
 				String specindex = t.getSpecIndex().getSpecIndex().toInteger()
@@ -243,8 +245,7 @@ public class LLRPEventFactory {
 				}
 			}
 			if (logger.isDebugEnabled()) {
-				logger.debug(tag.getTag().getFormattedID() + " ANT: "
-						+ tag.getAntennaID());
+				logger.debug(tag.getTag().getFormattedID() + " ANT: " + tag.getAntennaID());
 			}
 			
 			tagreaderevents.add(tag);
