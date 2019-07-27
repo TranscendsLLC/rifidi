@@ -38,6 +38,8 @@ import org.rifidi.edge.adapter.llrp.LLRPReaderSession.LLRP_OPERATION_CODE;
 
 public class LLRPOperationTracker extends TimerTask implements Serializable {
 
+	private static final long serialVersionUID = -2952096874005916279L;
+
 	/** List to keep track of all operations and responses received **/
 	private List<LLRPOperationDto> operationList;
 
@@ -80,12 +82,9 @@ public class LLRPOperationTracker extends TimerTask implements Serializable {
 	}
 
 	public void addOperationDto(LLRPOperationDto llrpOperationDto) {
-		
-		if (operationList == null){
-			
+		if (operationList == null) {			
 			//Initialize operation list
 			operationList = new LinkedList<LLRPOperationDto>();
-			
 		}
 		operationList.add(llrpOperationDto);
 	}

@@ -9,9 +9,9 @@
 ### END INIT INFO
 #
 
-# compile all modules 
+# compile all modules
 
-#mvn clean install 
+#mvn clean install
 #cd ..
 #cd org.rifidi.edge.api
 #mvn clean install
@@ -29,7 +29,7 @@
 #mvn clean install
 #cd ..
 #cd org.rifidi.edge.tools
-#mvn clean install 
+#mvn clean install
 #cd ..
 
 
@@ -40,7 +40,7 @@
 #sudo rm -f rifidi/debian/usr/local/sbin/rifidi/plugins/org.rifidi.edge.adapter.opticon-1.0.1.jar
 #sudo rm -f rifidi/debian/usr/local/sbin/rifidi/plugins/org.rifidi.edge.api-1.3.0.jar
 #sudo rm -f rifidi/debian/usr/local/sbin/rifidi/plugins/org.rifidi.edge.init-1.0.1.jar
-#sudo rm -f rifidi/debian/usr/local/sbin/rifidi/plugins/org.rifidi.edge.tools-1.0.0.jar 
+#sudo rm -f rifidi/debian/usr/local/sbin/rifidi/plugins/org.rifidi.edge.tools-1.0.0.jar
 #sudo rm -f rifidi/debian/usr/local/sbin/rifidi/plugins/org.rifidi.edge.adapter.thingmagic6-1.0.0.jar
 #sudo rm -f rifidi/debian/usr/local/sbin/rifidi/plugins/org.rifidi.edge-5.4.0.jar
 
@@ -53,7 +53,4 @@
 cd rifidi/
 dpkg-deb --build debian
 
-mv debian.deb ./Debian-packages/rifidi-edge-3.7.0-linux.gtk.x86.deb
-
-
-
+mv debian.deb ./Debian-packages/rifidi-edge-3.8.0-linux.gtk.x86.deb

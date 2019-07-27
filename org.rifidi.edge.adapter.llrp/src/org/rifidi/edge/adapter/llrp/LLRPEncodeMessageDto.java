@@ -17,7 +17,7 @@ public class LLRPEncodeMessageDto implements Serializable {
 	/**
 	 * 
 	 */
-	//private static final long serialVersionUID = 618168723573019895L;
+	private static final long serialVersionUID = -5460600784670034702L;
 	
 	@XmlElement(name="status")
 	private String status;//Success / Fail

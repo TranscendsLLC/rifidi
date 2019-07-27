@@ -1,6 +1,6 @@
 Package: rifidi
-Version: 3.7.0
-Installed-Size: 153272
+Version: 3.8.0
+Installed-Size: 155014
 Section: web 
 Depends: 
 Suggests: python, openjdk-8-jre, curl
