@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Restlet
 Bundle-SymbolicName: org.rifidi.edge.rest
-Bundle-Version: 1.9.0
+Bundle-Version: 1.9.1
 Bundle-Vendor: Transcends, LLC
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Import-Package: com.espertech.esper.client,
