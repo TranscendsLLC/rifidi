@@ -340,8 +340,8 @@ public class ConfigurationServiceImpl implements ConfigurationService,
 			throw new CannotCreateServiceException();
 		}
 
-		//Validate and accept only alphanumeric values and underscores
-		Pattern pattern = Pattern.compile("^[a-zA-Z0-9_]+$");
+		//Validate and accept only alphanumeric values, colons, periods, hyphens and underscores
+		Pattern pattern = Pattern.compile("^[a-zA-Z0-9_:.\\-]+$");
 		Matcher matcher = pattern.matcher(requiredServiceID);
 		if (!matcher.matches()){
 			throw new CannotCreateServiceException("Invalid character for reader id. It's allowed only alphanumeric and underscore characters");
