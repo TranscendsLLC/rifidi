@@ -3,6 +3,9 @@
  */
 package org.rifidi.edge.adapter.llrp;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.llrp.ltk.exceptions.InvalidLLRPMessageException;
 import org.llrp.ltk.generated.messages.ADD_ROSPEC_RESPONSE;
 import org.llrp.ltk.generated.messages.ENABLE_ROSPEC_RESPONSE;
 import org.llrp.ltk.generated.parameters.LLRPStatus;
@@ -21,6 +24,11 @@ public class LLRPExceptionHandler {
 	private final String readerID;
 	private final AbstractSensor<?> sensor;
 	
+
+	/** Logger for this class. */
+	private static final Log logger = LogFactory
+			.getLog(LLRPExceptionHandler.class);
+	
 	
 	/**
 	 * 
@@ -38,6 +46,11 @@ public class LLRPExceptionHandler {
 		if(message instanceof ADD_ROSPEC_RESPONSE) {
 			ADD_ROSPEC_RESPONSE response = (ADD_ROSPEC_RESPONSE) message;
 			if(isFieldError(response.getLLRPStatus().getStatusCode().toString())) {
+				try {
+					logger.error(response.toXMLString());
+				} catch (InvalidLLRPMessageException e) {
+					e.printStackTrace();
+				}
 				this.sendErrorEvent(response.getLLRPStatus());
 			}
 		} else if(message instanceof ENABLE_ROSPEC_RESPONSE) {

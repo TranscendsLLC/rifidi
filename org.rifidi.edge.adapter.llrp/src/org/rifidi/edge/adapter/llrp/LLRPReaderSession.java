@@ -1023,11 +1023,17 @@ public class LLRPReaderSession extends AbstractSensorSession implements
 				ant.setAntennaID(new UnsignedShort(key));
 				RFTransmitter transmitter = new RFTransmitter();
 				transmitter.setTransmitPower(transmitPowerMap.get(key));
-				transmitter.setChannelIndex(new UnsignedShort(0));
+				transmitter.setChannelIndex(new UnsignedShort(1));
 				transmitter.setHopTableID(new UnsignedShort(1));
 				ant.setRFTransmitter(transmitter);
 				inv.addToAntennaConfigurationList(ant);
 			}
+		}
+
+		try {
+			System.out.println(add_rospec.toXMLString());
+		} catch (InvalidLLRPMessageException e) {
+			e.printStackTrace();
 		}
 		
 		return add_rospec;
