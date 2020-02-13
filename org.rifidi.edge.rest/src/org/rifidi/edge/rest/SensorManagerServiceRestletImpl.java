@@ -1689,21 +1689,29 @@ public class SensorManagerServiceRestletImpl extends Application {
 			@Override
 			public void handle(Request request, Response response) {
 				setResponseHeaders(request, response);
-				String readerID = (String) request.getAttributes().get("readerID");
-				String portstr = (String) request.getAttributes().get("ports");
-				Set<Integer> ports = new HashSet<Integer>();
-				for (String port : portstr.split(",")) {
-					ports.add(Integer.parseInt(port));
-				}
-				for (AbstractGPIOService<?> service : gpioServiceList) {
-					if (service.isReaderAvailable(readerID)) {
-						try {
-							service.setGPO(readerID, ports);
-						} catch (CannotExecuteException e) {
-							e.printStackTrace();
-							self.generateErrorMessage("Error when setting GPO for reader " + readerID + " ports " + ports, "");
+				logger.info("In the setGPO");
+				try {
+					String readerID = (String) request.getAttributes().get("readerID");
+					String portstr = (String) request.getAttributes().get("ports");
+					Set<Integer> ports = new HashSet<Integer>();
+					for (String port : portstr.split(",")) {
+						ports.add(Integer.parseInt(port));
+					}
+					for (AbstractGPIOService<?> service : gpioServiceList) {
+						System.out.println(service.toString());
+						if (service.isReaderAvailable(readerID)) {
+							try {
+								System.out.println(service.getClass());
+								service.setGPO(readerID, ports);
+							} catch (CannotExecuteException e) {
+								e.printStackTrace();
+								self.generateErrorMessage(
+										"Error when setting GPO for reader " + readerID + " ports " + ports, "");
+							}
 						}
 					}
+				} catch (Exception e) {
+					e.printStackTrace();
 				}
 				response.setEntity(self.generateReturnString("Success"), MediaType.TEXT_XML);
 			}
