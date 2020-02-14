@@ -19,6 +19,7 @@ import java.util.Set;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.rifidi.edge.sensors.AbstractGPIOService;
+import org.rifidi.edge.sensors.AbstractSensor;
 import org.rifidi.edge.sensors.CannotExecuteException;
 
 /**
@@ -29,21 +30,18 @@ import org.rifidi.edge.sensors.CannotExecuteException;
  * @author Kyle Neumeier - kyle@pramari.com
  * 
  */
-public class AlienGPIOService extends
-		AbstractGPIOService<Alien9800ReaderSession> {
+public class AlienGPIOService extends AbstractGPIOService<Alien9800ReaderSession> {
 
 	private static final Log logger = LogFactory.getLog(AlienGPIOService.class);
 
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * org.rifidi.edge.sensors.sessions.interfaces.AbstractGPIOService#
+	 * @see org.rifidi.edge.sensors.sessions.interfaces.AbstractGPIOService#
 	 * setGPO(java.lang.String, java.util.Collection)
 	 */
 	@Override
-	public void setGPO(String readerID, Collection<Integer> ports)
-			throws CannotExecuteException {
+	public void setGPO(String readerID, Collection<Integer> ports) throws CannotExecuteException {
 		Alien9800ReaderSession session = getSession(readerID);
 		BitSet bits = new BitSet(8);
 		for (Integer port : ports) {
@@ -57,20 +55,17 @@ public class AlienGPIOService extends
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * org.rifidi.edge.sensors.sessions.interfaces.AbstractGPIOService#
+	 * @see org.rifidi.edge.sensors.sessions.interfaces.AbstractGPIOService#
 	 * flashGPO(java.lang.String, int, java.util.Set)
 	 */
 	@Override
-	public void flashGPO(String readerID, int flashTime, Set<Integer> ports)
-			throws CannotExecuteException {
+	public void flashGPO(String readerID, int flashTime, Set<Integer> ports) throws CannotExecuteException {
 		Alien9800ReaderSession session = getSession(readerID);
 		BitSet bits = new BitSet(8);
 		for (Integer port : ports) {
 			bits.set(port);
 		}
-		logger.info("Flashing GPO on " + readerID + " Ports: " + ports
-				+ " for " + flashTime + " seconds");
+		logger.info("Flashing GPO on " + readerID + " Ports: " + ports + " for " + flashTime + " seconds");
 		session.flashOutput(bits, new BitSet(), flashTime, 0, 1);
 
 	}
@@ -78,15 +73,24 @@ public class AlienGPIOService extends
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * org.rifidi.edge.sensors.management.AbstractGPIOService#testGPI(java
+	 * @see org.rifidi.edge.sensors.management.AbstractGPIOService#testGPI(java
 	 * .lang.String, int)
 	 */
 	@Override
-	public boolean testGPI(String readerID, int port)
-			throws CannotExecuteException {
+	public boolean testGPI(String readerID, int port) throws CannotExecuteException {
 		Alien9800ReaderSession session = getSession(readerID);
 		return session.testInputPort(port);
 	}
 
+	/**
+	 * 
+	 */
+	@Override
+	public boolean isReaderAvailable(String readerID) {
+		AbstractSensor<?> sensor = this.readerDAO.getReaderByID(readerID);
+		if (sensor != null && sensor instanceof Alien9800Reader) {
+			return true;
+		}
+		return false;
+	}
 }
