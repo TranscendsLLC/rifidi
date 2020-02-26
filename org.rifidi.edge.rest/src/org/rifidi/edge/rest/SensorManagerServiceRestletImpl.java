@@ -1760,10 +1760,9 @@ public class SensorManagerServiceRestletImpl extends Application {
 						ports.add(Integer.parseInt(port));
 					}
 					for (AbstractGPIOService<?> service : gpioServiceList) {
-						System.out.println(service.toString());
 						if (service.isReaderAvailable(readerID)) {
 							try {
-								System.out.println(service.getClass());
+								foundservice = true;
 								service.setGPO(readerID, ports);
 							} catch (CannotExecuteException e) {
 								e.printStackTrace();
@@ -1787,29 +1786,48 @@ public class SensorManagerServiceRestletImpl extends Application {
 				}
 			}
 		};
-
+		
 		Restlet flashGPO = new Restlet() {
 			@Override
 			public void handle(Request request, Response response) {
 				setResponseHeaders(request, response);
-				String readerID = (String) request.getAttributes().get("readerID");
-				String portstr = (String) request.getAttributes().get("ports");
-				Integer flashtime = (Integer) request.getAttributes().get("seconds");
-				Set<Integer> ports = new HashSet<Integer>();
-				for (String port : portstr.split(",")) {
-					ports.add(Integer.parseInt(port));
-				}
-				for (AbstractGPIOService<?> service : gpioServiceList) {
-					if (service.isReaderAvailable(readerID)) {
-						try {
-							service.flashGPO(readerID, flashtime, ports);
-						} catch (CannotExecuteException e) {
-							response.setEntity(self.generateReturnString(self.generateErrorMessage("Error when setting GPO for reader " + readerID + " ports " + ports, null)),
-									MediaType.TEXT_XML);
+				boolean foundservice = false;
+				String readerID = null;
+				String portstr = null;
+				Integer flashtime = null;
+				try {
+					readerID = (String) request.getAttributes().get("readerID");
+					portstr = (String) request.getAttributes().get("ports");
+					flashtime = (Integer) request.getAttributes().get("seconds");
+					Set<Integer> ports = new HashSet<Integer>();
+					for (String port : portstr.split(",")) {
+						ports.add(Integer.parseInt(port));
+					}
+					for (AbstractGPIOService<?> service : gpioServiceList) {
+						if (service.isReaderAvailable(readerID)) {
+							try {
+								foundservice = true;
+								service.flashGPO(readerID, flashtime, ports);
+							} catch (CannotExecuteException e) {
+								e.printStackTrace();
+								foundservice = true;
+								response.setEntity(self.generateReturnString(self.generateErrorMessage(
+										"Error when setting GPO for reader " + readerID + " ports " + ports, null)),
+										MediaType.TEXT_XML);
+							}
 						}
 					}
+				} catch (Exception e) {
+					e.printStackTrace();
 				}
-				response.setEntity(self.generateReturnString(self.generateSuccessMessage()), MediaType.TEXT_XML);
+				if (foundservice) {
+					response.setEntity(self.generateReturnString(self.generateSuccessMessage()), MediaType.TEXT_XML);
+				} else {
+					response.setEntity(
+							self.generateReturnString(
+									self.generateErrorMessage("Could not find session for reader " + readerID, null)),
+							MediaType.TEXT_XML);
+				}
 			}
 		};
 
