@@ -25,11 +25,11 @@ import org.llrp.ltk.generated.parameters.GPIPortCurrentState;
 import org.llrp.ltk.generated.parameters.GPOWriteData;
 import org.llrp.ltk.types.Bit;
 import org.llrp.ltk.types.UnsignedShort;
-import org.rifidi.edge.adapter.llrp.LLRPReader;
 import org.rifidi.edge.adapter.llrp.LLRPReaderSession;
 import org.rifidi.edge.sensors.AbstractGPIOService;
 import org.rifidi.edge.sensors.AbstractSensor;
 import org.rifidi.edge.sensors.CannotExecuteException;
+import org.rifidi.edge.sensors.SensorSession;
 
 /**
  * @author matt
@@ -200,7 +200,15 @@ public class LLRPGPIOService extends AbstractGPIOService<LLRPReaderSession> {
 	@Override
 	public boolean isReaderAvailable(String readerID) {
 		AbstractSensor<?> sensor = this.readerDAO.getReaderByID(readerID);
-		if (sensor != null && sensor instanceof LLRPReader) {
+		if(sensor == null) {
+			return false;
+		}
+		SensorSession cursession = null;
+		for(SensorSession session : sensor.getSensorSessions().values()) {
+			cursession = session;
+			break;
+		}
+		if (cursession instanceof LLRPReaderSession) {
 			return true;
 		}
 		return false;

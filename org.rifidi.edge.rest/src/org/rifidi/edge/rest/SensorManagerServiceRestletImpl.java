@@ -1749,10 +1749,12 @@ public class SensorManagerServiceRestletImpl extends Application {
 			@Override
 			public void handle(Request request, Response response) {
 				setResponseHeaders(request, response);
-				logger.info("In the setGPO");
+				boolean foundservice = false;
+				String readerID = null;
+				String portstr = null;
 				try {
-					String readerID = (String) request.getAttributes().get("readerID");
-					String portstr = (String) request.getAttributes().get("ports");
+					readerID = (String) request.getAttributes().get("readerID");
+					portstr = (String) request.getAttributes().get("ports");
 					Set<Integer> ports = new HashSet<Integer>();
 					for (String port : portstr.split(",")) {
 						ports.add(Integer.parseInt(port));
@@ -1765,7 +1767,9 @@ public class SensorManagerServiceRestletImpl extends Application {
 								service.setGPO(readerID, ports);
 							} catch (CannotExecuteException e) {
 								e.printStackTrace();
-								response.setEntity(self.generateReturnString(self.generateErrorMessage("Error when setting GPO for reader " + readerID + " ports " + ports, null)),
+								foundservice = true;
+								response.setEntity(self.generateReturnString(self.generateErrorMessage(
+										"Error when setting GPO for reader " + readerID + " ports " + ports, null)),
 										MediaType.TEXT_XML);
 							}
 						}
@@ -1773,7 +1777,14 @@ public class SensorManagerServiceRestletImpl extends Application {
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
-				response.setEntity(self.generateReturnString(self.generateSuccessMessage()), MediaType.TEXT_XML);
+				if (foundservice) {
+					response.setEntity(self.generateReturnString(self.generateSuccessMessage()), MediaType.TEXT_XML);
+				} else {
+					response.setEntity(
+							self.generateReturnString(
+									self.generateErrorMessage("Could not find session for reader " + readerID, null)),
+							MediaType.TEXT_XML);
+				}
 			}
 		};
 
