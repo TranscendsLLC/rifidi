@@ -17,12 +17,12 @@ import java.util.BitSet;
 import java.util.Collection;
 import java.util.Set;
 
-import org.rifidi.edge.adapter.awid.awid2010.AwidSensor;
 import org.rifidi.edge.adapter.awid.awid2010.AwidSession;
 import org.rifidi.edge.api.SessionStatus;
 import org.rifidi.edge.sensors.AbstractGPIOService;
 import org.rifidi.edge.sensors.AbstractSensor;
 import org.rifidi.edge.sensors.CannotExecuteException;
+import org.rifidi.edge.sensors.SensorSession;
 
 /**
  * This class is a service that lets applications access the GPIO functionality
@@ -115,7 +115,15 @@ public class AwidGPIOService extends AbstractGPIOService<AwidSession> {
 	@Override
 	public boolean isReaderAvailable(String readerID) {
 		AbstractSensor<?> sensor = this.readerDAO.getReaderByID(readerID);
-		if (sensor != null && sensor instanceof AwidSensor) {
+		if(sensor == null) {
+			return false;
+		}
+		SensorSession cursession = null;
+		for(SensorSession session : sensor.getSensorSessions().values()) {
+			cursession = session;
+			break;
+		}
+		if (cursession instanceof AwidSession) {
 			return true;
 		}
 		return false;
