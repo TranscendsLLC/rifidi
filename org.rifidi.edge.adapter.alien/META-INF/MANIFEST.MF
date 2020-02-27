@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Rifidi Edge Alien Adapter
 Bundle-SymbolicName: org.rifidi.edge.adapter.alien
-Bundle-Version: 2.11.1
+Bundle-Version: 2.11.3
 Bundle-Vendor: Pramari, LLC
 Import-Package: org.apache.commons.codec,
  org.apache.commons.codec.binary,
