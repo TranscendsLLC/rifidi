@@ -1770,11 +1770,16 @@ public class SensorManagerServiceRestletImpl extends Application {
 								response.setEntity(self.generateReturnString(self.generateErrorMessage(
 										"Error when setting GPO for reader " + readerID + " ports " + ports, null)),
 										MediaType.TEXT_XML);
+								return;
 							}
 						}
 					}
 				} catch (Exception e) {
 					e.printStackTrace();
+					response.setEntity(self.generateReturnString(self.generateErrorMessage(
+							"Error when setting GPO for reader " + readerID + " ports " + portstr, null)),
+							MediaType.TEXT_XML);
+					return;
 				}
 				if (foundservice) {
 					response.setEntity(self.generateReturnString(self.generateSuccessMessage()), MediaType.TEXT_XML);
@@ -1798,7 +1803,7 @@ public class SensorManagerServiceRestletImpl extends Application {
 				try {
 					readerID = (String) request.getAttributes().get("readerID");
 					portstr = (String) request.getAttributes().get("ports");
-					flashtime = (Integer) request.getAttributes().get("seconds");
+					flashtime = Integer.parseInt((String) request.getAttributes().get("seconds"));
 					Set<Integer> ports = new HashSet<Integer>();
 					for (String port : portstr.split(",")) {
 						ports.add(Integer.parseInt(port));
@@ -1814,11 +1819,16 @@ public class SensorManagerServiceRestletImpl extends Application {
 								response.setEntity(self.generateReturnString(self.generateErrorMessage(
 										"Error when setting GPO for reader " + readerID + " ports " + ports, null)),
 										MediaType.TEXT_XML);
+								return;
 							}
 						}
 					}
 				} catch (Exception e) {
 					e.printStackTrace();
+					response.setEntity(self.generateReturnString(self.generateErrorMessage(
+							"Error when setting GPO for reader " + readerID + " ports " + portstr, null)),
+							MediaType.TEXT_XML);
+					return;
 				}
 				if (foundservice) {
 					response.setEntity(self.generateReturnString(self.generateSuccessMessage()), MediaType.TEXT_XML);
