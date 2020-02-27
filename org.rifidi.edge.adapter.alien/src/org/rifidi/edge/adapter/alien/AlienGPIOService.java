@@ -21,6 +21,7 @@ import org.apache.commons.logging.LogFactory;
 import org.rifidi.edge.sensors.AbstractGPIOService;
 import org.rifidi.edge.sensors.AbstractSensor;
 import org.rifidi.edge.sensors.CannotExecuteException;
+import org.rifidi.edge.sensors.SensorSession;
 
 /**
  * This class is a service that lets applications access the GPIO functionality
@@ -88,7 +89,15 @@ public class AlienGPIOService extends AbstractGPIOService<Alien9800ReaderSession
 	@Override
 	public boolean isReaderAvailable(String readerID) {
 		AbstractSensor<?> sensor = this.readerDAO.getReaderByID(readerID);
-		if (sensor != null && sensor instanceof Alien9800Reader) {
+		if(sensor == null) {
+			return false;
+		}
+		SensorSession cursession = null;
+		for(SensorSession session : sensor.getSensorSessions().values()) {
+			cursession = session;
+			break;
+		}
+		if (cursession instanceof Alien9800ReaderSession) {
 			return true;
 		}
 		return false;
