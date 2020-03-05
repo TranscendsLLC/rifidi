@@ -1751,10 +1751,20 @@ public class SensorManagerServiceRestletImpl extends Application {
 				setResponseHeaders(request, response);
 				boolean foundservice = false;
 				String readerID = null;
+				String sessionID = null;
 				String portstr = null;
 				try {
 					readerID = (String) request.getAttributes().get("readerID");
+					sessionID = (String) request.getAttributes().get("sessionID");
 					portstr = (String) request.getAttributes().get("ports");
+					SessionStatus checkSessionState = sensorManagerService.getSession(readerID, sessionID).getStatus();
+					if (!checkSessionState.equals(SessionStatus.PROCESSING)) {
+						response.setEntity(
+								self.generateReturnString(self.generateErrorMessage("Session with id " + sessionID
+										+ " of reader with id " + readerID + " is not in the processing state.", null)),
+								MediaType.TEXT_XML);
+						return;
+					}
 					Set<Integer> ports = new HashSet<Integer>();
 					logger.info("Setting GPO for reader " + readerID + " ports: " + portstr);
 					for (String port : portstr.split(",")) {
@@ -1777,8 +1787,9 @@ public class SensorManagerServiceRestletImpl extends Application {
 					}
 				} catch (Exception e) {
 					e.printStackTrace();
-					response.setEntity(self.generateReturnString(self.generateErrorMessage(
-							"Error when setting GPO for reader " + readerID + " ports " + portstr, null)),
+					response.setEntity(
+							self.generateReturnString(self.generateErrorMessage(
+									"Error when setting GPO for reader " + readerID + " ports " + portstr, null)),
 							MediaType.TEXT_XML);
 					return;
 				}
@@ -1799,12 +1810,22 @@ public class SensorManagerServiceRestletImpl extends Application {
 				setResponseHeaders(request, response);
 				boolean foundservice = false;
 				String readerID = null;
+				String sessionID = null;
 				String portstr = null;
 				Integer flashtime = null;
 				try {
 					readerID = (String) request.getAttributes().get("readerID");
+					sessionID = (String) request.getAttributes().get("sessionID");
 					portstr = (String) request.getAttributes().get("ports");
 					flashtime = Integer.parseInt((String) request.getAttributes().get("seconds"));
+					SessionStatus checkSessionState = sensorManagerService.getSession(readerID, sessionID).getStatus();
+					if (!checkSessionState.equals(SessionStatus.PROCESSING)) {
+						response.setEntity(
+								self.generateReturnString(self.generateErrorMessage("Session with id " + sessionID
+										+ " of reader with id " + readerID + " is not in the processing state.", null)),
+								MediaType.TEXT_XML);
+						return;
+					}
 					logger.info("Flashing GPO for reader " + readerID + " ports " + portstr + " for " + flashtime + " seconds");
 					Set<Integer> ports = new HashSet<Integer>();
 					for (String port : portstr.split(",")) {
@@ -2615,8 +2636,8 @@ public class SensorManagerServiceRestletImpl extends Application {
 		router.attach("/currenttags/{readerID}", currenttags);
 
 		// gpio commands
-		router.attach("/setgpo/{readerID}/{ports}", setGPO);
-		router.attach("/flashgpo/{readerID}/{ports}/{seconds}", flashGPO);
+		router.attach("/setgpo/{readerID}/{sessionID}/{ports}", setGPO);
+		router.attach("/flashgpo/{readerID}/{sessionID}/{ports}/{seconds}", flashGPO);
 
 		// thinkify commands
 		// router.attach("/rcs/{readerID}/{sessionID}", rcs);
