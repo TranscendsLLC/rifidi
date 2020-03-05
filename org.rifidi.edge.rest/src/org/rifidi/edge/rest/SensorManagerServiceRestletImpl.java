@@ -3469,9 +3469,17 @@ public class SensorManagerServiceRestletImpl extends Application {
 			dto.setAntenna(tag.getAntennaID());
 			dto.setReader(tag.getReaderID());
 			dto.setTimestamp(tag.getTimestamp());
-			Serializable rssi = tag.getExtraInformation().get(StandardTagReadEventFieldNames.RSSI);
-			if (!rssi.equals(null)) {
-				dto.setRssi((String) rssi);
+			try {
+				Object rssi = tag.getExtraInformation().get(StandardTagReadEventFieldNames.RSSI);
+				if (!(rssi == null)) {
+					String signalStrength = null;
+					if (rssi instanceof Float || rssi instanceof Integer) {
+						signalStrength = String.valueOf(rssi);
+					}
+					dto.setRssi(signalStrength);
+				}
+			} catch (Exception e) {
+				dto.setRssi("0");
 			}
 			this.currenttags.put(tag.getTag().getFormattedID() + tag.getReaderID(), dto);
 		}
