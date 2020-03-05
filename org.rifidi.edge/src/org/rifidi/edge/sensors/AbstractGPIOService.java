@@ -34,7 +34,7 @@ import org.rifidi.edge.sensors.sessions.AbstractSensorSession;
 public abstract class AbstractGPIOService<T extends AbstractSensorSession> {
 
 	/** The readerDAO */
-	private ReaderDAO readerDAO;
+	protected ReaderDAO readerDAO;
 
 	/**
 	 * This method sets the output ports on a reader
@@ -159,8 +159,6 @@ public abstract class AbstractGPIOService<T extends AbstractSensorSession> {
 	 * @param readerID
 	 * @return
 	 */
-	public boolean isReaderAvailable(String readerID) {
-		return readerDAO.getReaderByID(readerID) != null;
-	}
+	public abstract boolean isReaderAvailable(String readerID);
 
 }

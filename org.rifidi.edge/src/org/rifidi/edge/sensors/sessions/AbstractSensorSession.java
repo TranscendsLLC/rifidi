@@ -408,6 +408,11 @@ public abstract class AbstractSensorSession extends SensorSession {
 					this.getSensor().getID(), System.currentTimeMillis(), this.getID());
 			this.getSensor().sendEvent(closedEvent);
 		}
+		if (oldStatus != SessionStatus.CLOSED && status == SessionStatus.CLOSED) {
+			SensorClosedEvent closedEvent = new SensorClosedEvent(
+					this.getSensor().getID(), System.currentTimeMillis(), this.getID());
+			this.getSensor().sendEvent(closedEvent);
+		}
 		if (oldStatus != SessionStatus.CONNECTING && status == SessionStatus.CONNECTING) {
 			SensorConnectingEvent connectingEvent = new SensorConnectingEvent(
 					this.getSensor().getID(), System.currentTimeMillis(), this.getID());

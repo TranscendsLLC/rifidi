@@ -27,6 +27,13 @@
 	<osgi:reference id="commandDAOImpl" interface="org.rifidi.edge.daos.CommandDAO"/>
 	
 	<osgi:reference id="rawTagMonitoringService" interface="org.rifidi.edge.api.service.tagmonitor.RawTagMonitoringService" />
+	
+	<osgi:set id="abstractGPIOService"
+		interface="org.rifidi.edge.sensors.AbstractGPIOService"
+		cardinality="0..N">
+		<osgi:listener ref="restletManagerStub" bind-method="onBind"
+			unbind-method="onUnbind"></osgi:listener>
+	</osgi:set>
 
 	<bean id="restletManagerStub" class="org.rifidi.edge.rest.SensorManagerServiceRestletImpl">
 		<property name="sensorManagerService" ref="sensorManagerServiceRef"/>
@@ -37,6 +44,7 @@
 		<property name="readerDAO" ref="readerDAOImpl" />
 		<property name="commandDAO" ref="commandDAOImpl" />
 		<property name="rawTagMonitoringService" ref="rawTagMonitoringService" />
+		<property name="GPIOService" ref="abstractGPIOService" />
 	</bean>
 	
 	<bean id="restletServer" class="org.rifidi.edge.rest.RestletServer">

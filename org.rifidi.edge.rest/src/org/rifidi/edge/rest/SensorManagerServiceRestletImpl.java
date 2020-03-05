@@ -19,13 +19,16 @@ import java.io.StringWriter;
 import java.io.Writer;
 import java.net.URLDecoder;
 import java.util.ArrayList;
+import java.util.Dictionary;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.CopyOnWriteArraySet;
 import java.util.concurrent.TimeUnit;
 
 import javax.management.Attribute;
@@ -81,8 +84,10 @@ import org.rifidi.edge.daos.ReaderDAO;
 import org.rifidi.edge.notification.StandardTagReadEventFieldNames;
 import org.rifidi.edge.notification.TagReadEvent;
 import org.rifidi.edge.rest.exception.NotValidPropertyForObjectException;
+import org.rifidi.edge.sensors.AbstractGPIOService;
 import org.rifidi.edge.sensors.AbstractSensor;
 import org.rifidi.edge.sensors.AbstractSensorFactory;
+import org.rifidi.edge.sensors.CannotExecuteException;
 import org.rifidi.edge.sensors.SensorSession;
 import org.rifidi.edge.services.EsperManagementService;
 import org.rifidi.edge.services.ProvisioningService;
@@ -132,6 +137,9 @@ public class SensorManagerServiceRestletImpl extends Application {
 
 	/** Esper service */
 	private EsperManagementService esperService;
+
+	/** GPIO Service */
+	private final Set<AbstractGPIOService<?>> gpioServiceList = new CopyOnWriteArraySet<AbstractGPIOService<?>>();
 
 	/**  */
 	public AppManager appManager;
@@ -1475,7 +1483,7 @@ public class SensorManagerServiceRestletImpl extends Application {
 					response.setEntity(self.generateReturnString(tagresponse), MediaType.TEXT_XML);
 
 				} catch (Exception e) {
-					e.printStackTrace();
+
 					response.setEntity(self.generateReturnString(self.generateErrorMessage(e.toString(), null)),
 							MediaType.TEXT_XML);
 				}
@@ -1729,12 +1737,132 @@ public class SensorManagerServiceRestletImpl extends Application {
 		Restlet ping = new Restlet() {
 			@Override
 			public void handle(Request request, Response response) {
-
 				setResponseHeaders(request, response);
 
 				PingDTO ping = new PingDTO();
 				ping.setTimestamp(Long.toString(System.currentTimeMillis()));
 				response.setEntity(self.generateReturnString(ping), MediaType.TEXT_XML);
+			}
+		};
+
+		Restlet setGPO = new Restlet() {
+			@Override
+			public void handle(Request request, Response response) {
+				setResponseHeaders(request, response);
+				String readerID = null;
+				String sessionID = null;
+				String portstr = null;
+				try {
+					readerID = (String) request.getAttributes().get("readerID");
+					sessionID = (String) request.getAttributes().get("sessionID");
+					portstr = (String) request.getAttributes().get("ports");
+					SessionStatus checkSessionState = null;
+					try {
+						checkSessionState = sensorManagerService.getSession(readerID, sessionID).getStatus();
+					} catch (Exception e) {
+						response.setEntity(self.generateReturnString(self.generateErrorMessage(
+								"Could not find session id " + sessionID + " of reader with id " + readerID, null)),
+								MediaType.TEXT_XML);
+						return;
+					}
+					if (!checkSessionState.equals(SessionStatus.PROCESSING)) {
+						response.setEntity(
+								self.generateReturnString(self.generateErrorMessage("Session with id " + sessionID
+										+ " of reader with id " + readerID + " is not in the processing state.", null)),
+								MediaType.TEXT_XML);
+						return;
+					}
+					Set<Integer> ports = new HashSet<Integer>();
+					logger.info("Setting GPO for reader " + readerID + " ports: " + portstr);
+					for (String port : portstr.split(",")) {
+						ports.add(Integer.parseInt(port));
+					}
+					for (AbstractGPIOService<?> service : gpioServiceList) {
+						if (service.isReaderAvailable(readerID)) {
+							try {
+								service.setGPO(readerID, ports);
+							} catch (CannotExecuteException e) {
+								e.printStackTrace();
+								response.setEntity(self.generateReturnString(self.generateErrorMessage(
+										"Error when setting GPO for reader " + readerID + " ports " + ports, null)),
+										MediaType.TEXT_XML);
+								return;
+							}
+						}
+					}
+				} catch (Exception e) {
+					e.printStackTrace();
+					response.setEntity(
+							self.generateReturnString(self.generateErrorMessage(
+									"Error when setting GPO for reader " + readerID + " ports " + portstr, null)),
+							MediaType.TEXT_XML);
+					return;
+				}
+				response.setEntity(self.generateReturnString(self.generateSuccessMessage()), MediaType.TEXT_XML);
+			}
+		};
+		
+		Restlet flashGPO = new Restlet() {
+			@Override
+			public void handle(Request request, Response response) {
+				setResponseHeaders(request, response);
+				String readerID = null;
+				String sessionID = null;
+				String portstr = null;
+				Integer flashtime = null;
+				try {
+					readerID = (String) request.getAttributes().get("readerID");
+					sessionID = (String) request.getAttributes().get("sessionID");
+					portstr = (String) request.getAttributes().get("ports");
+					flashtime = Integer.parseInt((String) request.getAttributes().get("seconds"));
+					SessionStatus checkSessionState = null;
+					try {
+						checkSessionState = sensorManagerService.getSession(readerID, sessionID).getStatus();
+					} catch (Exception e) {
+						response.setEntity(self.generateReturnString(self.generateErrorMessage(
+								"Could not find session id " + sessionID + " of reader with id " + readerID, null)),
+								MediaType.TEXT_XML);
+						return;
+					}
+					if (!checkSessionState.equals(SessionStatus.PROCESSING)) {
+						response.setEntity(
+								self.generateReturnString(self.generateErrorMessage("Session with id " + sessionID
+										+ " of reader with id " + readerID + " is not in the processing state.", null)),
+								MediaType.TEXT_XML);
+						return;
+					}
+					logger.info("Flashing GPO for reader " + readerID + " ports " + portstr + " for " + flashtime
+							+ " seconds");
+					Set<Integer> ports = new HashSet<Integer>();
+					for (String port : portstr.split(",")) {
+						ports.add(Integer.parseInt(port));
+					}
+					for (AbstractGPIOService<?> service : gpioServiceList) {
+						if (service.isReaderAvailable(readerID)) {
+							try {
+								service.flashGPO(readerID, flashtime, ports);
+							} catch (CannotExecuteException e) {
+								e.printStackTrace();
+								response.setEntity(self.generateReturnString(self.generateErrorMessage(
+										"Error when setting GPO for reader " + readerID + " ports " + ports, null)),
+										MediaType.TEXT_XML);
+								return;
+							}
+						}
+					}
+				} catch (Exception e) {
+					e.printStackTrace();
+					response.setEntity(
+							self.generateReturnString(self.generateErrorMessage(
+									"Error when setting GPO for reader " + readerID + " ports " + portstr, null)),
+							MediaType.TEXT_XML);
+					return;
+				}
+				response.setEntity(
+						self.generateReturnString(
+								self.generateErrorMessage("Could not find session for reader " + readerID, null)),
+						MediaType.TEXT_XML);
+
 			}
 		};
 
@@ -2509,6 +2637,10 @@ public class SensorManagerServiceRestletImpl extends Application {
 		router.attach("/save", save);
 		router.attach("/currenttags/{readerID}", currenttags);
 
+		// gpio commands
+		router.attach("/setgpo/{readerID}/{sessionID}/{ports}", setGPO);
+		router.attach("/flashgpo/{readerID}/{sessionID}/{ports}/{seconds}", flashGPO);
+
 		// thinkify commands
 		// router.attach("/rcs/{readerID}/{sessionID}", rcs);
 
@@ -2687,6 +2819,33 @@ public class SensorManagerServiceRestletImpl extends Application {
 
 	public void setRawTagMonitoringService(RawTagMonitoringService rzms) {
 		this.rawTagMonitoringService = rzms;
+	}
+
+	public void setGPIOService(Set<AbstractGPIOService<?>> gpioSet) {
+		// Should we clear the local list before we iterate through the loop?
+		for (AbstractGPIOService<?> service : gpioSet) {
+			logger.debug("Adding a GPIO service in the setter: " + service);
+			this.gpioServiceList.add(service);
+		}
+	}
+
+	public Set<AbstractGPIOService<?>> getServiceSet() {
+		return this.gpioServiceList;
+	}
+
+	/**
+	 * @param gpioService the gpioService to set
+	 */
+	public void onBind(AbstractGPIOService<?> gpioService, Dictionary<String, String> parameters) {
+		logger.debug("Binding: " + gpioService);
+		this.gpioServiceList.add(gpioService);
+	}
+
+	/**
+	 * @param gpioService the gpioService to set
+	 */
+	public void onUnbind(AbstractGPIOService<?> gpioService, Dictionary<String, String> parameters) {
+		this.gpioServiceList.remove(gpioService);
 	}
 
 	// End Spring Inject
@@ -3310,17 +3469,9 @@ public class SensorManagerServiceRestletImpl extends Application {
 			dto.setAntenna(tag.getAntennaID());
 			dto.setReader(tag.getReaderID());
 			dto.setTimestamp(tag.getTimestamp());
-			try {
-				Object rssi = tag.getExtraInformation().get(StandardTagReadEventFieldNames.RSSI);
-				if (!(rssi == null)) {
-					String signalStrength = null;
-					if (rssi instanceof Float || rssi instanceof Integer) {
-						signalStrength = String.valueOf(rssi);
-					}
-					dto.setRssi(signalStrength);
-				}
-			} catch (Exception e) {
-				dto.setRssi("0");
+			Serializable rssi = tag.getExtraInformation().get(StandardTagReadEventFieldNames.RSSI);
+			if (!rssi.equals(null)) {
+				dto.setRssi((String) rssi);
 			}
 			this.currenttags.put(tag.getTag().getFormattedID() + tag.getReaderID(), dto);
 		}
