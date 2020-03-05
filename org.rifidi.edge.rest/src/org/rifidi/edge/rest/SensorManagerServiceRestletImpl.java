@@ -1756,6 +1756,7 @@ public class SensorManagerServiceRestletImpl extends Application {
 					readerID = (String) request.getAttributes().get("readerID");
 					portstr = (String) request.getAttributes().get("ports");
 					Set<Integer> ports = new HashSet<Integer>();
+					logger.info("Setting GPO for reader " + readerID + " ports: " + portstr);
 					for (String port : portstr.split(",")) {
 						ports.add(Integer.parseInt(port));
 					}
@@ -1804,6 +1805,7 @@ public class SensorManagerServiceRestletImpl extends Application {
 					readerID = (String) request.getAttributes().get("readerID");
 					portstr = (String) request.getAttributes().get("ports");
 					flashtime = Integer.parseInt((String) request.getAttributes().get("seconds"));
+					logger.info("Flashing GPO for reader " + readerID + " ports " + portstr + " for " + flashtime + " seconds");
 					Set<Integer> ports = new HashSet<Integer>();
 					for (String port : portstr.split(",")) {
 						ports.add(Integer.parseInt(port));
