@@ -1858,11 +1858,7 @@ public class SensorManagerServiceRestletImpl extends Application {
 							MediaType.TEXT_XML);
 					return;
 				}
-				response.setEntity(
-						self.generateReturnString(
-								self.generateErrorMessage("Could not find session for reader " + readerID, null)),
-						MediaType.TEXT_XML);
-
+				response.setEntity(self.generateReturnString(self.generateSuccessMessage()), MediaType.TEXT_XML);
 			}
 		};
 
