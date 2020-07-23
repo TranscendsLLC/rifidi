@@ -81,6 +81,7 @@ public class StatsApp extends AbstractRifidiApp {
 		Boolean disable = false;
 		String license = null;
 		Boolean sendOverride = false;
+		Long startTime = System.currentTimeMillis();
 		try {
 			disable = Boolean.parseBoolean(this.getProperty("disablestats", "false"));
 		} catch (Exception e) {}
@@ -95,8 +96,8 @@ public class StatsApp extends AbstractRifidiApp {
 		if (!disable && home.contains("Rifidi-SDK/RifidiHome")) {
 			//Thread thread = new Thread(new StatsThread(sensorService, appManager, license, sendOverride));
 			//thread.start();
-			StatsThread statsthread = new StatsThread(sensorService, appManager, license, sendOverride);
-			StatsThread statsthread2 = new StatsThread(sensorService, appManager, license, sendOverride);
+			StatsThread statsthread = new StatsThread(sensorService, appManager, license, sendOverride, startTime);
+			StatsThread statsthread2 = new StatsThread(sensorService, appManager, license, sendOverride, startTime);
 			Timer timer = new Timer();
 			timer.schedule(statsthread, 60000);
 			timer.schedule(statsthread2, 2592000000L);
@@ -121,18 +122,19 @@ public class StatsApp extends AbstractRifidiApp {
 		private SensorManagerService sensorService;
 		private String license;
 		private Boolean sendOverride;
+		private Long startTime;
 
-		public StatsThread(SensorManagerService sensorService, AppManager appManager, String license, Boolean sendOverride) {
+		public StatsThread(SensorManagerService sensorService, AppManager appManager, String license, Boolean sendOverride, Long startTime) {
 			this.appManager = appManager;
 			this.sensorService = sensorService;
 			this.license = license;
 			this.sendOverride = sendOverride;
+			this.startTime = startTime;
 		}
 
 		@Override
 		public void run() {
 			try {
-				System.out.println("SENDING STATS " + System.currentTimeMillis());
 				InetAddress localip = getFirstNonLoopbackAddress(true, false);
 				NetworkInterface network = NetworkInterface.getByInetAddress(localip);
 				byte[] mac = network.getHardwareAddress();
@@ -232,6 +234,7 @@ public class StatsApp extends AbstractRifidiApp {
 					} catch(Exception e) {}
 					
 					List<NameValuePair> data = new ArrayList<NameValuePair>(Arrays.asList(
+							new BasicNameValuePair("uptime", getUptime(startTime).toString()),
 						    new BasicNameValuePair("token", "Rifidi@2006"),
 						    new BasicNameValuePair("event", "serverstart"),
 						    new BasicNameValuePair("local_ip", localip.getHostAddress()),
@@ -265,6 +268,10 @@ public class StatsApp extends AbstractRifidiApp {
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
+		}
+		
+		private Long getUptime(Long startTime) {
+			return System.currentTimeMillis() - startTime;
 		}
 	}
 	
