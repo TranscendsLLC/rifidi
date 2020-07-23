@@ -25,9 +25,9 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Timer;
+import java.util.TimerTask;
 
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
@@ -92,9 +92,15 @@ public class StatsApp extends AbstractRifidiApp {
 		} catch (Exception e) {}
 		
 		String home = System.getProperty("org.rifidi.home");
-		if (!disable && !home.contains("Rifidi-SDK/RifidiHome")) {
-			Thread thread = new Thread(new StatsThread(sensorService, appManager, license, sendOverride));
-			thread.start();
+		if (!disable && home.contains("Rifidi-SDK/RifidiHome")) {
+			//Thread thread = new Thread(new StatsThread(sensorService, appManager, license, sendOverride));
+			//thread.start();
+			StatsThread statsthread = new StatsThread(sensorService, appManager, license, sendOverride);
+			StatsThread statsthread2 = new StatsThread(sensorService, appManager, license, sendOverride);
+			Timer timer = new Timer();
+			timer.schedule(statsthread, 60000);
+			timer.schedule(statsthread2, 2592000000L);
+			//2592000000 milliseconds in 30 days
 		}
 	}
 
@@ -109,7 +115,7 @@ public class StatsApp extends AbstractRifidiApp {
 	/**
 	 * Long running thread
 	 */
-	private class StatsThread implements Runnable {
+	private class StatsThread extends TimerTask {
 
 		private AppManager appManager;
 		private SensorManagerService sensorService;
@@ -126,6 +132,7 @@ public class StatsApp extends AbstractRifidiApp {
 		@Override
 		public void run() {
 			try {
+				System.out.println("SENDING STATS " + System.currentTimeMillis());
 				InetAddress localip = getFirstNonLoopbackAddress(true, false);
 				NetworkInterface network = NetworkInterface.getByInetAddress(localip);
 				byte[] mac = network.getHardwareAddress();
@@ -161,11 +168,11 @@ public class StatsApp extends AbstractRifidiApp {
 					String emailfile = home + File.separator + "configuration" + File.separator + "emailcontact";
 					String xmlfile = home + File.separator + "config" + File.separator + "rifidi.xml";
 					String versionfile = home + File.separator + "version.txt";
-					try {
-						//sleep for 10 minutes
-						Thread.sleep(600000);
-					} catch (InterruptedException e) {
-					}
+//					try {
+//						//sleep for 10 minutes
+//						Thread.sleep(600000);
+//					} catch (InterruptedException e) {
+//					}
 					Integer numapps = appManager.getApps().size();
 					StringBuilder appbldr = new StringBuilder();
 					boolean first = true;
@@ -243,8 +250,9 @@ public class StatsApp extends AbstractRifidiApp {
 					HttpClient client = HttpClients.createDefault();
 					HttpPost post = new HttpPost(url.toString());
 					post.setEntity(new UrlEncodedFormEntity(data));
-					HttpResponse response = client.execute(post);
-					HttpEntity entity = response.getEntity();
+					//HttpResponse response = 
+					client.execute(post);
+					//HttpEntity entity = response.getEntity();
 
 					// get result
 //					BufferedReader br = new BufferedReader(new InputStreamReader(entity.getContent()));
