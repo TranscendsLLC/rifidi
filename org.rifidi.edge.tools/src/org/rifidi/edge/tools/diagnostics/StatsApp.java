@@ -28,6 +28,8 @@ import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
@@ -96,12 +98,14 @@ public class StatsApp extends AbstractRifidiApp {
 		if (!disable && home.contains("Rifidi-SDK/RifidiHome")) {
 			//Thread thread = new Thread(new StatsThread(sensorService, appManager, license, sendOverride));
 			//thread.start();
-			StatsThread statsthread = new StatsThread(sensorService, appManager, license, sendOverride, startTime);
-			StatsThread statsthread2 = new StatsThread(sensorService, appManager, license, sendOverride, startTime);
+			StatsThread statsthread = new StatsThread(sensorService, appManager, license, sendOverride, startTime, "startupevent");
+			StatsThread statsthread2 = new StatsThread(sensorService, appManager, license, sendOverride, startTime, "uptime");
 			Timer timer = new Timer();
-			timer.schedule(statsthread, 60000);
-			timer.schedule(statsthread2, 2592000000L);
+			//startupevent 10 minutes after startup
+			timer.schedule(statsthread, 600000);
+			//uptime every month
 			//2592000000 milliseconds in 30 days
+			timer.schedule(statsthread2, 2592000000L, 2592000000L);
 		}
 	}
 
@@ -123,13 +127,15 @@ public class StatsApp extends AbstractRifidiApp {
 		private String license;
 		private Boolean sendOverride;
 		private Long startTime;
+		private String eventType;
 
-		public StatsThread(SensorManagerService sensorService, AppManager appManager, String license, Boolean sendOverride, Long startTime) {
+		public StatsThread(SensorManagerService sensorService, AppManager appManager, String license, Boolean sendOverride, Long startTime, String eventType) {
 			this.appManager = appManager;
 			this.sensorService = sensorService;
 			this.license = license;
 			this.sendOverride = sendOverride;
 			this.startTime = startTime;
+			this.eventType = eventType;
 		}
 
 		@Override
@@ -170,11 +176,6 @@ public class StatsApp extends AbstractRifidiApp {
 					String emailfile = home + File.separator + "configuration" + File.separator + "emailcontact";
 					String xmlfile = home + File.separator + "config" + File.separator + "rifidi.xml";
 					String versionfile = home + File.separator + "version.txt";
-//					try {
-//						//sleep for 10 minutes
-//						Thread.sleep(600000);
-//					} catch (InterruptedException e) {
-//					}
 					Integer numapps = appManager.getApps().size();
 					StringBuilder appbldr = new StringBuilder();
 					boolean first = true;
@@ -236,7 +237,7 @@ public class StatsApp extends AbstractRifidiApp {
 					List<NameValuePair> data = new ArrayList<NameValuePair>(Arrays.asList(
 							new BasicNameValuePair("uptime", getUptime(startTime).toString()),
 						    new BasicNameValuePair("token", "Rifidi@2006"),
-						    new BasicNameValuePair("event", "serverstart"),
+						    new BasicNameValuePair("event", eventType),
 						    new BasicNameValuePair("local_ip", localip.getHostAddress()),
 						    new BasicNameValuePair("os", os),
 						    new BasicNameValuePair("version", version.trim()),
