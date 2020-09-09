@@ -95,7 +95,7 @@ public class StatsApp extends AbstractRifidiApp {
 		} catch (Exception e) {}
 		
 		String home = System.getProperty("org.rifidi.home");
-		if (!disable && home.contains("Rifidi-SDK/RifidiHome")) {
+		if (!disable && !home.contains("Rifidi-SDK/RifidiHome")) {
 			//Thread thread = new Thread(new StatsThread(sensorService, appManager, license, sendOverride));
 			//thread.start();
 			StatsThread statsthread = new StatsThread(sensorService, appManager, license, sendOverride, startTime, "startupevent");
