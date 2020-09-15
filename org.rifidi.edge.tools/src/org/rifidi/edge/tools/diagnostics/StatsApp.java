@@ -94,10 +94,7 @@ public class StatsApp extends AbstractRifidiApp {
 			sendOverride = Boolean.parseBoolean(this.getProperty("sendoverride", "false"));
 		} catch (Exception e) {}
 		
-		String home = System.getProperty("org.rifidi.home");
-		if (!disable && !home.contains("Rifidi-SDK/RifidiHome")) {
-			//Thread thread = new Thread(new StatsThread(sensorService, appManager, license, sendOverride));
-			//thread.start();
+		if (!disable) {
 			StatsThread statsthread = new StatsThread(sensorService, appManager, license, sendOverride, startTime, "startupevent");
 			StatsThread statsthread2 = new StatsThread(sensorService, appManager, license, sendOverride, startTime, "uptime");
 			Timer timer = new Timer();
