@@ -1,1 +1,1 @@
-Version: 3.8.1RC2
+Version: 3.8.1
