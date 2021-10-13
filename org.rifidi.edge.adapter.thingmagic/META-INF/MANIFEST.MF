@@ -3,7 +3,7 @@ Bundle-ManifestVersion: 2
 Bundle-Name: Rifidi Edge ThingMagic Adapter
 Bundle-SymbolicName: org.rifidi.edge.adapter.thingmagic
 Bundle-Version: 1.1.1
-Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Import-Package: org.apache.commons.codec,
  org.apache.commons.codec.binary,
  org.apache.commons.logging;version="1.1.1",
