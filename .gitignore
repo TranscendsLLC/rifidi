@@ -23,7 +23,7 @@ LLRP_CMDR/
 .externalToolBuilders/
 
 # Locally stored "Eclipse launch configurations"
-*.launch
+#*.launch
 
 # PyDev specific (Python IDE for Eclipse)
 *.pydevproject
@@ -82,3 +82,5 @@ com.amazon.ion/
 com.amazonaws.jmespath/
 org.apache.poi/
 Rifidi-SDK/rifidi/Debian-packages/*
+
+.directory

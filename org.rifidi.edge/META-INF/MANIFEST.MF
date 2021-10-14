@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Rifidi Edge Core
 Bundle-SymbolicName: org.rifidi.edge
-Bundle-Version: 6.3.0
+Bundle-Version: 6.3.2
 Bundle-Vendor: Transcends
 Import-Package: com.espertech.esper.client,
  com.espertech.esper.client.metric,

@@ -27,7 +27,9 @@ import org.llrp.ltk.types.Bit;
 import org.llrp.ltk.types.UnsignedShort;
 import org.rifidi.edge.adapter.llrp.LLRPReaderSession;
 import org.rifidi.edge.sensors.AbstractGPIOService;
+import org.rifidi.edge.sensors.AbstractSensor;
 import org.rifidi.edge.sensors.CannotExecuteException;
+import org.rifidi.edge.sensors.SensorSession;
 
 /**
  * @author matt
@@ -38,16 +40,13 @@ public class LLRPGPIOService extends AbstractGPIOService<LLRPReaderSession> {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * org.rifidi.edge.sensors.AbstractGPIOService#flashGPO(java.lang.String,
+	 * @see org.rifidi.edge.sensors.AbstractGPIOService#flashGPO(java.lang.String,
 	 * int, java.util.Set)
 	 */
 	@Override
-	public void flashGPO(String readerID, int flashTime, Set<Integer> ports)
-			throws CannotExecuteException {
+	public void flashGPO(String readerID, int flashTime, Set<Integer> ports) throws CannotExecuteException {
 		LLRPReaderSession session = super.getSession(readerID);
-		LLRPGPOFlashThread flashrun = new LLRPGPOFlashThread(session,
-				flashTime, ports);
+		LLRPGPOFlashThread flashrun = new LLRPGPOFlashThread(session, flashTime, ports);
 		Thread flashthread = new Thread(flashrun);
 		flashthread.start();
 	}
@@ -59,8 +58,7 @@ public class LLRPGPIOService extends AbstractGPIOService<LLRPReaderSession> {
 	 * java.util.Collection)
 	 */
 	@Override
-	public void setGPO(String readerID, Collection<Integer> ports)
-			throws CannotExecuteException {
+	public void setGPO(String readerID, Collection<Integer> ports) throws CannotExecuteException {
 		LLRPReaderSession session = super.getSession(readerID);
 
 		GET_READER_CONFIG grc = new GET_READER_CONFIG();
@@ -73,9 +71,7 @@ public class LLRPGPIOService extends AbstractGPIOService<LLRPReaderSession> {
 		try {
 			grcr = (GET_READER_CONFIG_RESPONSE) session.transact(grc);
 		} catch (Exception e) {
-			throw new CannotExecuteException(
-					"Exception during transact while trying to "
-							+ "obtain GPO information");
+			throw new CannotExecuteException("Exception during transact while trying to " + "obtain GPO information");
 		}
 		int num_ports = grcr.getGPOWriteDataList().size();
 
@@ -92,26 +88,24 @@ public class LLRPGPIOService extends AbstractGPIOService<LLRPReaderSession> {
 			data.setGPOPortNumber(new UnsignedShort(i));
 			writedata.add(data);
 		}
-		
+
 		SET_READER_CONFIG src = new SET_READER_CONFIG();
 		src.setGPOWriteDataList(writedata);
 		src.setResetToFactoryDefault(new Bit(0));
-		
+
 		session.send(src);
 	}
 
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * org.rifidi.edge.sensors.AbstractGPIOService#testGPI(java.lang.String,
+	 * @see org.rifidi.edge.sensors.AbstractGPIOService#testGPI(java.lang.String,
 	 * int)
 	 */
 	@Override
-	public boolean testGPI(String readerID, int port)
-			throws CannotExecuteException {
+	public boolean testGPI(String readerID, int port) throws CannotExecuteException {
 		LLRPReaderSession session = super.getSession(readerID);
-		
+
 		GET_READER_CONFIG grc = new GET_READER_CONFIG();
 		grc.setGPOPortNum(new UnsignedShort(0));
 		grc.setAntennaID(new UnsignedShort(0));
@@ -122,23 +116,20 @@ public class LLRPGPIOService extends AbstractGPIOService<LLRPReaderSession> {
 		try {
 			grcr = (GET_READER_CONFIG_RESPONSE) session.transact(grc);
 		} catch (Exception e) {
-			throw new CannotExecuteException(
-					"Exception during transact while trying to "
-							+ "obtain GPI information");
+			throw new CannotExecuteException("Exception during transact while trying to " + "obtain GPI information");
 		}
 		List<GPIPortCurrentState> gpilist = grcr.getGPIPortCurrentStateList();
-		
-		for(GPIPortCurrentState gpi:gpilist) {
-			if(gpi.getGPIPortNum().intValue()==port) {
-				if(gpi.getState().intValue()==1) {
+
+		for (GPIPortCurrentState gpi : gpilist) {
+			if (gpi.getGPIPortNum().intValue() == port) {
+				if (gpi.getState().intValue() == 1) {
 					return true;
 				} else {
 					return false;
 				}
 			}
 		}
-		
-		
+
 		throw new CannotExecuteException("No such port found while searching for GPI value: " + port);
 	}
 
@@ -155,8 +146,7 @@ public class LLRPGPIOService extends AbstractGPIOService<LLRPReaderSession> {
 		 * 
 		 * @param session
 		 */
-		public LLRPGPOFlashThread(LLRPReaderSession session, int flashTime,
-				Set<Integer> ports) {
+		public LLRPGPOFlashThread(LLRPReaderSession session, int flashTime, Set<Integer> ports) {
 			this.session = session;
 			this.flashTime = flashTime;
 			this.ports = ports;
@@ -179,7 +169,7 @@ public class LLRPGPIOService extends AbstractGPIOService<LLRPReaderSession> {
 			}
 			srchigh.setGPOWriteDataList(gpowritehigh);
 			srchigh.setResetToFactoryDefault(new Bit(0));
-			
+
 			session.send(srchigh);
 
 			// Sleeping for the time given for the flash.
@@ -204,4 +194,23 @@ public class LLRPGPIOService extends AbstractGPIOService<LLRPReaderSession> {
 
 	}
 
+	/*
+	 * 
+	 */
+	@Override
+	public boolean isReaderAvailable(String readerID) {
+		AbstractSensor<?> sensor = this.readerDAO.getReaderByID(readerID);
+		if(sensor == null) {
+			return false;
+		}
+		SensorSession cursession = null;
+		for(SensorSession session : sensor.getSensorSessions().values()) {
+			cursession = session;
+			break;
+		}
+		if (cursession instanceof LLRPReaderSession) {
+			return true;
+		}
+		return false;
+	}
 }

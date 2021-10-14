@@ -53,4 +53,4 @@
 cd rifidi/
 dpkg-deb --build debian
 
-mv debian.deb ./Debian-packages/rifidi-edge-3.8.0-linux.gtk.x86.deb
+mv debian.deb ./rifidi-edge-3.8.1-linux.gtk.x86.deb
