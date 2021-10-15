@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<?pde version="3.5"?>
+
+<target name="Rifidi Edge Server Target">
+<locations>
+<location path="${workspace_loc}/Rifidi-SDK/rifidi/debian/usr/local/sbin/rifidi/plugins" type="Directory"/>
+</locations>
+<environment>
+<nl>en_US</nl>
+</environment>
+</target>
