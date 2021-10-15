@@ -69,7 +69,7 @@ public class Tag
 	 * @param discoveryTime the discoveryTime
 	 */
 	public Tag(String id, String readerId, int antennaId, byte[] tagId, String tagIDAsPureURI, long discoveryTime) {
-		super(id, null, antennaId, discoveryTime);
+		super(id, (DatacontainerEvent)null, antennaId, discoveryTime);
 		setReaderOrigin(readerId);
 		setAntennaOrigin(antennaId);
 		setReader(origin);

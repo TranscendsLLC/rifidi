@@ -4,7 +4,7 @@ Bundle-Name: Thingmagic6
 Bundle-SymbolicName: org.rifidi.edge.adapter.thingmagic6
 Bundle-Version: 1.1.1
 Bundle-Vendor: Pramari, LLC
-Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Import-Package: com.thingmagic,
  org.apache.commons.codec,
  org.apache.commons.codec.binary,

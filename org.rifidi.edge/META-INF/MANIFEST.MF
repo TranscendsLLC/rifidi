@@ -95,7 +95,7 @@ Export-Package: org.rifidi.edge.api,
  org.rifidi.edge.sensors.sessions,
  org.rifidi.edge.services,
  org.rifidi.edge.util
-Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Bundle-Activator: org.rifidi.edge.Activator
 Bundle-Description: This bundle contains several core services needed by the edge server, such as ReaderSession service
 Require-Bundle: org.rifidi.edge.api;bundle-version="1.3.0",

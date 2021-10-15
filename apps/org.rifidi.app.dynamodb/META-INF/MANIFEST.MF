@@ -3,7 +3,7 @@ Bundle-ManifestVersion: 2
 Bundle-Name: AmazonSample
 Bundle-SymbolicName: org.rifidi.app.dynamodb
 Bundle-Version: 1.1.0
-Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Require-Bundle: com.espertech.esper;bundle-version="4.2.0",
  org.rifidi.edge;bundle-version="5.4.0"
 Import-Package: com.amazonaws;version="1.11.78",

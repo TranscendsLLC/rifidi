@@ -15,6 +15,6 @@ Export-Package: org.rifidi.edge.adapter.alien,
  org.rifidi.edge.adapter.alien.messages
 Require-Bundle: org.rifidi.edge;bundle-version="5.4.0",
  org.rifidi.edge.api;bundle-version="1.1.1"
-Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Spring-Context: *;create-asynchronously:=true
 Eclipse-BuddyPolicy: global

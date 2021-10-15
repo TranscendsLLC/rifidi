@@ -4,7 +4,7 @@ Bundle-Name: Restlet
 Bundle-SymbolicName: org.rifidi.edge.rest
 Bundle-Version: 1.9.4
 Bundle-Vendor: Transcends, LLC
-Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Import-Package: com.espertech.esper.client,
  javax.xml.bind,
  javax.xml.bind.annotation,
