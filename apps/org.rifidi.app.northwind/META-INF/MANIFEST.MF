@@ -4,7 +4,7 @@ Bundle-Name: Northwind
 Bundle-SymbolicName: org.rifidi.app.northwind
 Bundle-Version: 2.0.0
 Bundle-Vendor: Pramari, LLC
-Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Require-Bundle: org.rifidi.edge;bundle-version="5.4.0",
  com.espertech.esper;bundle-version="4.7.0"
 Import-Package: net.sf.cglib.reflect;version="2.1.3",

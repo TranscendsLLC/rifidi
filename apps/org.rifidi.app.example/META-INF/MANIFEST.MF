@@ -4,7 +4,7 @@ Bundle-Name: Example Applicaiton
 Bundle-SymbolicName: org.rifidi.app.example
 Bundle-Version: 1.0.1
 Bundle-Vendor: Pramari, LLC
-Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Require-Bundle: org.rifidi.edge;bundle-version="5.4.0"
 Import-Package: com.espertech.esper.client,
  net.sf.cglib.reflect;version="2.1.3",
