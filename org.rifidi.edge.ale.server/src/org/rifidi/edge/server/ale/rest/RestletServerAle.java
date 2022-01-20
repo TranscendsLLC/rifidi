@@ -13,13 +13,14 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
+import java.security.InvalidParameterException;
 
 import javax.annotation.PostConstruct;
 import javax.xml.namespace.QName;
 import javax.xml.transform.Source;
 import javax.xml.transform.stream.StreamSource;
 import javax.xml.ws.Endpoint;
-import javax.xml.ws.http.HTTPBinding;
+import javax.xml.ws.soap.SOAPBinding;
 import javax.xml.ws.spi.http.HttpContext;
 
 import org.apache.commons.logging.Log;
@@ -97,7 +98,17 @@ public class RestletServerAle extends Restlet {
 			if (restletEnabled) {
 
 				int port = Integer.parseInt(System.getProperty("org.rifidi.ale.port"));
+				String host = System.getProperty("org.rifidi.ale.host");
 
+				if ((port < 1) || (port > 65535)) {
+					throw new InvalidParameterException("Parameter 'org.rifidi.ale.port' is not between 1 and 65535.");
+				}
+				
+				if ((host == null) || (host.isEmpty())) {
+					host = "localhost";
+					logger.warn("Using " + host + " as ALE server host name. To change it, set parameter 'org.rifidi.ale.host'.");
+				}
+				
 				URL alelrXsdResource = RestletServerAle.class
 						.getResource("/org/rifidi/edge/alelr/xsd/EPCglobal-ale-1_1-alelr.xsd");
 
@@ -159,28 +170,28 @@ public class RestletServerAle extends Restlet {
 				 */
 
 				// Publish alelr service
-				logger.info("Starting alelr service on port: " + port);
-				Endpoint alelrEndPoint = Endpoint.create(HTTPBinding.HTTP_BINDING,alelrServicePortType);
+				logger.info("Starting alelr service on host " + host + " port " + port);
+				Endpoint alelrEndPoint;
 				if (IsWindows()) {
 					alelrEndPoint = Endpoint.create(alelrServicePortType);
 				} else {
-					alelrEndPoint = Endpoint.create(HTTPBinding.HTTP_BINDING,alelrServicePortType);
+					alelrEndPoint = Endpoint.create(SOAPBinding.SOAP11HTTP_BINDING, alelrServicePortType);
 				}
 				alelrEndPoint.setMetadata(metadataAlelr);
 				// alelrEndPoint.setProperties(properties);
-				URI uriAlelr = URI.create("http://localhost:" + port + "/alelrservice");
+				URI uriAlelr = URI.create("http://" + host + ":" + port + "/alelrservice");
 				alelrEndPoint.publish(uriAlelr.toString());
 
 				// Publish ale service
-				logger.info("Starting ale service on port: " + port);
+				logger.info("Starting ale service on host " + host + " port " + port);
 				Endpoint aleEndPoint;
 				if (IsWindows()) {
 					aleEndPoint = Endpoint.create(aleServicePortType);
 				} else {
-					aleEndPoint = Endpoint.create(HTTPBinding.HTTP_BINDING,aleServicePortType);
+					aleEndPoint = Endpoint.create(SOAPBinding.SOAP11HTTP_BINDING, aleServicePortType);
 				}
 				aleEndPoint.setMetadata(metadataAle);
-				URI uriAle = URI.create("http://localhost:" + port + "/aleservice");
+				URI uriAle = URI.create("http://" + host + ":" + port + "/aleservice");
 				aleEndPoint.publish(uriAle.toString());
 
 				// //Restlet
