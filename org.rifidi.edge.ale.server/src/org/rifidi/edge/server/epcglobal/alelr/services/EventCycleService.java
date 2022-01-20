@@ -20,6 +20,7 @@ import org.rifidi.edge.epcglobal.ale.ECSpecValidationExceptionResponse;
 import org.rifidi.edge.epcglobal.ale.ImplementationExceptionResponse;
 import org.rifidi.edge.epcglobal.ale.InvalidURIExceptionResponse;
 import org.rifidi.edge.epcglobal.alelr.ValidationExceptionResponse;
+import org.rifidi.edge.server.ale.infrastructure.HttpNotifier;
 import org.rifidi.edge.server.ale.infrastructure.MqttNotifier;
 import org.rifidi.edge.server.ale.infrastructure.Notifier;
 import org.rifidi.edge.server.epcglobal.ale.Cycle;
@@ -146,7 +147,18 @@ public class EventCycleService implements CycleService {
 		// TODO Auto-generated method stub
 		// Notifier notifier = notifierService.createNotifierFromPlugin("MQTT",
 		// specName, notificationURI);
-		Notifier notifier = new MqttNotifier();
+
+		// Determine whether to use MQTT (TCP) or SOAP (HTTP) notifier
+		Notifier notifier;
+		if (notificationURI.startsWith("tcp://")) {
+			notifier = new MqttNotifier();
+		} else if (notificationURI.startsWith("http://")) {
+			notifier = new HttpNotifier();
+		} else {
+			LOG.error("Unsupported subscription schema: " + notificationURI);
+			throw new InvalidURIExceptionResponse("Unsupported subscription schema");
+		}
+
 		notifier.setNotifierId(specName + notificationURI);
 		notifier.init(notificationURI, rifidiHelper);
 		Subscription subscription = eventCycleReadersAndNotifiers.get(specName).getKey().subscribeObserver(notifier);
@@ -154,7 +166,6 @@ public class EventCycleService implements CycleService {
 				notifier);
 		eventCycleReadersAndNotifiers.get(specName).getRight().getRight().putIfAbsent(notificationURI,
 				subscriptionAndNotifier);
-
 	}
 
 	@Override
