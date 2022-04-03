@@ -82,6 +82,7 @@
         <setEntry value="org.apache.geronimo.specs.geronimo-jms_1.1_spec@default:default"/>
         <setEntry value="org.apache.httpcomponents.httpclient@default:default"/>
         <setEntry value="org.apache.httpcomponents.httpcore@default:default"/>
+        <setEntry value="org.apache.log4j@default:default"/>
         <setEntry value="org.apache.openjpa@default:default"/>
         <setEntry value="org.apache.poi@default:default"/>
         <setEntry value="org.apache.servicemix.bundles.jaxb-impl@default:default"/>
@@ -130,9 +131,6 @@
         <setEntry value="org.rifidi.edge.adapter.thingmagic6@default:default"/>
         <setEntry value="org.rifidi.edge.adapter.thingmagic@default:default"/>
         <setEntry value="org.rifidi.edge.adapter.thinkifyusb@default:default"/>
-        <setEntry value="org.rifidi.edge.ale.lr@default:default"/>
-        <setEntry value="org.rifidi.edge.ale.server@default:default"/>
-        <setEntry value="org.rifidi.edge.ale@default:default"/>
         <setEntry value="org.rifidi.edge.api@default:default"/>
         <setEntry value="org.rifidi.edge.init@default:default"/>
         <setEntry value="org.rifidi.edge.rest@default:default"/>

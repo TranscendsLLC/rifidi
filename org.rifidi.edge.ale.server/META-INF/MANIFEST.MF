@@ -68,6 +68,5 @@ Export-Package: ale.server2,
  org.rifidi.edge.server.epcglobal.alelr.services,
  org.rifidi.edge.utils
 Require-Bundle: org.rifidi.org.llrp.ltk,
- com.springsource.org.apache.log4j;bundle-version="1.2.15",
  org.springframework.web,
  org.rifidi.edge

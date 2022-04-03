@@ -95,7 +95,7 @@ org.postgresql,9.4.1201,plugins/org.postgresql_9.4.1201.jar,4,true
 org.rifidi.edge,6.3.2,plugins/org.rifidi.edge_6.3.2.jar,4,true
 org.rifidi.edge.api,1.3.0,plugins/org.rifidi.edge.api_1.3.0.jar,4,true
 org.rifidi.edge.catalina.config,1.0.0,plugins/org.rifidi.edge.catalina.config_1.0.0.jar,4,false
-org.rifidi.edge.init,1.1.0,plugins/org.rifidi.edge.init_1.1.0.jar,2,true
+org.rifidi.edge.init,1.1.1,plugins/org.rifidi.edge.init_1.1.1.jar,2,true
 org.rifidi.edge.adapter.alien,2.11.3,plugins/org.rifidi.edge.adapter.alien_2.11.3.jar,4,true
 org.rifidi.edge.adapter.awid,1.1.3,plugins/org.rifidi.edge.adapter.awid_1.1.3.jar,4,true
 org.rifidi.edge.adapter.csl,1.1.2,plugins/org.rifidi.edge.adapter.csl_1.1.2.jar,4,true
@@ -109,7 +109,7 @@ org.rifidi.edge.rest,1.9.4,plugins/org.rifidi.edge.rest_1.9.4.jar,4,true
 org.rifidi.edge.tools,1.4.1,plugins/org.rifidi.edge.tools_1.4.1.jar,4,true
 #org.rifidi.org.antlr.runtime,3.1.1,plugins/org.rifidi.org.antlr.runtime_3.1.1.jar,4,true
 org.rifidi.org.apache.mina-core,1.0.0,plugins/org.rifidi.org.apache.mina-core_1.0.0.jar,4,true
-org.rifidi.org.llrp.ltk,1.0.6,plugins/org.rifidi.org.llrp.ltk_1.0.6.jar,4,true
+org.rifidi.org.llrp.ltk,1.0.0.7,plugins/org.rifidi.org.llrp.ltk_1.0.0.7.jar,4,true
 org.rifidi.org.relique.jdbc,1.0.0,plugins/org.rifidi.org.relique.jdbc_1.0.0.jar,4,true
 org.rifidi.edge.ale.server,1.0.0,plugins/org.rifidi.edge.ale.server_1.0.0.jar,4,true
 org.rifidi.edge.ale,1.0.0,plugins/org.rifidi.edge.ale_1.0.0.jar,4,true
