@@ -112,7 +112,7 @@ org.rifidi.org.relique.jdbc,1.0.0,plugins/org.rifidi.org.relique.jdbc_1.0.0.jar,
 org.rifidi.edge.ale.server,1.0.0,plugins/org.rifidi.edge.ale.server_1.0.0.jar,4,true
 org.rifidi.edge.ale,1.0.0,plugins/org.rifidi.edge.ale_1.0.0.jar,4,true
 org.rifidi.edge.ale.lr,1.0.0,plugins/org.rifidi.edge.ale.lr_1.0.0.jar,4,true
-reload4j,1.2.19,plugins/reload4j-1.2.19.jar,4,true
+org.apache.log4j,1.2.22,plugins/reload4j-1.2.22.jar,4,true
 org.simpleframework,1.0.0,plugins/org.simpleframework_1.0.0.jar,4,true
 org.springframework.aop,3.2.5.RELEASE,plugins/org.springframework.aop-3.2.5.RELEASE.jar,4,true
 org.springframework.context,3.2.5.RELEASE,plugins/org.springframework.context-3.2.5.RELEASE.jar,4,true
