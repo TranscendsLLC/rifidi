@@ -2,13 +2,13 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Edge Server Initialization
 Bundle-SymbolicName: org.rifidi.edge.init
-Bundle-Version: 1.1.0
+Bundle-Version: 1.1.1
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
-Require-Bundle: com.springsource.org.apache.log4j;bundle-version="1.2.15"
 Import-Package: org.apache.http;version="4.4.3",
  org.apache.http.client.config;version="4.5.1",
  org.apache.http.client.methods;version="4.5.1",
  org.apache.http.impl.client;version="4.5.1",
+ org.apache.log4j;version="1.2.19",
  org.osgi.framework
 Bundle-Activator: org.rifidi.edge.init.Activator
 Export-Package: org.rifidi.edge.init

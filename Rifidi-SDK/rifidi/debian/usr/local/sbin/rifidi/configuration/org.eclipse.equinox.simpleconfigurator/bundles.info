@@ -56,12 +56,10 @@ com.springsource.org.apache.el,6.0.18,plugins/com.springsource.org.apache.el_6.0
 com.springsource.org.apache.jasper,6.0.18,plugins/com.springsource.org.apache.jasper_6.0.18.jar,4,false
 com.springsource.org.apache.jasper.org.eclipse.jdt,6.0.18,plugins/com.springsource.org.apache.jasper.org.eclipse.jdt_6.0.18.jar,4,true
 com.springsource.org.apache.juli.extras,6.0.18,plugins/com.springsource.org.apache.juli.extras_6.0.18.jar,4,true
-com.springsource.org.apache.log4j,1.2.15,plugins/com.springsource.org.apache.log4j_1.2.15.jar,4,true
 #com.springsource.org.apache.taglibs.standard,1.1.2,plugins/com.springsource.org.apache.taglibs.standard_1.1.2.jar,4,true
 com.springsource.org.apache.tools.ant,1.7.1,plugins/com.springsource.org.apache.tools.ant_1.7.1.jar,4,true
 com.springsource.slf4j.api,1.5.6,plugins/com.springsource.slf4j.api_1.5.6.jar,4,true
 com.springsource.slf4j.jcl,1.5.6,plugins/com.springsource.slf4j.jcl_1.5.6.jar,4,false
-com.springsource.slf4j.log4j,1.5.6,plugins/com.springsource.slf4j.log4j_1.5.6.jar,4,false
 javax.servlet,2.5.0.v200806031605,plugins/javax.servlet_2.5.0.v200806031605.jar,4,true
 org.apache.activemq.activemq-core,5.5.0,plugins/org.apache.activemq.activemq-core_5.5.0.jar,4,true
 org.apache.activemq.activemq-pool,5.5.0,plugins/org.apache.activemq.activemq-pool_5.5.0.jar,4,true
@@ -95,7 +93,7 @@ org.postgresql,9.4.1201,plugins/org.postgresql_9.4.1201.jar,4,true
 org.rifidi.edge,6.3.2,plugins/org.rifidi.edge_6.3.2.jar,4,true
 org.rifidi.edge.api,1.3.0,plugins/org.rifidi.edge.api_1.3.0.jar,4,true
 org.rifidi.edge.catalina.config,1.0.0,plugins/org.rifidi.edge.catalina.config_1.0.0.jar,4,false
-org.rifidi.edge.init,1.1.0,plugins/org.rifidi.edge.init_1.1.0.jar,2,true
+org.rifidi.edge.init,1.1.1,plugins/org.rifidi.edge.init_1.1.1.jar,2,true
 org.rifidi.edge.adapter.alien,2.11.3,plugins/org.rifidi.edge.adapter.alien_2.11.3.jar,4,true
 org.rifidi.edge.adapter.awid,1.1.3,plugins/org.rifidi.edge.adapter.awid_1.1.3.jar,4,true
 org.rifidi.edge.adapter.csl,1.1.2,plugins/org.rifidi.edge.adapter.csl_1.1.2.jar,4,true
@@ -109,11 +107,12 @@ org.rifidi.edge.rest,1.9.4,plugins/org.rifidi.edge.rest_1.9.4.jar,4,true
 org.rifidi.edge.tools,1.4.1,plugins/org.rifidi.edge.tools_1.4.1.jar,4,true
 #org.rifidi.org.antlr.runtime,3.1.1,plugins/org.rifidi.org.antlr.runtime_3.1.1.jar,4,true
 org.rifidi.org.apache.mina-core,1.0.0,plugins/org.rifidi.org.apache.mina-core_1.0.0.jar,4,true
-org.rifidi.org.llrp.ltk,1.0.6,plugins/org.rifidi.org.llrp.ltk_1.0.6.jar,4,true
+org.rifidi.org.llrp.ltk,1.0.0.7,plugins/org.rifidi.org.llrp.ltk_1.0.0.7.jar,4,true
 org.rifidi.org.relique.jdbc,1.0.0,plugins/org.rifidi.org.relique.jdbc_1.0.0.jar,4,true
 org.rifidi.edge.ale.server,1.0.0,plugins/org.rifidi.edge.ale.server_1.0.0.jar,4,true
 org.rifidi.edge.ale,1.0.0,plugins/org.rifidi.edge.ale_1.0.0.jar,4,true
 org.rifidi.edge.ale.lr,1.0.0,plugins/org.rifidi.edge.ale.lr_1.0.0.jar,4,true
+org.apache.log4j,1.2.22,plugins/reload4j-1.2.22.jar,4,true
 org.simpleframework,1.0.0,plugins/org.simpleframework_1.0.0.jar,4,true
 org.springframework.aop,3.2.5.RELEASE,plugins/org.springframework.aop-3.2.5.RELEASE.jar,4,true
 org.springframework.context,3.2.5.RELEASE,plugins/org.springframework.context-3.2.5.RELEASE.jar,4,true
